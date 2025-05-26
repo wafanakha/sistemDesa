@@ -25,10 +25,17 @@ export interface Resident {
     | "Belum Tamat SD/Sederajat"
     | "SLTP/Sederajat"
     | "Diploma IV/Strata1";
-  religion: string;
-  bloodType?: string;
+  religion: "Islam" | "Protestan" | "Katolik" | "Hindu" | "Buddha" | "Konghucu";
+  bloodType?: "A" | "B" | "O" | "AB";
   occupation: string;
-  physicalDisability?: string;
+  physicalDisability?:
+    | "Tidak ada"
+    | "Tuna Netra"
+    | "Tuna Rungu"
+    | "Tuna Daksa"
+    | "Tuna Wicara"
+    | "Dwarfsime"
+    | "Cerebral Palsy";
   fatherName: string;
   motherName: string;
   createdAt: Date;

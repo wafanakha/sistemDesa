@@ -192,9 +192,23 @@ const ViewResident: React.FC = () => {
           <InfoItem label="No NIK" value={resident.nik} />
           <InfoItem label="Nama Lengkap" value={resident.name} />
           <InfoItem label="Tempat Lahir" value={resident.birthPlace} />
+          <InfoItem
+            label="Tanggal Lahir"
+            value={new Date(resident.birthDate).toLocaleDateString("id-ID")}
+          />
+          <InfoItem label="Umur" value={resident.age?.toString() || "-"} />
+          <InfoItem label="Jenis Kelamin" value={resident.gender} />
+          <InfoItem label="Alamat" value={resident.address} />
           <InfoItem label="RT" value={resident.rt} />
           <InfoItem label="RW" value={resident.rw} />
-          <InfoItem label="SHDK" value={resident.shdk} />
+          <InfoItem
+            label="Status Hubungan Dalam Keluarga"
+            value={resident.shdk}
+          />
+          <InfoItem
+            label="KTP Elektronik"
+            value={resident.ktpEl ? "Ya" : "Tidak"}
+          />
           <InfoItem
             label="Akta Lahir"
             value={resident.birthCertificate ? "Ya" : "Tidak"}
@@ -203,10 +217,47 @@ const ViewResident: React.FC = () => {
             label="No Akta Lahir"
             value={resident.birthCertificateNumber || "-"}
           />
+          <InfoItem label="Status Pernikahan" value={resident.maritalStatus} />
+          <InfoItem
+            label="Akta Nikah"
+            value={resident.marriageCertificate ? "Ya" : "Tidak"}
+          />
+          <InfoItem
+            label="No Akta Nikah"
+            value={resident.marriageCertificateNumber || "-"}
+          />
+          <InfoItem
+            label="Akta Cerai"
+            value={resident.divorceCertificate ? "Ya" : "Tidak"}
+          />
+          <InfoItem
+            label="No Akta Cerai"
+            value={resident.divorceCertificateNumber || "-"}
+          />
           <InfoItem label="Pendidikan" value={resident.education} />
+          <InfoItem label="Agama" value={resident.religion} />
+          <InfoItem label="Pekerjaan" value={resident.occupation} />
           <InfoItem label="Golongan Darah" value={resident.bloodType || "-"} />
+          <InfoItem
+            label="Disabilitas Fisik"
+            value={resident.physicalDisability || "-"}
+          />
           <InfoItem label="Nama Ayah" value={resident.fatherName} />
           <InfoItem label="Nama Ibu" value={resident.motherName} />
+          <InfoItem
+            label="Foto"
+            value={
+              resident.photoUrl ? (
+                <img
+                  src={resident.photoUrl}
+                  alt={`Foto ${resident.name}`}
+                  className="w-20 h-20 object-cover rounded"
+                />
+              ) : (
+                "-"
+              )
+            }
+          />
         </div>
       </Card>
 

@@ -10,6 +10,8 @@ import Select from "../../components/ui/Select";
 import Card from "../../components/ui/Card";
 import { toast } from "react-toastify";
 
+const inputStyle = "border border-gray-300 rounded-none";
+
 const AddResident: React.FC = () => {
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [customFieldValues, setCustomFieldValues] = useState<{
@@ -31,7 +33,7 @@ const AddResident: React.FC = () => {
       address: "",
       birthDate: "",
       gender: "Laki-laki",
-      religion: "",
+      religion: "Islam",
       occupation: "",
       maritalStatus: "Belum Kawin",
     },
@@ -105,139 +107,102 @@ const AddResident: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic information */}
-        <Card title="Informasi Dasar">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
-              label="NIK"
-              {...register("nik", {
-                required: "NIK wajib diisi",
-                minLength: { value: 16, message: "NIK harus 16 digit" },
-                maxLength: { value: 16, message: "NIK harus 16 digit" },
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: "NIK hanya boleh berisi angka",
-                },
-              })}
-              error={errors.nik?.message}
-              fullWidth
-            />
-
-            <Input
-              label="Nama Lengkap"
-              {...register("name", { required: "Nama wajib diisi" })}
-              error={errors.name?.message}
-              fullWidth
-            />
-
-            <Input
-              label="Tanggal Lahir"
-              type="date"
-              {...register("birthDate", {
-                required: "Tanggal lahir wajib diisi",
-              })}
-              error={errors.birthDate?.message}
-              fullWidth
-            />
-
-            <Controller
-              name="gender"
-              control={control}
-              rules={{ required: "Jenis kelamin wajib dipilih" }}
-              render={({ field }) => (
-                <Select
-                  label="Jenis Kelamin"
-                  options={[
-                    { value: "Laki-laki", label: "Laki-laki" },
-                    { value: "Perempuan", label: "Perempuan" },
-                  ]}
-                  error={errors.gender?.message}
-                  fullWidth
-                  {...field}
-                />
-              )}
-            />
-
-            <Input
-              label="Agama"
-              {...register("religion", { required: "Agama wajib diisi" })}
-              error={errors.religion?.message}
-              fullWidth
-            />
-
-            <Input
-              label="Pekerjaan"
-              {...register("occupation", { required: "Pekerjaan wajib diisi" })}
-              error={errors.occupation?.message}
-              fullWidth
-            />
-
-            <Controller
-              name="maritalStatus"
-              control={control}
-              rules={{ required: "Status perkawinan wajib dipilih" }}
-              render={({ field }) => (
-                <Select
-                  label="Status Perkawinan"
-                  options={[
-                    { value: "Belum Kawin", label: "Belum Kawin" },
-                    { value: "Kawin", label: "Kawin" },
-                    { value: "Cerai Hidup", label: "Cerai Hidup" },
-                    { value: "Cerai Mati", label: "Cerai Mati" },
-                  ]}
-                  error={errors.maritalStatus?.message}
-                  fullWidth
-                  {...field}
-                />
-              )}
-            />
-
-            <div className="md:col-span-2">
+        <Card title="Masukkan Informasi Warga">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-200 p-4">
+            {/* Personal Information Section */}
+            <div className="space-y-3 p-3 bg-white border border-gray-200">
+              <h3 className="font-semibold text-lg border-b border-gray-300 pb-2 mb-3">
+                Informasi Pribadi
+              </h3>
               <Input
-                label="Alamat"
-                {...register("address", { required: "Alamat wajib diisi" })}
-                error={errors.address?.message}
+                label="NIK"
+                {...register("nik", {
+                  required: "NIK wajib diisi",
+                  minLength: { value: 16, message: "NIK harus 16 digit" },
+                  maxLength: { value: 16, message: "NIK harus 16 digit" },
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "NIK hanya boleh berisi angka",
+                  },
+                })}
+                error={errors.nik?.message}
                 fullWidth
               />
+              <Input
+                label="Nama Lengkap"
+                {...register("name", { required: "Nama wajib diisi" })}
+                error={errors.name?.message}
+                fullWidth
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Tanggal Lahir"
+                  type="date"
+                  {...register("birthDate", {
+                    required: "Tanggal lahir wajib diisi",
+                  })}
+                  error={errors.birthDate?.message}
+                  fullWidth
+                />
+                <Input
+                  label="Umur"
+                  type="number"
+                  {...register("age", { required: "Umur wajib diisi" })}
+                  error={errors.age?.message}
+                  fullWidth
+                />
+              </div>
+              <Input
+                label="Tempat Lahir"
+                {...register("birthPlace")}
+                fullWidth
+              />
+              <Controller
+                name="gender"
+                control={control}
+                rules={{ required: "Jenis kelamin wajib dipilih" }}
+                render={({ field }) => (
+                  <Select
+                    label="Jenis Kelamin"
+                    options={[
+                      { value: "Laki-laki", label: "Laki-laki" },
+                      { value: "Perempuan", label: "Perempuan" },
+                    ]}
+                    error={errors.gender?.message}
+                    fullWidth
+                    {...field}
+                  />
+                )}
+              />
+            </div>
 
+            {/* Family & Address Section */}
+            <div className="space-y-3 p-3 bg-white border border-gray-200">
+              <h3 className="font-semibold text-lg border-b border-gray-300 pb-2 mb-3">
+                Informasi Keluarga & Alamat
+              </h3>
               <Input
                 label="No KK"
                 {...register("kk", { required: "No KK wajib diisi" })}
                 error={errors.kk?.message}
                 fullWidth
               />
-
-              <Controller
-                name="ktpEl"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    label="KTP Elektronik"
-                    options={[
-                      { value: "true", label: "Ya" },
-                      { value: "false", label: "Tidak" },
-                    ]}
-                    value={String(field.value)} // konversi boolean ke string
-                    onChange={(val) => field.onChange(val === "true")} // konversi string ke boolean
-                    error={errors.ktpEl?.message}
-                    fullWidth
-                  />
-                )}
-              />
-
+              <div className="grid grid-cols-2 gap-3">
+                <Input label="RT" {...register("rt")} fullWidth />
+                <Input label="RW" {...register("rw")} fullWidth />
+              </div>
               <Input
-                label="Tempat Lahir"
-                {...register("birthPlace")}
+                label="Alamat"
+                {...register("address", { required: "Alamat wajib diisi" })}
+                error={errors.address?.message}
                 fullWidth
               />
-              <Input label="RT" {...register("rt")} fullWidth />
-              <Input label="RW" {...register("rw")} fullWidth />
-
               <Controller
                 name="shdk"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    label="SHDK"
+                    label="Status Hubungan Dalam Keluarga"
                     options={[
                       { value: "Kepala Keluarga", label: "Kepala Keluarga" },
                       { value: "Istri", label: "Istri" },
@@ -249,76 +214,136 @@ const AddResident: React.FC = () => {
                   />
                 )}
               />
+              <Input label="Nama Ayah" {...register("fatherName")} fullWidth />
+              <Input label="Nama Ibu" {...register("motherName")} fullWidth />
+            </div>
 
+            {/* Documents Section */}
+            <div className="space-y-3 p-3 bg-white border border-gray-200 md:col-span-2">
+              <h3 className="font-semibold text-lg border-b border-gray-300 pb-2 mb-3">
+                Dokumen
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <Controller
+                  name="ktpEl"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      label="KTP Elektronik"
+                      options={[
+                        { value: "true", label: "Ya" },
+                        { value: "false", label: "Tidak" },
+                      ]}
+                      value={String(field.value)}
+                      onChange={(val) => field.onChange(val === "true")}
+                      error={errors.ktpEl?.message}
+                      fullWidth
+                    />
+                  )}
+                />
+                <Controller
+                  name="birthCertificate"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="space-y-3">
+                      <Select
+                        label="Akta Lahir"
+                        options={[
+                          { value: "true", label: "Ya" },
+                          { value: "false", label: "Tidak" },
+                        ]}
+                        value={String(field.value)}
+                        onChange={(val) => field.onChange(val === "true")}
+                        fullWidth
+                      />
+                      <Input
+                        label="No Akta Lahir"
+                        {...register("birthCertificateNumber")}
+                        fullWidth
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Marriage Information Section */}
+            <div className="space-y-3 p-3 bg-white border border-gray-200">
+              <h3 className="font-semibold text-lg border-b border-gray-300 pb-2 mb-3">
+                Informasi Perkawinan
+              </h3>
+              <Controller
+                name="maritalStatus"
+                control={control}
+                rules={{ required: "Status perkawinan wajib dipilih" }}
+                render={({ field }) => (
+                  <Select
+                    label="Status Perkawinan"
+                    options={[
+                      { value: "Belum Kawin", label: "Belum Kawin" },
+                      { value: "Kawin", label: "Kawin" },
+                      { value: "Cerai Hidup", label: "Cerai Hidup" },
+                      { value: "Cerai Mati", label: "Cerai Mati" },
+                    ]}
+                    error={errors.maritalStatus?.message}
+                    fullWidth
+                    {...field}
+                  />
+                )}
+              />
               <Controller
                 name="marriageCertificate"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    label="Punya Akta Kawin?"
-                    options={[
-                      { value: "true", label: "Ya" },
-                      { value: "false", label: "Tidak" },
-                    ]}
-                    value={String(field.value)} // konversi boolean ke string
-                    onChange={(val) => field.onChange(val === "true")} // konversi string ke boolean
-                    error={errors.ktpEl?.message}
-                    fullWidth
-                  />
+                  <div className="space-y-3">
+                    <Select
+                      label="Punya Akta Kawin?"
+                      options={[
+                        { value: "true", label: "Ya" },
+                        { value: "false", label: "Tidak" },
+                      ]}
+                      value={String(field.value)}
+                      onChange={(val) => field.onChange(val === "true")}
+                      fullWidth
+                    />
+                    <Input
+                      label="No Akta Kawin"
+                      {...register("marriageCertificateNumber")}
+                      fullWidth
+                    />
+                  </div>
                 )}
               />
-              <Input
-                label="No Akta Kawin"
-                {...register("marriageCertificateNumber")}
-                fullWidth
-              />
-
               <Controller
                 name="divorceCertificate"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    label="Punya Akta Cerai?"
-                    options={[
-                      { value: "true", label: "Ya" },
-                      { value: "false", label: "Tidak" },
-                    ]}
-                    value={String(field.value)} // konversi boolean ke string
-                    onChange={(val) => field.onChange(val === "true")} // konversi string ke boolean
-                    error={errors.ktpEl?.message}
-                    fullWidth
-                  />
+                  <div className="space-y-3">
+                    <Select
+                      label="Punya Akta Cerai?"
+                      options={[
+                        { value: "true", label: "Ya" },
+                        { value: "false", label: "Tidak" },
+                      ]}
+                      value={String(field.value)}
+                      onChange={(val) => field.onChange(val === "true")}
+                      fullWidth
+                    />
+                    <Input
+                      label="No Akta Cerai"
+                      {...register("divorceCertificateNumber")}
+                      fullWidth
+                    />
+                  </div>
                 )}
               />
-              <Input
-                label="No Akta Cerai"
-                {...register("divorceCertificateNumber")}
-                fullWidth
-              />
+            </div>
 
-              <Controller
-                name="birthCertificate"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    label="Punya Akta Lahir?"
-                    options={[
-                      { value: "true", label: "Ya" },
-                      { value: "false", label: "Tidak" },
-                    ]}
-                    value={String(field.value)} // konversi boolean ke string
-                    onChange={(val) => field.onChange(val === "true")} // konversi string ke boolean
-                    error={errors.ktpEl?.message}
-                    fullWidth
-                  />
-                )}
-              />
-              <Input
-                label="No Akta Lahir"
-                {...register("birthCertificateNumber")}
-                fullWidth
-              />
-
+            {/* Education & Occupation Section */}
+            <div className="space-y-3 p-3 bg-white border border-gray-200">
+              <h3 className="font-semibold text-lg border-b border-gray-300 pb-2 mb-3">
+                Pendidikan & Pekerjaan
+              </h3>
               <Controller
                 name="education"
                 control={control}
@@ -345,19 +370,79 @@ const AddResident: React.FC = () => {
                   />
                 )}
               />
+              <Input
+                label="Pekerjaan"
+                {...register("occupation", {
+                  required: "Pekerjaan wajib diisi",
+                })}
+                error={errors.occupation?.message}
+                fullWidth
+              />
+            </div>
 
-              <Input
-                label="Golongan Darah"
-                {...register("bloodType")}
-                fullWidth
+            {/* Additional Information Section */}
+            <div className="space-y-3 p-3 bg-white border border-gray-200">
+              <h3 className="font-semibold text-lg border-b border-gray-300 pb-2 mb-3">
+                Informasi Tambahan
+              </h3>
+              <Controller
+                name="religion"
+                control={control}
+                rules={{ required: "Agama Wajib Dipilih" }}
+                render={({ field }) => (
+                  <Select
+                    label="Agama"
+                    options={[
+                      { value: "Islam", label: "Islam" },
+                      { value: "Protestan", label: "Protestan" },
+                      { value: "Katolik", label: "Katolik" },
+                      { value: "Hindu", label: "Hindu" },
+                      { value: "Buddha", label: "Buddha" },
+                      { value: "Konghucu", label: "Konghucu" },
+                    ]}
+                    error={errors.religion?.message}
+                    fullWidth
+                    {...field}
+                  />
+                )}
               />
-              <Input
-                label="Kelainan Fisik"
-                {...register("physicalDisability")}
-                fullWidth
+              <Controller
+                name="bloodType"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label="Golongan Darah"
+                    options={[
+                      { value: "A", label: "A" },
+                      { value: "B", label: "B" },
+                      { value: "AB", label: "AB" },
+                      { value: "O", label: "O" },
+                    ]}
+                    {...field}
+                    fullWidth
+                  />
+                )}
               />
-              <Input label="Nama Ayah" {...register("fatherName")} fullWidth />
-              <Input label="Nama Ibu" {...register("motherName")} fullWidth />
+              <Controller
+                name="physicalDisability"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label="Disabilitas Fisik"
+                    options={[
+                      { value: "Tidak ada", label: "Tidak ada" },
+                      { value: "Tuna Netra", label: "Tuna Netra" },
+                      { value: "Tuna Rungu", label: "Tuna Rungu" },
+                      { value: "Tuna Daksa", label: "Tuna Daksa" },
+                      { value: "Tuna Wicara", label: "Tuna Wicara" },
+                      { value: "Dwarfsime", label: "Dwarfsime" },
+                      { value: "Cerebral Palsy", label: "Cerebral Palsy" },
+                    ]}
+                    {...field}
+                    fullWidth
+                  />
+                )}
+              />
             </div>
           </div>
         </Card>
