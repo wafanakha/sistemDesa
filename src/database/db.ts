@@ -1,5 +1,13 @@
-import Dexie, { Table } from 'dexie';
-import { Resident, CustomField, ResidentCustomField, Letter, LetterTemplate, VillageInfo } from '../types';
+import Dexie, { Table } from "dexie";
+import {
+  Resident,
+  CustomField,
+  ResidentCustomField,
+  Letter,
+  LetterTemplate,
+  VillageInfo,
+  LetterType,
+} from "../types";
 
 class VillageAdministrationDB extends Dexie {
   residents!: Table<Resident, number>;
@@ -10,19 +18,21 @@ class VillageAdministrationDB extends Dexie {
   villageInfo!: Table<VillageInfo, number>;
 
   constructor() {
-    super('VillageAdministrationDB');
-    
+    super("VillageAdministrationDB");
+
     this.version(1).stores({
-      residents: '++id, nik, name, address, birthDate, gender, religion, occupation, maritalStatus, createdAt, updatedAt',
-      customFields: '++id, name, type, required',
-      residentCustomFields: '++id, residentId, customFieldId, value',
-      letters: '++id, letterNumber, letterType, residentId, title, issuedDate, status, createdAt, updatedAt',
-      letterTemplates: '++id, name, type, isDefault, createdAt, updatedAt',
-      villageInfo: '++id, name'
+      residents:
+        "++id, kk, nik, name, birthDate, gender, address, rt, rw, religion, occupation, maritalStatus, createdAt, updatedAt",
+      customFields: "++id, name, type, required",
+      residentCustomFields: "++id, residentId, customFieldId, value",
+      letters:
+        "++id, letterNumber, letterType, residentId, title, issuedDate, status, createdAt, updatedAt",
+      letterTemplates: "++id, name, type, isDefault, createdAt, updatedAt",
+      villageInfo: "++id, name",
     });
 
     // Initialize default templates
-    this.on('ready', async () => {
+    this.on("ready", async () => {
       const count = await this.letterTemplates.count();
       if (count === 0) {
         await this.initializeDefaultTemplates();
@@ -39,8 +49,8 @@ class VillageAdministrationDB extends Dexie {
     const now = new Date();
     const defaultTemplates = [
       {
-        name: 'Surat Keterangan Domisili',
-        type: 'domicile' as LetterType,
+        name: "Surat Keterangan Domisili",
+        type: "domicile" as LetterType,
         template: `Yang bertanda tangan di bawah ini:
 
 Nama: [VILLAGE_LEADER_NAME]
@@ -63,11 +73,11 @@ Surat Keterangan ini dibuat untuk keperluan [LETTER_PURPOSE].
 Demikian Surat Keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.`,
         isDefault: true,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       },
       {
-        name: 'Surat Keterangan Tidak Mampu',
-        type: 'poverty' as LetterType,
+        name: "Surat Keterangan Tidak Mampu",
+        type: "poverty" as LetterType,
         template: `Yang bertanda tangan di bawah ini:
 
 Nama: [VILLAGE_LEADER_NAME]
@@ -91,11 +101,11 @@ Surat Keterangan ini dibuat untuk keperluan [LETTER_PURPOSE].
 Demikian Surat Keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.`,
         isDefault: true,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       },
       {
-        name: 'Surat Pengantar',
-        type: 'introduction' as LetterType,
+        name: "Surat Pengantar",
+        type: "introduction" as LetterType,
         template: `Yang bertanda tangan di bawah ini:
 
 Nama: [VILLAGE_LEADER_NAME]
@@ -117,11 +127,11 @@ Untuk keperluan [LETTER_PURPOSE].
 Demikian Surat Pengantar ini dibuat untuk dipergunakan sebagaimana mestinya.`,
         isDefault: true,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       },
       {
-        name: 'Surat Keterangan Usaha',
-        type: 'business' as LetterType,
+        name: "Surat Keterangan Usaha",
+        type: "business" as LetterType,
         template: `Yang bertanda tangan di bawah ini:
 
 Nama: [VILLAGE_LEADER_NAME]
@@ -145,11 +155,11 @@ Surat Keterangan ini dibuat untuk keperluan [LETTER_PURPOSE].
 Demikian Surat Keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.`,
         isDefault: true,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       },
       {
-        name: 'Surat Keterangan Kelahiran',
-        type: 'birth' as LetterType,
+        name: "Surat Keterangan Kelahiran",
+        type: "birth" as LetterType,
         template: `Yang bertanda tangan di bawah ini:
 
 Nama: [VILLAGE_LEADER_NAME]
@@ -176,8 +186,8 @@ Surat Keterangan ini dibuat untuk keperluan [LETTER_PURPOSE].
 Demikian Surat Keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.`,
         isDefault: true,
         createdAt: now,
-        updatedAt: now
-      }
+        updatedAt: now,
+      },
     ];
 
     await this.letterTemplates.bulkAdd(defaultTemplates);
@@ -185,17 +195,17 @@ Demikian Surat Keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.`,
 
   async initializeVillageInfo() {
     const defaultVillageInfo: VillageInfo = {
-      name: 'Desa Contoh',
-      address: 'Jl. Desa No. 1',
-      districtName: 'Kecamatan Contoh',
-      regencyName: 'Kabupaten Contoh',
-      provinceName: 'Provinsi Contoh',
-      postalCode: '12345',
-      phoneNumber: '021-1234567',
-      email: 'desa.contoh@example.com',
-      website: 'www.desacontoh.id',
-      leaderName: 'Bpk. Kepala Desa',
-      leaderTitle: 'Kepala Desa'
+      name: "Desa Contoh",
+      address: "Jl. Desa No. 1",
+      districtName: "Kecamatan Contoh",
+      regencyName: "Kabupaten Contoh",
+      provinceName: "Provinsi Contoh",
+      postalCode: "12345",
+      phoneNumber: "021-1234567",
+      email: "desa.contoh@example.com",
+      website: "www.desacontoh.id",
+      leaderName: "Bpk. Kepala Desa",
+      leaderTitle: "Kepala Desa",
     };
 
     await this.villageInfo.add(defaultVillageInfo);
@@ -208,38 +218,44 @@ Demikian Surat Keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.`,
       residentCustomFields: await this.residentCustomFields.toArray(),
       letters: await this.letters.toArray(),
       letterTemplates: await this.letterTemplates.toArray(),
-      villageInfo: await this.villageInfo.toArray()
+      villageInfo: await this.villageInfo.toArray(),
     };
   }
 
   async importData(data: any) {
-    return this.transaction('rw', 
-      this.residents, 
-      this.customFields, 
-      this.residentCustomFields, 
-      this.letters, 
-      this.letterTemplates, 
-      this.villageInfo, 
+    return this.transaction(
+      "rw",
+      this.residents,
+      this.customFields,
+      this.residentCustomFields,
+      this.letters,
+      this.letterTemplates,
+      this.villageInfo,
       async () => {
-        
-      // Clear existing data
-      await Promise.all([
-        this.residents.clear(),
-        this.customFields.clear(),
-        this.residentCustomFields.clear(),
-        this.letters.clear(),
-        this.letterTemplates.clear(),
-        this.villageInfo.clear()
-      ]);
-      
-      // Import new data
-      if (data.villageInfo?.length) await this.villageInfo.bulkAdd(data.villageInfo);
-      if (data.residents?.length) await this.residents.bulkAdd(data.residents);
-      if (data.customFields?.length) await this.customFields.bulkAdd(data.customFields);
-      if (data.residentCustomFields?.length) await this.residentCustomFields.bulkAdd(data.residentCustomFields);
-      if (data.letterTemplates?.length) await this.letterTemplates.bulkAdd(data.letterTemplates);
-      if (data.letters?.length) await this.letters.bulkAdd(data.letters);
-    });
+        // Clear existing data
+        await Promise.all([
+          this.residents.clear(),
+          this.customFields.clear(),
+          this.residentCustomFields.clear(),
+          this.letters.clear(),
+          this.letterTemplates.clear(),
+          this.villageInfo.clear(),
+        ]);
+
+        // Import new data
+        if (data.villageInfo?.length)
+          await this.villageInfo.bulkAdd(data.villageInfo);
+        if (data.residents?.length)
+          await this.residents.bulkAdd(data.residents);
+        if (data.customFields?.length)
+          await this.customFields.bulkAdd(data.customFields);
+        if (data.residentCustomFields?.length)
+          await this.residentCustomFields.bulkAdd(data.residentCustomFields);
+        if (data.letterTemplates?.length)
+          await this.letterTemplates.bulkAdd(data.letterTemplates);
+        if (data.letters?.length) await this.letters.bulkAdd(data.letters);
+      }
+    );
   }
 }
 

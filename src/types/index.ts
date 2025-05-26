@@ -1,14 +1,36 @@
 export interface Resident {
   id?: number;
+  kk: string;
   nik: string;
+  ktpEl: boolean;
   name: string;
-  address: string;
+  birthPlace: string;
   birthDate: string;
-  gender: 'Laki-laki' | 'Perempuan';
-  religion: string;
-  occupation: string;
-  maritalStatus: 'Belum Kawin' | 'Kawin' | 'Cerai Hidup' | 'Cerai Mati';
+  age?: number;
+  gender: "Laki-laki" | "Perempuan";
+  address: string;
+  rt: string;
+  rw: string;
+  shdk: "Kepala Keluarga" | "Anak" | "Istri" | "Lainnya";
   photoUrl?: string;
+  maritalStatus: "Belum Kawin" | "Kawin Tercatat";
+  marriageCertificate: boolean;
+  marriageCertificateNumber?: string;
+  divorceCertificate: boolean;
+  divorceCertificateNumber?: string;
+  birthCertificate: boolean;
+  birthCertificateNumber?: string;
+  education:
+    | "Tidak/belum sekolah"
+    | "Belum Tamat SD/Sederajat"
+    | "SLTP/Sederajat"
+    | "Diploma IV/Strata1";
+  religion: string;
+  bloodType?: string;
+  occupation: string;
+  physicalDisability?: string;
+  fatherName: string;
+  motherName: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,7 +38,7 @@ export interface Resident {
 export interface CustomField {
   id?: number;
   name: string;
-  type: 'text' | 'number' | 'date' | 'select';
+  type: "text" | "number" | "date" | "select";
   options?: string[];
   required: boolean;
 }
@@ -28,18 +50,15 @@ export interface ResidentCustomField {
   value: string;
 }
 
-export type LetterType = 
-  | 'domicile' 
-  | 'poverty' 
-  | 'introduction' 
-  | 'business' 
-  | 'birth' 
-  | 'custom';
+export type LetterType =
+  | "domicile"
+  | "poverty"
+  | "introduction"
+  | "business"
+  | "birth"
+  | "custom";
 
-export type LetterStatus = 
-  | 'draft' 
-  | 'completed' 
-  | 'signed';
+export type LetterStatus = "draft" | "completed" | "signed";
 
 export interface Letter {
   id?: number;
