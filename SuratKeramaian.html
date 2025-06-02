@@ -79,12 +79,12 @@
       text-align: center;
       display: flex;
       flex-direction: column;
-      /* ganti space-between jadi flex-start supaya elemen tidak terlalu jauh */
-      justify-content: flex-start;
-      min-height: 60px;
+      justify-content: space-between;
+      /* pastikan tinggi sama */
+      min-height: 180px;
     }
     .ttd-space {
-      min-height: 60px; /* beri ruang tanda tangan yang cukup */
+      min-height: 70px; /* beri ruang tanda tangan yang cukup */
       border-bottom: 1px solid transparent; /* buat spacer tanpa garis */
     }
     .print-btn {
@@ -95,13 +95,18 @@
       font-size: 14px;
       cursor: pointer;
     }
+    .compact p {
+    margin: 0;
+    line-height: 1.1; /* bisa disesuaikan, misal 1.0 atau 1.05 */
+}
+
   </style>
 </head>
 <body>
   <div class="container">
 
     <div class="header">
-      <img src="logo-bms.png " alt="Logo Instansi" class="logo" />
+      <img src="logo-bms.png" alt="Logo Instansi" class="logo" />
       <div class="instansi">
         <div class="bold">PEMERINTAHAN DESA KEDUNGWRINGIN</div>
         <div class="bold">KECAMATAN PATIKREJA KABUPATEN BANYUMAS</div>
@@ -142,7 +147,21 @@
       <p>3. Menyudahi kegiatan sesuai waktu yang telah ditentukan.</p>
       <p>Demikian Surat Keterangan Keramaian ini diberikan untuk dipergunakan sebagaimana mestinya.</p>
     </div>
-    <div class="signature-block">
+    <div class="footer-info">
+      <table>
+        <tr>
+          <td>No. Reg</td>
+          <td>:</td>
+          <td>_________</td>
+        </tr>
+        <tr>
+          <td>Tanggal</td>
+          <td>:</td>
+          <td>[Tanggal Surat]</td>
+        </tr>
+      </table>
+    </div>
+   <div class="signature-block">
   <div class="signature">
     <p>Pemohon</p>
     <div style="margin-top: auto;">
@@ -161,16 +180,16 @@
     </div>
   </div>
   <div class="signature">
-    <div>
-        <p>Kedungwringin, 22 Mei 2025</p>
-        <p>An. KEPALA DESA KEDUNGWRINGIN</p>
-        <p>KASI PEMERINTAH</p>
-    </div>
-    <div style="margin-top: auto;">
-      <div class="ttd-space"></div>
-      <p><strong>[Nama Kepala Desa]</strong></p>
-    </div>
+  <div class="compact">
+    <p>Kedungwringin, 22 Mei 2025</p>
+    <p>An. KEPALA DESA KEDUNGWRINGIN</p>
+    <p>KASI PEMERINTAH</p>
   </div>
+  <div style="margin-top: auto;">
+    <div class="ttd-space"></div>
+    <p><strong>[Nama Kepala Desa]</strong></p>
+  </div>
+</div>
 </div>
 
     <button class="print-btn" onclick="downloadPDF()">Download PDF</button>
