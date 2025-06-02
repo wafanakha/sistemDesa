@@ -54,6 +54,25 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    title: "Monografi",
+    path: "/monographs",
+    icon: <FileText size={20} />,
+    submenu: [
+      {
+        title: "Daftar Monografi",
+        path: "/monographs",
+      },
+      {
+        title: "Buat Monografi",
+        path: "/monographs/create",
+      },
+      {
+        title: "Template Monografi",
+        path: "/monographs/templates",
+      },
+    ],
+  },
+  {
     title: "Surat",
     path: "/letters",
     icon: <FileText size={20} />,

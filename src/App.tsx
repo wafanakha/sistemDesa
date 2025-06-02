@@ -14,6 +14,10 @@ import EditLetter from "./pages/letters/EditLetter";
 import LetterTemplates from "./pages/letters/LetterTemplates";
 import Settings from "./pages/Settings";
 import HelpPage from "./pages/HelpPage";
+import MonographList from "./pages/monographs/MonographListPage";
+import MonographCreate from "./pages/monographs/MonographCreatePage";
+import MonographDetail from "./pages/monographs/MonographDetailPage";
+import MonographEdit from "./pages/monographs/MonographEditPage";
 
 function App() {
   return (
@@ -36,6 +40,12 @@ function App() {
           <Route path="letters/view/:id" element={<ViewLetter />} />
           <Route path="letters/edit/:id" element={<EditLetter />} />
           <Route path="letters/templates" element={<LetterTemplates />} />
+
+          {/* Monographs */}
+          <Route path="monographs" element={<MonographList />} />
+          <Route path="monographs/create" element={<MonographCreate />} />
+          <Route path="monographs/:id" element={<MonographDetail />} />
+          <Route path="monographs/:id/edit" element={<MonographEdit />} />
 
           {/* Settings & Help */}
           <Route path="settings" element={<Settings />} />
