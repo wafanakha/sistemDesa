@@ -54,6 +54,11 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    title: "Monografi",
+    path: "/monografi",
+    icon: <FileText size={20} />,
+  },
+  {
     title: "Surat",
     path: "/letters",
     icon: <FileText size={20} />,

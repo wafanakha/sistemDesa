@@ -14,6 +14,7 @@ import EditLetter from "./pages/letters/EditLetter";
 import LetterTemplates from "./pages/letters/LetterTemplates";
 import Settings from "./pages/Settings";
 import HelpPage from "./pages/HelpPage";
+import MonografiPage from "./pages/MonografiPage";
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="residents/edit/:id" element={<EditResident />} />
           <Route path="residents/view/:id" element={<ViewResident />} />
           <Route path="residents/custom-fields" element={<CustomFields />} />
+
+          <Route path="/monografi" element={<MonografiPage />} />
 
           {/* Letters */}
           <Route path="letters" element={<LettersList />} />
