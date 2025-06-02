@@ -6,6 +6,8 @@ import "jspdf-autotable";
 import MonografiAgama from "./monografi/monografiAgama";
 import MonografiUmur from "./monografi/monografiUmur";
 import MonografiStatusPernikahan from "./monografi/monografiPerkawinan";
+import MonografiGender from "./monografi/monografiGender";
+
 const MonografiPage = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
 
@@ -69,25 +71,7 @@ const MonografiPage = () => {
 
       {/* Gender Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-xl mb-4">Jenis Kelamin</h2>
-        <table className="table-auto w-full border text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Jenis Kelamin</th>
-              <th className="p-2">Jumlah</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="hover:bg-gray-100">
-              <td className="p-2">Laki-laki</td>
-              <td className="p-2">{countBy("gender", "Laki-laki")}</td>
-            </tr>
-            <tr className="hover:bg-gray-100">
-              <td className="p-2">Perempuan</td>
-              <td className="p-2">{countBy("gender", "Perempuan")}</td>
-            </tr>
-          </tbody>
-        </table>
+        <MonografiGender residents={residents} />
       </div>
 
       {/* Marital Status Section */}
