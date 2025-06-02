@@ -82,132 +82,174 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = () => {
-    // Use F4 landscape for much more width
+    // Create PDF with maximum possible width (A0 landscape)
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",
-      format: "f4", // F4 is 330 x 210 mm in landscape
+      format: [1189, 841], // A0 size (largest standard paper size)
     });
 
+    // Set document metadata
+    doc.setProperties({
+      title: "Monografi Berdasarkan Umur",
+      subject: "Data Penduduk Berdasarkan Kelompok Umur",
+      author: "Sistem Informasi Desa",
+    });
+
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(16);
-    doc.text("Monografi Berdasarkan Umur", 14, 20);
-    doc.text(`Tanggal: ${new Date().toLocaleDateString("id-ID")}`, 14, 28);
-    let y = 40;
+    doc.setTextColor(33, 150, 243);
+    doc.text("MONOGRAFI PENDUDUK BERDASARKAN KELOMPOK UMUR", 20, 20);
+
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Dicetak pada: " + new Date().toLocaleDateString("id-ID"), 20, 26);
+
+    let y = 32;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
-      doc.setFontSize(14);
-      doc.text(`NO RW : ${rw}`, 14, y);
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`RW ${rw.padStart(3, "0")}`, 20, y);
       y += 8;
 
       const body: any[] = [];
 
       Object.entries(rtData).forEach(([rt], i) => {
         const list = rtData[rt];
-        const row: any[] = [i + 1, `RT.${rt.padStart(3, "0")}`];
+        const row: any[] = [i + 1, `RT ${rt.padStart(3, "0")}`];
 
-        AGE_GROUPS.forEach((group) => {
-          const l = list.filter(
-            (r) => getAgeGroup(r.age || 0) === group && r.gender === "Laki-laki"
-          ).length;
-          const p = list.filter(
-            (r) => getAgeGroup(r.age || 0) === group && r.gender === "Perempuan"
-          ).length;
+        AGE_GROUPS.forEach(([min, max]) => {
+          const group = list.filter((r) => {
+            const age = getAge(r.birthDate);
+            return age >= min && (max === null || age <= max);
+          });
+          const l = group.filter((r) => r.gender === "Laki-laki").length;
+          const p = group.filter((r) => r.gender === "Perempuan").length;
           row.push(l, p, l + p);
         });
 
-        const lTotal = list.filter((r) => r.gender === "Laki-laki").length;
-        const pTotal = list.filter((r) => r.gender === "Perempuan").length;
-        row.push(lTotal, pTotal, lTotal + pTotal);
+        const totalL = list.filter((r) => r.gender === "Laki-laki").length;
+        const totalP = list.filter((r) => r.gender === "Perempuan").length;
+        row.push(totalL, totalP, totalL + totalP);
         body.push(row);
       });
 
-      // TOTAL ROW
-      const rwTotals = ["", "JML RW"];
+      // Add RW totals row
+      const rwTotals = ["", "TOTAL RW"];
       let totalL = 0;
       let totalP = 0;
-      AGE_GROUPS.forEach((group) => {
-        const l = Object.values(rtData)
+
+      AGE_GROUPS.forEach(([min, max]) => {
+        const group = Object.values(rtData)
           .flat()
-          .filter(
-            (r) => getAgeGroup(r.age || 0) === group && r.gender === "Laki-laki"
-          ).length;
-        const p = Object.values(rtData)
-          .flat()
-          .filter(
-            (r) => getAgeGroup(r.age || 0) === group && r.gender === "Perempuan"
-          ).length;
+          .filter((r) => {
+            const age = getAge(r.birthDate);
+            return age >= min && (max === null || age <= max);
+          });
+        const l = group.filter((r) => r.gender === "Laki-laki").length;
+        const p = group.filter((r) => r.gender === "Perempuan").length;
         rwTotals.push(l, p, l + p);
         totalL += l;
         totalP += p;
       });
+
       rwTotals.push(totalL, totalP, totalL + totalP);
       body.push(rwTotals);
 
-      const head = [
-        [
-          { content: "NO", rowSpan: 2 },
-          { content: "RT", rowSpan: 2 },
-          ...AGE_GROUPS.map((g) => ({
-            content: g[1] === null ? "75+" : `${g[0]}-${g[1]}`,
-            colSpan: 3,
-            styles: { halign: "center", valign: "middle" },
-          })),
-          { content: "TOT", colSpan: 3 },
-        ],
-        [
-          ...AGE_GROUPS.flatMap(() => [
-            { content: "L" },
-            { content: "P" },
-            { content: "J" },
-          ]),
-          { content: "L" },
-          { content: "P" },
-          { content: "J" },
-        ],
-      ];
+      // Calculate column widths dynamically based on content
+      const columnCount = 2 + AGE_GROUPS.length * 3 + 3;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const minColWidth = 8;
+      const maxColWidth = 15;
 
-      // Calculate available width and distribute columns
-      const availableWidth = 330 - 16; // F4 width minus margins
-      const totalColumns = 2 + AGE_GROUPS.length * 3 + 3; // NO, RT, age groups, totals
-      const avgColumnWidth = availableWidth / totalColumns;
+      // Base column styles
+      const columnStyles = {
+        0: { cellWidth: 10, halign: "center" }, // NO column
+        1: { cellWidth: 15, halign: "center" }, // RT column
+      };
 
-      doc.autoTable({
-        head,
+      // Age group columns
+      for (let i = 2; i < columnCount - 3; i++) {
+        columnStyles[i] = {
+          cellWidth: minColWidth,
+          halign: "center",
+        };
+      }
+
+      // Total columns (last 3 columns)
+      for (let i = columnCount - 3; i < columnCount; i++) {
+        columnStyles[i] = {
+          cellWidth: minColWidth,
+          halign: "center",
+          fontStyle: "bold",
+        };
+      }
+
+      (doc as any).autoTable({
+        head: [
+          [
+            {
+              content: "NO",
+              rowSpan: 2,
+              styles: { halign: "center", valign: "middle" },
+            },
+            {
+              content: "RT",
+              rowSpan: 2,
+              styles: { halign: "center", valign: "middle" },
+            },
+            ...AGE_GROUPS.map(([min, max]) => ({
+              content: max === null ? "≥75" : `${min}-${max}`,
+              colSpan: 3,
+              styles: { halign: "center", valign: "middle" },
+            })),
+            {
+              content: "TOTAL",
+              colSpan: 3,
+              styles: { halign: "center", valign: "middle" },
+            },
+          ],
+          [
+            {}, // Empty for NO
+            {}, // Empty for RT
+            ...AGE_GROUPS.flatMap(() => [
+              { content: "L", styles: { halign: "center" } },
+              { content: "P", styles: { halign: "center" } },
+              { content: "JML", styles: { halign: "center" } },
+            ]),
+            { content: "L", styles: { halign: "center" } },
+            { content: "P", styles: { halign: "center" } },
+            { content: "JML", styles: { halign: "center" } },
+          ],
+        ],
         body,
         startY: y,
-        margin: { left: 8, right: 8 },
+        margin: { left: 10, right: 10 },
         styles: {
-          fontSize: 5.5, // Much smaller font
-          cellPadding: 0.8,
+          fontSize: 7,
           halign: "center",
           valign: "middle",
-          lineWidth: 0.1,
+          cellPadding: 2,
+          lineColor: [200, 200, 200],
+          lineWidth: 0.2,
         },
         headStyles: {
-          fillColor: [0, 102, 204],
+          fillColor: [33, 150, 243],
           textColor: 255,
           fontStyle: "bold",
-          fontSize: 5.5,
+          lineWidth: 0.3,
         },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        theme: "grid",
-        tableWidth: availableWidth,
-        columnStyles: {
-          0: { cellWidth: Math.max(avgColumnWidth * 0.8, 6) }, // NO
-          1: { cellWidth: Math.max(avgColumnWidth * 1.2, 8) }, // RT
-          // All other columns get equal width
-          ...Object.fromEntries(
-            Array.from({ length: totalColumns - 2 }, (_, i) => [
-              2 + i,
-              { cellWidth: Math.max(avgColumnWidth * 0.9, 4.5) },
-            ])
-          ),
+        bodyStyles: {
+          textColor: [50, 50, 50],
         },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245],
+        },
+        columnStyles,
         didDrawCell: (data: any) => {
-          if (
-            data.row.index === body.length - 1 &&
-            data.row.raw[1] === "JML RW"
-          ) {
+          // Highlight the totals row
+          if (data.row.index === body.length - 1) {
             doc.setFillColor(220, 240, 255);
             doc.rect(
               data.cell.x,
@@ -217,15 +259,20 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
               "F"
             );
             doc.setTextColor(0, 0, 0);
+            doc.setFont("helvetica", "bold");
           }
         },
       });
 
-      y = doc.lastAutoTable.finalY + 15;
-      // Check if we need a new page
-      if (y > 180) {
-        doc.addPage();
-        y = 30;
+      y = (doc as any).lastAutoTable.finalY + 12;
+
+      if (y > doc.internal.pageSize.getHeight() - 20) {
+        doc.addPage({
+          orientation: "landscape",
+          unit: "mm",
+          format: [1189, 841],
+        });
+        y = 20;
       }
     });
 

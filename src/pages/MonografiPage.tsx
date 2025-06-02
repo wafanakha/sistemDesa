@@ -7,6 +7,7 @@ import MonografiAgama from "./monografi/monografiAgama";
 import MonografiUmur from "./monografi/monografiUmur";
 import MonografiStatusPernikahan from "./monografi/monografiPerkawinan";
 import MonografiGender from "./monografi/monografiGender";
+import MonografiPendidikan from "./monografi/monografiPendidikan";
 
 const MonografiPage = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -36,37 +37,7 @@ const MonografiPage = () => {
 
       {/* Education Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-xl mb-4">Pendidikan</h2>
-        <table className="table-auto w-full border text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Pendidikan</th>
-              <th className="p-2">Laki-laki</th>
-              <th className="p-2">Perempuan</th>
-              <th className="p-2">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              "Tidak/belum sekolah",
-              "Belum Tamat SD/Sederajat",
-              "SLTP/Sederajat",
-              "SLTA/Sederajat",
-              "Diploma IV/Strata1",
-            ].map((edu) => (
-              <tr key={edu} className="hover:bg-gray-100">
-                <td className="p-2">{edu}</td>
-                <td className="p-2">
-                  {countByGender("education", edu, "Laki-laki")}
-                </td>
-                <td className="p-2">
-                  {countByGender("education", edu, "Perempuan")}
-                </td>
-                <td className="p-2">{countBy("education", edu)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MonografiPendidikan residents={residents} />
       </div>
 
       {/* Gender Section */}
