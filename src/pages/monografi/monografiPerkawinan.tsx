@@ -3,14 +3,11 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Resident } from "../../types"; // pastikan path sesuai
 
-const AGAMA_LIST = [
-  "Islam",
-  "Kristen",
-  "Katolik",
-  "Hindu",
-  "Budha",
-  "Konghucu",
-  "Kepercayaan",
+const STATUS_PERNIKAHAN_LIST = [
+  "Belum Kawin",
+  "Kawin",
+  "Cerai Hidup",
+  "Cerai Mati",
 ];
 
 const groupResidentsByRWRT = (residents: Resident[]) => {
@@ -25,13 +22,17 @@ const groupResidentsByRWRT = (residents: Resident[]) => {
   return result;
 };
 
-const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
+const MonografiStatusPernikahan = ({
+  residents,
+}: {
+  residents: Resident[];
+}) => {
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = () => {
     const doc = new jsPDF("landscape");
     doc.setFontSize(14);
-    doc.text("Monografi Berdasarkan Agama", 14, 16);
+    doc.text("Monografi Berdasarkan Status Pernikahan", 14, 16);
     let y = 24;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
@@ -45,12 +46,12 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
         const list = rtData[rt];
         const row: any[] = [i + 1, `RT.${rt.padStart(3, "0")}`];
 
-        AGAMA_LIST.forEach((agama) => {
+        STATUS_PERNIKAHAN_LIST.forEach((status) => {
           const l = list.filter(
-            (r) => r.religion === agama && r.gender === "Laki-laki"
+            (r) => r.maritalStatus === status && r.gender === "Laki-laki"
           ).length;
           const p = list.filter(
-            (r) => r.religion === agama && r.gender === "Perempuan"
+            (r) => r.maritalStatus === status && r.gender === "Perempuan"
           ).length;
           row.push(l, p, l + p);
         });
@@ -65,16 +66,16 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
       const rwTotals = ["", "JML RW"];
       let totalL = 0;
       let totalP = 0;
-      AGAMA_LIST.forEach((agama) => {
+      STATUS_PERNIKAHAN_LIST.forEach((status) => {
         const l = Object.values(rtData)
           .flat()
           .filter(
-            (r) => r.religion === agama && r.gender === "Laki-laki"
+            (r) => r.maritalStatus === status && r.gender === "Laki-laki"
           ).length;
         const p = Object.values(rtData)
           .flat()
           .filter(
-            (r) => r.religion === agama && r.gender === "Perempuan"
+            (r) => r.maritalStatus === status && r.gender === "Perempuan"
           ).length;
         rwTotals.push(l, p, l + p);
         totalL += l;
@@ -95,8 +96,8 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
             rowSpan: 2,
             styles: { valign: "middle", halign: "center" },
           },
-          ...AGAMA_LIST.map((agama) => ({
-            content: agama,
+          ...STATUS_PERNIKAHAN_LIST.map((status) => ({
+            content: status,
             colSpan: 3,
             styles: { halign: "center", valign: "middle" },
           })),
@@ -107,7 +108,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           },
         ],
         [
-          ...AGAMA_LIST.flatMap(() => [
+          ...STATUS_PERNIKAHAN_LIST.flatMap(() => [
             { content: "L" },
             { content: "P" },
             { content: "JML" },
@@ -130,7 +131,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           cellPadding: 2,
         },
         headStyles: {
-          fillColor: [0, 122, 204],
+          fillColor: [34, 197, 94], // Green color
           textColor: 255,
           fontStyle: "bold",
         },
@@ -140,14 +141,23 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           0: { cellWidth: 8 },
           1: { cellWidth: 14 },
           ...Object.fromEntries(
-            Array.from({ length: AGAMA_LIST.length * 3 }, (_, i) => [
-              2 + i,
-              { cellWidth: 10 },
-            ])
+            Array.from(
+              { length: STATUS_PERNIKAHAN_LIST.length * 3 },
+              (_, i) => [2 + i, { cellWidth: 15 }]
+            )
           ),
-          [2 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
-          [3 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
-          [4 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
+          [2 + STATUS_PERNIKAHAN_LIST.length * 3]: {
+            cellWidth: 10,
+            fontStyle: "bold",
+          },
+          [3 + STATUS_PERNIKAHAN_LIST.length * 3]: {
+            cellWidth: 10,
+            fontStyle: "bold",
+          },
+          [4 + STATUS_PERNIKAHAN_LIST.length * 3]: {
+            cellWidth: 10,
+            fontStyle: "bold",
+          },
         },
         didDrawCell: (data: any) => {
           // Highlight baris total RW
@@ -155,7 +165,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
             data.row.index === body.length - 1 &&
             data.row.raw[1] === "JML RW"
           ) {
-            doc.setFillColor(220, 240, 255);
+            doc.setFillColor(220, 252, 231); // Light green
             doc.rect(
               data.cell.x,
               data.cell.y,
@@ -175,18 +185,20 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
       }
     });
 
-    doc.save(`monografi-agama-${new Date().toISOString().slice(0, 10)}.pdf`);
+    doc.save(
+      `monografi-status-pernikahan-${new Date().toISOString().slice(0, 10)}.pdf`
+    );
   };
 
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-green-900">
-          Monografi Berdasarkan Agama
+          Monografi Berdasarkan Status Pernikahan
         </h1>
         <button
           onClick={generatePDF}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-green-900 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -227,13 +239,13 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
                   >
                     RT
                   </th>
-                  {AGAMA_LIST.map((agama) => (
+                  {STATUS_PERNIKAHAN_LIST.map((status) => (
                     <th
-                      key={agama}
+                      key={status}
                       colSpan={3}
                       className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider border"
                     >
-                      {agama}
+                      {status}
                     </th>
                   ))}
                   <th
@@ -244,7 +256,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
                   </th>
                 </tr>
                 <tr className="bg-gray-100">
-                  {AGAMA_LIST.map(() => (
+                  {STATUS_PERNIKAHAN_LIST.map(() => (
                     <React.Fragment key={Math.random()}>
                       <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border">
                         L
@@ -285,17 +297,19 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
                       <td className="px-3 py-2 text-center font-medium border">
                         RT {rt.padStart(3, "0")}
                       </td>
-                      {AGAMA_LIST.map((agama) => {
+                      {STATUS_PERNIKAHAN_LIST.map((status) => {
                         const l = list.filter(
                           (r) =>
-                            r.religion === agama && r.gender === "Laki-laki"
+                            r.maritalStatus === status &&
+                            r.gender === "Laki-laki"
                         ).length;
                         const p = list.filter(
                           (r) =>
-                            r.religion === agama && r.gender === "Perempuan"
+                            r.maritalStatus === status &&
+                            r.gender === "Perempuan"
                         ).length;
                         return (
-                          <React.Fragment key={agama}>
+                          <React.Fragment key={status}>
                             <td className="px-2 py-2 text-center border">
                               {l}
                             </td>
@@ -324,19 +338,21 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
                   <td colSpan={2} className="px-3 py-2 text-center border">
                     TOTAL RW {rw.padStart(3, "0")}
                   </td>
-                  {AGAMA_LIST.map((agama) => {
+                  {STATUS_PERNIKAHAN_LIST.map((status) => {
                     const l = Object.values(rtData)
                       .flat()
                       .filter(
-                        (r) => r.religion === agama && r.gender === "Laki-laki"
+                        (r) =>
+                          r.maritalStatus === status && r.gender === "Laki-laki"
                       ).length;
                     const p = Object.values(rtData)
                       .flat()
                       .filter(
-                        (r) => r.religion === agama && r.gender === "Perempuan"
+                        (r) =>
+                          r.maritalStatus === status && r.gender === "Perempuan"
                       ).length;
                     return (
-                      <React.Fragment key={agama}>
+                      <React.Fragment key={status}>
                         <td className="px-2 py-2 text-center border">{l}</td>
                         <td className="px-2 py-2 text-center border">{p}</td>
                         <td className="px-2 py-2 text-center border">
@@ -372,4 +388,4 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
   );
 };
 
-export default MonografiAgama;
+export default MonografiStatusPernikahan;

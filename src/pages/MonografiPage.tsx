@@ -5,7 +5,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import MonografiAgama from "./monografi/monografiAgama";
 import MonografiUmur from "./monografi/monografiUmur";
-
+import MonografiStatusPernikahan from "./monografi/monografiPerkawinan";
 const MonografiPage = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
 
@@ -92,44 +92,16 @@ const MonografiPage = () => {
 
       {/* Marital Status Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-xl mb-4">Status Perkawinan</h2>
-        <table className="table-auto w-full border text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Status</th>
-              <th className="p-2">Laki-laki</th>
-              <th className="p-2">Perempuan</th>
-              <th className="p-2">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {["Belum Kawin", "Kawin", "Cerai Hidup", "Cerai Mati"].map(
-              (status) => (
-                <tr key={status} className="hover:bg-gray-100">
-                  <td className="p-2">{status}</td>
-                  <td className="p-2">
-                    {countByGender("maritalStatus", status, "Laki-laki")}
-                  </td>
-                  <td className="p-2">
-                    {countByGender("maritalStatus", status, "Perempuan")}
-                  </td>
-                  <td className="p-2">{countBy("maritalStatus", status)}</td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
+        <MonografiStatusPernikahan residents={residents} />
       </div>
 
       {/* Age Group Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-xl mb-4">UMUR</h2>
         <MonografiUmur residents={residents} />
       </div>
 
       {/* Religion Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-xl mb-4">Agama</h2>
         <MonografiAgama residents={residents} />
       </div>
     </div>
