@@ -3,6 +3,8 @@ import { getAllResidents } from "../services/residentService";
 import { Resident } from "../types/index";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import MonografiAgama from "./monografi/monografiAgama";
+import MonografiUmur from "./monografi/monografiUmur";
 
 const MonografiPage = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -121,71 +123,14 @@ const MonografiPage = () => {
 
       {/* Age Group Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-xl mb-4">Kelompok Umur</h2>
-        <table className="table-auto w-full border text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Kelompok Umur</th>
-              <th className="p-2">Jumlah</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              [0, 4],
-              [5, 9],
-              [10, 14],
-              [15, 19],
-              [20, 24],
-              [25, 29],
-              [30, 34],
-              [35, 39],
-              [40, 44],
-              [45, 49],
-              [50, 54],
-              [55, 59],
-              [60, 64],
-              [65, 69],
-              [70, 74],
-              [75, 120],
-            ].map(([min, max]) => (
-              <tr key={min} className="hover:bg-gray-100">
-                <td className="p-2">
-                  {min} - {max}
-                </td>
-                <td className="p-2">{countAgeGroup(min, max)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2 className="font-semibold text-xl mb-4">UMUR</h2>
+        <MonografiUmur residents={residents} />
       </div>
 
       {/* Religion Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
         <h2 className="font-semibold text-xl mb-4">Agama</h2>
-        <table className="table-auto w-full border text-sm">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Agama</th>
-              <th className="p-2">Jumlah</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              "Islam",
-              "Protestan",
-              "Katolik",
-              "Hindu",
-              "Buddha",
-              "Konghucu",
-              "Kepercayaan",
-            ].map((agama) => (
-              <tr key={agama} className="hover:bg-gray-100">
-                <td className="p-2">{agama}</td>
-                <td className="p-2">{countBy("religion", agama)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MonografiAgama residents={residents} />
       </div>
     </div>
   );
