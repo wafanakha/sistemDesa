@@ -8,6 +8,8 @@ import MonografiUmur from "./monografi/monografiUmur";
 import MonografiStatusPernikahan from "./monografi/monografiPerkawinan";
 import MonografiGender from "./monografi/monografiGender";
 import MonografiPendidikan from "./monografi/monografiPendidikan";
+import MonografiPekerjaan from "./monografi/monografiPekerjaan";
+import MonografiGolonganDarah from "./monografi/monografiGolDarah";
 
 const MonografiPage = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -34,6 +36,16 @@ const MonografiPage = () => {
       <h1 className="text-2xl font-bold mb-6 text-center">
         Monografi Penduduk
       </h1>
+
+      {/* Blood type section */}
+      <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+        <MonografiGolonganDarah residents={residents} />
+      </div>
+
+      {/* Work Section */}
+      <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+        <MonografiPekerjaan residents={residents} />
+      </div>
 
       {/* Education Section */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">

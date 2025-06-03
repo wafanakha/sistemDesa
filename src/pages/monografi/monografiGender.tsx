@@ -22,11 +22,42 @@ const MonografiGender = ({ residents }: Props) => {
 
   const exportPDF = () => {
     const doc = new jsPDF();
-    let y = 15;
-
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text("REKAPITULASI JUMLAH PENDUDUK BERDASARKAN JENIS KELAMIN", 14, y);
-    y += 10;
+
+    // Pemerintah heading
+    doc.text("PEMERINTAH KABUPATEN BANYUMAS", pageWidth / 2, 14, {
+      align: "center",
+    });
+    doc.text("KECAMATAN PATIKRAJA", pageWidth / 2, 20, {
+      align: "center",
+    });
+    doc.text("DESA/KELURAHAN KEDUNGWRINGIN", pageWidth / 2, 26, {
+      align: "center",
+    });
+
+    // Title with underline
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text(
+      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA",
+      pageWidth / 2,
+      34,
+      { align: "center" }
+    );
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      `Tgl. ${new Date().toLocaleDateString("id-ID")}`,
+      pageWidth / 2,
+      40,
+      {
+        align: "center",
+      }
+    );
+
+    let y = 48;
 
     Object.entries(grouped).forEach(([rw, rts], rwIndex) => {
       const tableBody = Object.entries(rts).map(([rt, count], idx) => {

@@ -182,7 +182,243 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
         </button>
       </div>
 
-      {/* Tabel tampilan di aplikasi bisa ditambahkan mirip dengan MonografiAgama jika dibutuhkan */}
+      {Object.entries(grouped).map(([rw, rtData]) => (
+        <div
+          key={rw}
+          className="mb-8 bg-white rounded-lg shadow-sm overflow-hidden"
+        >
+          {/* RW Header */}
+          <div className="bg-blue-600 px-4 py-3">
+            <h2 className="text-lg font-semibold text-white">
+              RW {rw.padStart(3, "0")}
+            </h2>
+          </div>
+
+          {/* Table Container */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-50">
+                {/* Main Header Row */}
+                <tr>
+                  <th
+                    rowSpan={2}
+                    className="px-3 py-3 text-center font-medium text-gray-700 uppercase tracking-wider border"
+                  >
+                    NO
+                  </th>
+                  <th
+                    rowSpan={2}
+                    className="px-3 py-3 text-center font-medium text-gray-700 uppercase tracking-wider border"
+                  >
+                    RT
+                  </th>
+                  {PENDIDIKAN_LIST.map((edu) => (
+                    <th
+                      key={edu}
+                      colSpan={3}
+                      className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider border"
+                    >
+                      {edu}
+                    </th>
+                  ))}
+                  <th
+                    colSpan={3}
+                    className="px-3 py-3 text-center font-medium text-gray-700 uppercase tracking-wider border"
+                  >
+                    TOTAL
+                  </th>
+                </tr>
+
+                {/* Subheader Row */}
+                <tr className="bg-gray-100">
+                  {PENDIDIKAN_LIST.flatMap((edu) => [
+                    <th
+                      key={`${edu}-l`}
+                      className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border"
+                    >
+                      L
+                    </th>,
+                    <th
+                      key={`${edu}-p`}
+                      className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border"
+                    >
+                      P
+                    </th>,
+                    <th
+                      key={`${edu}-jml`}
+                      className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border"
+                    >
+                      JML
+                    </th>,
+                  ])}
+                  <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border">
+                    L
+                  </th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border">
+                    P
+                  </th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border">
+                    JML
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="bg-white divide-y divide-gray-200">
+                {Object.entries(rtData).map(([rt, list], i) => {
+                  const row = [];
+
+                  // Add RT data
+                  row.push(
+                    <td
+                      key={`no-${i}`}
+                      className="px-3 py-2 text-center border"
+                    >
+                      {i + 1}
+                    </td>,
+                    <td
+                      key={`rt-${i}`}
+                      className="px-3 py-2 text-center font-medium border"
+                    >
+                      RT {rt.padStart(3, "0")}
+                    </td>
+                  );
+
+                  // Add education data
+                  PENDIDIKAN_LIST.forEach((edu) => {
+                    const l = list.filter(
+                      (r) => r.education === edu && r.gender === "Laki-laki"
+                    ).length;
+                    const p = list.filter(
+                      (r) => r.education === edu && r.gender === "Perempuan"
+                    ).length;
+                    row.push(
+                      <td
+                        key={`${edu}-l-${i}`}
+                        className="px-2 py-2 text-center border"
+                      >
+                        {l}
+                      </td>,
+                      <td
+                        key={`${edu}-p-${i}`}
+                        className="px-2 py-2 text-center border"
+                      >
+                        {p}
+                      </td>,
+                      <td
+                        key={`${edu}-jml-${i}`}
+                        className="px-2 py-2 text-center font-medium border"
+                      >
+                        {l + p}
+                      </td>
+                    );
+                  });
+
+                  // Add totals
+                  const lTotal = list.filter(
+                    (r) => r.gender === "Laki-laki"
+                  ).length;
+                  const pTotal = list.filter(
+                    (r) => r.gender === "Perempuan"
+                  ).length;
+                  row.push(
+                    <td
+                      key={`total-l-${i}`}
+                      className="px-2 py-2 text-center font-medium border"
+                    >
+                      {lTotal}
+                    </td>,
+                    <td
+                      key={`total-p-${i}`}
+                      className="px-2 py-2 text-center font-medium border"
+                    >
+                      {pTotal}
+                    </td>,
+                    <td
+                      key={`total-jml-${i}`}
+                      className="px-2 py-2 text-center font-bold border"
+                    >
+                      {lTotal + pTotal}
+                    </td>
+                  );
+
+                  return (
+                    <tr key={rt} className="hover:bg-gray-50">
+                      {row}
+                    </tr>
+                  );
+                })}
+
+                {/* RW Total Row */}
+                <tr className="bg-blue-50 font-semibold">
+                  <td colSpan={2} className="px-3 py-2 text-center border">
+                    TOTAL RW {rw.padStart(3, "0")}
+                  </td>
+                  {PENDIDIKAN_LIST.flatMap((edu) => {
+                    const l = Object.values(rtData)
+                      .flat()
+                      .filter(
+                        (r) => r.education === edu && r.gender === "Laki-laki"
+                      ).length;
+                    const p = Object.values(rtData)
+                      .flat()
+                      .filter(
+                        (r) => r.education === edu && r.gender === "Perempuan"
+                      ).length;
+                    return [
+                      <td
+                        key={`${edu}-l-total`}
+                        className="px-2 py-2 text-center border"
+                      >
+                        {l}
+                      </td>,
+                      <td
+                        key={`${edu}-p-total`}
+                        className="px-2 py-2 text-center border"
+                      >
+                        {p}
+                      </td>,
+                      <td
+                        key={`${edu}-jml-total`}
+                        className="px-2 py-2 text-center border"
+                      >
+                        {l + p}
+                      </td>,
+                    ];
+                  })}
+                  {(() => {
+                    const totalL = Object.values(rtData)
+                      .flat()
+                      .filter((r) => r.gender === "Laki-laki").length;
+                    const totalP = Object.values(rtData)
+                      .flat()
+                      .filter((r) => r.gender === "Perempuan").length;
+                    return [
+                      <td
+                        key="total-l"
+                        className="px-2 py-2 text-center border"
+                      >
+                        {totalL}
+                      </td>,
+                      <td
+                        key="total-p"
+                        className="px-2 py-2 text-center border"
+                      >
+                        {totalP}
+                      </td>,
+                      <td
+                        key="total-jml"
+                        className="px-2 py-2 text-center font-bold text-blue-700 border"
+                      >
+                        {totalL + totalP}
+                      </td>,
+                    ];
+                  })()}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
