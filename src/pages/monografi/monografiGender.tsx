@@ -40,7 +40,7 @@ const MonografiGender = ({ residents }: Props) => {
         ];
       });
 
-      const totalRW = tableBody.reduce(
+      const totalRW: (string | number)[] = tableBody.reduce(
         (acc, row) => {
           acc.male += row[2] as number;
           acc.female += row[3] as number;

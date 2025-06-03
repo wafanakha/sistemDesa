@@ -81,43 +81,36 @@ const getAge = (birthDate: string): number => {
 const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
   const grouped = groupResidentsByRWRT(residents);
 
-  const generatePDF = () => {
-    // Create PDF with maximum possible width (A0 landscape)
-    const doc = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-      format: [1189, 841], // A0 size (largest standard paper size)
-    });
+  const generatePDF = (residents: Resident[]) => {
+    const doc = new jsPDF("l", "mm", "f4"); // landscape, mm, F4 size
+    doc.setFontSize(12);
+    doc.text("Monografi Berdasarkan Kelompok Umur", 10, 10);
 
-    // Set document metadata
-    doc.setProperties({
-      title: "Monografi Berdasarkan Umur",
-      subject: "Data Penduduk Berdasarkan Kelompok Umur",
-      author: "Sistem Informasi Desa",
-    });
+    const grouped = groupResidentsByRWRT(residents);
+    let yOffset = 20;
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(16);
-    doc.setTextColor(33, 150, 243);
-    doc.text("MONOGRAFI PENDUDUK BERDASARKAN KELOMPOK UMUR", 20, 20);
+    Object.entries(grouped).forEach(([rw, rtData], rwIndex) => {
+      doc.text(`RW ${rw.padStart(3, "0")}`, 10, yOffset);
+      yOffset += 6;
 
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text("Dicetak pada: " + new Date().toLocaleDateString("id-ID"), 20, 26);
+      const headerRow = [
+        "NO",
+        "RT",
+        ...AGE_GROUPS.flatMap(([min, max]) => {
+          const label = max === null ? "≥75" : `${min}-${max}`;
+          return [`${label} L`, `${label} P`, `${label} JML`];
+        }),
+        "L TOTAL",
+        "P TOTAL",
+        "JML TOTAL",
+      ];
 
-    let y = 32;
+      const rows: any[] = [];
 
-    Object.entries(grouped).forEach(([rw, rtData]) => {
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`RW ${rw.padStart(3, "0")}`, 20, y);
-      y += 8;
-
-      const body: any[] = [];
-
-      Object.entries(rtData).forEach(([rt], i) => {
-        const list = rtData[rt];
-        const row: any[] = [i + 1, `RT ${rt.padStart(3, "0")}`];
+      Object.entries(rtData).forEach(([rt, list], idx) => {
+        const row: any[] = [];
+        row.push(idx + 1);
+        row.push(`RT ${rt.padStart(3, "0")}`);
 
         AGE_GROUPS.forEach(([min, max]) => {
           const group = list.filter((r) => {
@@ -132,14 +125,12 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
         const totalL = list.filter((r) => r.gender === "Laki-laki").length;
         const totalP = list.filter((r) => r.gender === "Perempuan").length;
         row.push(totalL, totalP, totalL + totalP);
-        body.push(row);
+
+        rows.push(row);
       });
 
-      // Add RW totals row
-      const rwTotals = ["", "TOTAL RW"];
-      let totalL = 0;
-      let totalP = 0;
-
+      // Add total row for RW
+      const totalRow: any[] = ["", `TOTAL RW ${rw.padStart(3, "0")}`];
       AGE_GROUPS.forEach(([min, max]) => {
         const group = Object.values(rtData)
           .flat()
@@ -149,146 +140,43 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
           });
         const l = group.filter((r) => r.gender === "Laki-laki").length;
         const p = group.filter((r) => r.gender === "Perempuan").length;
-        rwTotals.push(l, p, l + p);
-        totalL += l;
-        totalP += p;
+        totalRow.push(l, p, l + p);
       });
 
-      rwTotals.push(totalL, totalP, totalL + totalP);
-      body.push(rwTotals);
+      const allResidents = Object.values(rtData).flat();
+      const totalL = allResidents.filter(
+        (r) => r.gender === "Laki-laki"
+      ).length;
+      const totalP = allResidents.filter(
+        (r) => r.gender === "Perempuan"
+      ).length;
+      totalRow.push(totalL, totalP, totalL + totalP);
 
-      // Calculate column widths dynamically based on content
-      const columnCount = 2 + AGE_GROUPS.length * 3 + 3;
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const minColWidth = 8;
-      const maxColWidth = 15;
-
-      // Base column styles
-      const columnStyles = {
-        0: { cellWidth: 10, halign: "center" }, // NO column
-        1: { cellWidth: 15, halign: "center" }, // RT column
-      };
-
-      // Age group columns
-      for (let i = 2; i < columnCount - 3; i++) {
-        columnStyles[i] = {
-          cellWidth: minColWidth,
-          halign: "center",
-        };
-      }
-
-      // Total columns (last 3 columns)
-      for (let i = columnCount - 3; i < columnCount; i++) {
-        columnStyles[i] = {
-          cellWidth: minColWidth,
-          halign: "center",
-          fontStyle: "bold",
-        };
-      }
+      rows.push(totalRow);
 
       (doc as any).autoTable({
-        head: [
-          [
-            {
-              content: "NO",
-              rowSpan: 2,
-              styles: { halign: "center", valign: "middle" },
-            },
-            {
-              content: "RT",
-              rowSpan: 2,
-              styles: { halign: "center", valign: "middle" },
-            },
-            ...AGE_GROUPS.map(([min, max]) => ({
-              content: max === null ? "≥75" : `${min}-${max}`,
-              colSpan: 3,
-              styles: { halign: "center", valign: "middle" },
-            })),
-            {
-              content: "TOTAL",
-              colSpan: 3,
-              styles: { halign: "center", valign: "middle" },
-            },
-          ],
-          [
-            {}, // Empty for NO
-            {}, // Empty for RT
-            ...AGE_GROUPS.flatMap(() => [
-              { content: "L", styles: { halign: "center" } },
-              { content: "P", styles: { halign: "center" } },
-              { content: "JML", styles: { halign: "center" } },
-            ]),
-            { content: "L", styles: { halign: "center" } },
-            { content: "P", styles: { halign: "center" } },
-            { content: "JML", styles: { halign: "center" } },
-          ],
-        ],
-        body,
-        startY: y,
-        margin: { left: 10, right: 10 },
+        startY: yOffset,
+        head: [headerRow],
+        body: rows,
+        theme: "grid",
+        headStyles: { fillColor: [34, 139, 34] },
         styles: {
-          fontSize: 7,
-          halign: "center",
-          valign: "middle",
-          cellPadding: 2,
-          lineColor: [200, 200, 200],
-          lineWidth: 0.2,
+          fontSize: 6,
+          cellPadding: 1,
         },
-        headStyles: {
-          fillColor: [33, 150, 243],
-          textColor: 255,
-          fontStyle: "bold",
-          lineWidth: 0.3,
+        columnStyles: {
+          0: { cellWidth: 10 }, // NO
+          1: { cellWidth: 20 }, // RT
+          // Optionally, compress other columns to fit
         },
-        bodyStyles: {
-          textColor: [50, 50, 50],
-        },
-        alternateRowStyles: {
-          fillColor: [245, 245, 245],
-        },
-        columnStyles,
-        didDrawCell: (data: any) => {
-          // Highlight the totals row
-          if (data.row.index === body.length - 1) {
-            doc.setFillColor(220, 240, 255);
-            doc.rect(
-              data.cell.x,
-              data.cell.y,
-              data.cell.width,
-              data.cell.height,
-              "F"
-            );
-            doc.setTextColor(0, 0, 0);
-            doc.setFont("helvetica", "bold");
-          }
-        },
+        margin: { left: 10, right: 10 },
+        pageBreak: "auto",
       });
 
-      y = (doc as any).lastAutoTable.finalY + 12;
-
-      if (y > doc.internal.pageSize.getHeight() - 20) {
-        doc.addPage({
-          orientation: "landscape",
-          unit: "mm",
-          format: [1189, 841],
-        });
-        y = 20;
-      }
+      yOffset = (doc as any).lastAutoTable.finalY + 10;
     });
 
-    // Add footer page number
-    const totalPages = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.text(
-        `Halaman ${i} dari ${totalPages}`,
-        doc.internal.pageSize.getWidth() - 30,
-        doc.internal.pageSize.getHeight() - 10
-      );
-    }
-
-    doc.save(`monografi-umur-${new Date().toISOString().slice(0, 10)}.pdf`);
+    doc.save("monografi-umur.pdf");
   };
 
   return (
@@ -298,7 +186,7 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
           Monografi Berdasarkan Kelompok Umur
         </h1>
         <button
-          onClick={generatePDF}
+          onClick={() => generatePDF(residents)}
           className="flex items-center gap-2 bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
         >
           <svg

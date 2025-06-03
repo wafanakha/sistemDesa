@@ -2,6 +2,7 @@ import React from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Resident } from "../../types"; // pastikan path sesuai
+import { AlignCenter } from "lucide-react";
 
 const AGAMA_LIST = [
   "Islam",
@@ -10,7 +11,6 @@ const AGAMA_LIST = [
   "Hindu",
   "Budha",
   "Konghucu",
-  "Kepercayaan",
 ];
 
 const groupResidentsByRWRT = (residents: Resident[]) => {
@@ -30,9 +30,42 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
 
   const generatePDF = () => {
     const doc = new jsPDF("landscape");
-    doc.setFontSize(14);
-    doc.text("Monografi Berdasarkan Agama", 14, 16);
-    let y = 24;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+
+    // Pemerintah heading
+    doc.text("PEMERINTAH KABUPATEN BANYUMAS", pageWidth / 2, 14, {
+      align: "center",
+    });
+    doc.text("KECAMATAN PATIKRAJA", pageWidth / 2, 20, {
+      align: "center",
+    });
+    doc.text("DESA/KELURAHAN KEDUNGWRINGIN", pageWidth / 2, 26, {
+      align: "center",
+    });
+
+    // Title with underline
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text(
+      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA",
+      pageWidth / 2,
+      34,
+      { align: "center" }
+    );
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      `Tgl. ${new Date().toLocaleDateString("id-ID")}`,
+      pageWidth / 2,
+      40,
+      {
+        align: "center",
+      }
+    );
+
+    let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
       doc.setFontSize(12);
@@ -61,8 +94,10 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
         body.push(row);
       });
 
-      // Baris total RW
-      const rwTotals = ["", "JML RW"];
+      const rwTotals: (string | number)[] = [
+        "",
+        `JML RW : ${rw.padStart(3, "0")}`,
+      ];
       let totalL = 0;
       let totalP = 0;
       AGAMA_LIST.forEach((agama) => {
@@ -118,11 +153,12 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
         ],
       ];
 
-      doc.autoTable({
+      (doc as any).autoTable({
         head,
         body,
         startY: y,
-        margin: { left: 5, right: 5 },
+        margin: "auto", // Center table
+        tableWidth: "auto", // Fit to content
         styles: {
           fontSize: 7,
           halign: "center",
@@ -149,26 +185,31 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           [3 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
           [4 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
         },
-        didDrawCell: (data: any) => {
-          // Highlight baris total RW
+        didParseCell: (data: any) => {
+          // More precise JML column detection
+          const isJMLColumn =
+            data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
+
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 239, 184];
+            data.cell.styles.fontStyle = "bold";
+          }
+
+          // RW summary row styling
           if (
+            data.section === "body" &&
             data.row.index === body.length - 1 &&
-            data.row.raw[1] === "JML RW"
+            typeof data.row.raw?.[1] === "string" &&
+            data.row.raw[1].toString().includes("JML RW")
           ) {
-            doc.setFillColor(220, 240, 255);
-            doc.rect(
-              data.cell.x,
-              data.cell.y,
-              data.cell.width,
-              data.cell.height,
-              "F"
-            );
-            doc.setTextColor(0, 0, 0);
+            data.cell.styles.fillColor = [220, 240, 255];
+            data.cell.styles.textColor = [0, 0, 0];
+            data.cell.styles.fontStyle = "bold";
           }
         },
       });
 
-      y = doc.lastAutoTable.finalY + 10;
+      y = (doc as any).lastAutoTable.finalY + 10;
       if (y > 180) {
         doc.addPage();
         y = 20;

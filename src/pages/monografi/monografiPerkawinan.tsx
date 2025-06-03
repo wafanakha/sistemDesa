@@ -31,9 +31,42 @@ const MonografiStatusPernikahan = ({
 
   const generatePDF = () => {
     const doc = new jsPDF("landscape");
-    doc.setFontSize(14);
-    doc.text("Monografi Berdasarkan Status Pernikahan", 14, 16);
-    let y = 24;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+
+    // Pemerintah heading
+    doc.text("PEMERINTAH KABUPATEN BANYUMAS", pageWidth / 2, 14, {
+      align: "center",
+    });
+    doc.text("KECAMATAN PATIKRAJA", pageWidth / 2, 20, {
+      align: "center",
+    });
+    doc.text("DESA/KELURAHAN KEDUNGWRINGIN", pageWidth / 2, 26, {
+      align: "center",
+    });
+
+    // Title with underline
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text(
+      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN STATUS PERNIKAHAN",
+      pageWidth / 2,
+      34,
+      { align: "center" }
+    );
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      `Tgl. ${new Date().toLocaleDateString("id-ID")}`,
+      pageWidth / 2,
+      40,
+      {
+        align: "center",
+      }
+    );
+
+    let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
       doc.setFontSize(12);
@@ -63,7 +96,10 @@ const MonografiStatusPernikahan = ({
       });
 
       // Baris total RW
-      const rwTotals = ["", "JML RW"];
+      const rwTotals: (string | number)[] = [
+        "",
+        `JML RW : ${rw.padStart(3, "0")}`,
+      ];
       let totalL = 0;
       let totalP = 0;
       STATUS_PERNIKAHAN_LIST.forEach((status) => {
@@ -119,7 +155,7 @@ const MonografiStatusPernikahan = ({
         ],
       ];
 
-      doc.autoTable({
+      (doc as any).autoTable({
         head,
         body,
         startY: y,
@@ -137,6 +173,28 @@ const MonografiStatusPernikahan = ({
         },
         alternateRowStyles: { fillColor: [245, 245, 245] },
         theme: "grid",
+        didParseCell: (data: any) => {
+          // More precise JML column detection
+          const isJMLColumn =
+            data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
+
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 239, 184];
+            data.cell.styles.fontStyle = "bold";
+          }
+
+          // RW summary row styling
+          if (
+            data.section === "body" &&
+            data.row.index === body.length - 1 &&
+            typeof data.row.raw?.[1] === "string" &&
+            data.row.raw[1].toString().includes("JML RW")
+          ) {
+            data.cell.styles.fillColor = [220, 240, 255];
+            data.cell.styles.textColor = [0, 0, 0];
+            data.cell.styles.fontStyle = "bold";
+          }
+        },
         columnStyles: {
           0: { cellWidth: 8 },
           1: { cellWidth: 14 },
@@ -178,7 +236,7 @@ const MonografiStatusPernikahan = ({
         },
       });
 
-      y = doc.lastAutoTable.finalY + 10;
+      y = (doc as any).lastAutoTable.finalY + 10;
       if (y > 180) {
         doc.addPage();
         y = 20;

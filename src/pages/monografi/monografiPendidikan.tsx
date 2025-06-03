@@ -64,7 +64,7 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
       });
 
       // Baris total RW
-      const rwTotals = ["", "JML RW"];
+      const rwTotals = [3, 0];
       let totalL = 0;
       let totalP = 0;
       PENDIDIKAN_LIST.forEach((edu) => {
