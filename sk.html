@@ -62,7 +62,7 @@
     }
     .footer-info {
       display: flex;
-      justify-content: left;
+      justify-content: center;
       margin-top: 20px;
       margin-bottom: 10px;
     }
@@ -79,12 +79,12 @@
       text-align: center;
       display: flex;
       flex-direction: column;
-      /* ganti space-between jadi flex-start supaya elemen tidak terlalu jauh */
-      justify-content: flex-start;
-      min-height: 60px;
+      justify-content: space-between;
+      /* pastikan tinggi sama */
+      min-height: 180px;
     }
     .ttd-space {
-      min-height: 60px; /* beri ruang tanda tangan yang cukup */
+      min-height: 70px; /* beri ruang tanda tangan yang cukup */
       border-bottom: 1px solid transparent; /* buat spacer tanpa garis */
     }
     .print-btn {
@@ -99,13 +99,14 @@
     margin: 0;
     line-height: 1.1; /* bisa disesuaikan, misal 1.0 atau 1.05 */
 }
+
   </style>
 </head>
 <body>
   <div class="container">
 
     <div class="header">
-      <img src="logo-bms.png " alt="Logo Instansi" class="logo" />
+      <img src="logo-bms.png" alt="Logo Instansi" class="logo" />
       <div class="instansi">
         <div class="bold">PEMERINTAHAN DESA KEDUNGWRINGIN</div>
         <div class="bold">KECAMATAN PATIKREJA KABUPATEN BANYUMAS</div>
@@ -117,61 +118,45 @@
 
     <hr />
     <p>Kode Desa: 02122013</p>
-    <h2>SURAT KETERANGAN DOMISILI USAHA</h2>
+    <h2>SURAT KETERANGAN</h2>
     <p style="text-align: center;">Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
 
     <div class="content">
       <p>Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:</p>
 
       <table>
-        <tr><td>1. Nama Lengkap</td><td>:</td><td>Sugiono Sutikno</td></tr>
-        <tr><td>2. Jenis Kelamin</td><td>:</td><td>Laki-laki</td></tr>
-        <tr><td>3. Tempat/Tgl Lahir</td><td>:</td><td>2 September 2025</td></tr>
-        <tr><td>4. Kewarganegaraan</td><td>:</td><td>Konoha</td></tr>
-        <tr><td>5. No. KTP/NIK</td><td>:</td><td>3011301203829019</td></tr>
-        <tr><td>6. Pekerjaan</td><td>:</td><td>Begal</td></tr>
-        <tr><td>7. Alamat</td><td>:</td><td>Kedungwringin</td></tr>
-      </table>
-
-      <p>Berdasarkan Surat Pernyataan tidak keberatan/ijin tetangga yang diketahui Ketua Rukun Tetangga dan Ketua Rukun Warga Nomer Tanggal, bahwa yang bersangkutan benar telah membuka Usaha sebagai berikut:</p>
-      <table>
-
-        <tr><td>Nama Perusahaan</td><td>:</td><td>Usaha Dagang</td></tr>
-        <tr><td>Nama Pemilik</td><td>:</td><td>Kedungwringin</td></tr>
-        <tr><td>Alamat Perusahaan</td><td>:</td><td>Perdagangan Umum</td></tr>
-        <tr><td>Jenis Usaha</td><td>:</td><td>(0281) 638395</td></tr>
-        <tr><td>Jumlah Karyawan</td><td>:</td><td>10 Orang</td></tr>
-        <tr><td>Luas Tempat Usaha</td><td>:</td><td>(0281) 638395</td></tr>
-        <tr><td>Waktu Usaha</td><td>:</td><td>(0281) 638395</td></tr>
-
-      </table>
-      <p>Demikian Surat Keterangan Domisili Usaha ini dibuat untuk keperluan mengajukan Permohonan Surat Ijin Tempat Usaha/Ijin Undang-undang Gangguan dari Pemerintah Kabupaten Banyumas. Surat ini berlaku 3 (tiga) bulan setelah dikeluarkan, bukan merupakan surat ijin, dan tidak diperkenankan untuk melakukan usaha sebelum mendapat ijin resmi dari instansi terkait</p>
-    <div class="footer-info">
-      <table>
+        <tr><td>1. Nama</td><td>:</td><td>Sugiono Sutikno</td></tr>
+        <tr><td>2. Tempat/Tgl Lahir</td><td>:</td><td>2 September 2025</td></tr>
+        <tr><td>3. Warganegara</td><td>:</td><td>Laki-laki</td></tr>
+        <tr><td>4. Agama</td><td>:</td><td>SIGMA</td></tr>
+        <tr><td>5. Pekerjaan</td><td>:</td><td>Konoha</td></tr>
+        <tr><td>6. Tempat Tinggal</td><td>:</td><td>Begal</td></tr>
         <tr>
-          <td>No. Reg</td>
-          <td>:</td>
-          <td>_________</td>
-        </tr>
-        <tr>
-          <td>Tanggal</td>
-          <td>:</td>
-          <td>[Tanggal Surat]</td>
-        </tr>
+            <td>7. Surat Bukti Diri</td>
+            <td>:</td>
+            <td>
+                <div style="display: flex; flex-direction: column;">
+                <span>NIK: 3011301203829019</span>
+                <span>No. KK: 3175098765432100</span>
+                </div>
+            </td>
+            </tr>
+
+        <tr><td>8. Keperluan</td><td>:</td><td>DEMO WAPRES</td></tr>
+        <tr><td>9. Berlaku</td><td>:</td><td>s/d</td></tr>
+        <tr><td>10. Keterangan lain</td><td>:</td><td>-</td></tr>
       </table>
+      <p>Demikian Surat Keterangan Keramaian ini diberikan untuk dipergunakan seperlunya.</p>
     </div>
-      <div class="signature-block">
+   <div class="signature-block">
   <div class="signature">
-    <div>
-      <p>Mengetahui,</p>
-      <p>Camat Patikreja</p>
-    </div>
+    <p>Pemohon</p>
     <div style="margin-top: auto;">
       <div class="ttd-space"></div>
-      <p><strong>[Nama Camat]</strong></p>
+      <p><strong>Sugiono Sutikno</strong></p>
     </div>
   </div>
- <div class="signature">
+  <div class="signature">
   <div class="compact">
     <p>Kedungwringin, 22 Mei 2025</p>
     <p>An. KEPALA DESA KEDUNGWRINGIN</p>
@@ -183,7 +168,11 @@
   </div>
 </div>
 </div>
-<button class="print-btn" onclick="downloadPDF()">Download PDF</button>
+
+    <button class="print-btn" onclick="downloadPDF()">Download PDF</button>
+
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
