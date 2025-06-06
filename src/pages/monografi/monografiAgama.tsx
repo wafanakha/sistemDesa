@@ -60,6 +60,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
 
     doc.setLineWidth(0.5);
     doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
+
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(

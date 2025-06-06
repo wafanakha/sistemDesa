@@ -35,7 +35,7 @@ const MonografiPekerjaan = ({ residents }: { residents: Resident[] }) => {
   const totalAll = totalL + totalP;
 
   const generatePDF = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF("portrait", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
@@ -54,12 +54,19 @@ const MonografiPekerjaan = ({ residents }: { residents: Resident[] }) => {
     // Title with underline
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    doc.text(
-      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA",
-      pageWidth / 2,
-      34,
-      { align: "center" }
-    );
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN PEKERJAAN";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
+
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
@@ -71,6 +78,8 @@ const MonografiPekerjaan = ({ residents }: { residents: Resident[] }) => {
       }
     );
 
+    let y = 48;
+
     const body = data.map((row) => [
       row.no,
       row.job,
@@ -79,25 +88,37 @@ const MonografiPekerjaan = ({ residents }: { residents: Resident[] }) => {
       row.total,
     ]);
 
-    body.push(["", "TOTAL", totalL, totalP, totalAll]);
+    body.push(["", "JUMLAH", totalL, totalP, totalAll]);
 
     (doc as any).autoTable({
       head: [["NO", "PEKERJAAN", "LK", "PR", "JUMLAH"]],
       body,
-      startY: 24,
+      margin: { left: 20, right: 20 },
+
+      startY: y,
       styles: {
         fontSize: 9,
         halign: "center",
         valign: "middle",
-        cellPadding: 2,
+        cellPadding: 1,
+        lineColor: [0, 0, 0], // Set grid lines to black
+        lineWidth: 0.1,
+        textColor: 0,
       },
       headStyles: {
-        fillColor: [102, 126, 234],
-        textColor: 255,
+        fillColor: [220, 220, 220],
+        textColor: 0,
         fontStyle: "bold",
       },
       alternateRowStyles: { fillColor: [245, 245, 245] },
       theme: "grid",
+      didParseCell: (data: any) => {
+        // Highlight the last row (summary row) with gray background
+        if (data.row.index === body.length - 1) {
+          data.cell.styles.fillColor = [221, 221, 221]; // Light gray
+          data.cell.styles.fontStyle = "bold"; // Optional: make text bold
+        }
+      },
     });
 
     doc.save(
