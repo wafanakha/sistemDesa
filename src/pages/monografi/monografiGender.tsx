@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Resident } from "../../types";
+import { FootprintsIcon } from "lucide-react";
 
 type Props = {
   residents: Resident[];
@@ -40,12 +41,18 @@ const MonografiGender = ({ residents }: Props) => {
     // Title with underline
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    doc.text(
-      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA",
-      pageWidth / 2,
-      34,
-      { align: "center" }
-    );
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN JENIS KELAMIN ";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
@@ -60,18 +67,32 @@ const MonografiGender = ({ residents }: Props) => {
     let y = 48;
 
     Object.entries(grouped).forEach(([rw, rts], rwIndex) => {
-      const tableBody = Object.entries(rts).map(([rt, count], idx) => {
-        const total = count["Laki-laki"] + count["Perempuan"];
-        return [
-          idx + 1,
-          `RT. ${rt}`,
-          count["Laki-laki"],
-          count["Perempuan"],
-          total,
-        ];
-      });
+      doc.setFontSize(12);
+      doc.text(`NO RW : ${rw}`, 14, y);
+      y += 4;
+      type TableCell =
+        | string
+        | number
+        | {
+            content: string;
+            colSpan?: number;
+            styles?: { halign: string };
+          };
 
-      const totalRW: (string | number)[] = tableBody.reduce(
+      const tableBody: TableCell[][] = Object.entries(rts).map(
+        ([rt, count], idx) => {
+          const total = count["Laki-laki"] + count["Perempuan"];
+          return [
+            idx + 1,
+            `RT. ${rt}`,
+            count["Laki-laki"],
+            count["Perempuan"],
+            total,
+          ];
+        }
+      );
+
+      const totalRW = tableBody.reduce(
         (acc, row) => {
           acc.male += row[2] as number;
           acc.female += row[3] as number;
@@ -92,12 +113,25 @@ const MonografiGender = ({ residents }: Props) => {
         totalRW.total,
       ]);
 
-      doc.autoTable({
+      (doc as any).autoTable({
         startY: y,
         head: [["NO", "NO RT", "LAKI-LAKI", "PEREMPUAN", "JUMLAH"]],
         body: tableBody,
-        styles: { halign: "center" },
+        styles: {
+          halign: "center",
+          fontSize: 10,
+          lineColor: [0, 0, 0],
+          lineWidth: 0.2,
+          textColor: 0,
+        },
         headStyles: { fillColor: [221, 221, 221] },
+        didParseCell: (data: any) => {
+          // Highlight the last row (summary row) with gray background
+          if (data.row.index === tableBody.length - 1) {
+            data.cell.styles.fillColor = [221, 221, 221]; // Light gray
+            data.cell.styles.fontStyle = "bold"; // Optional: make text bold
+          }
+        },
       });
 
       y = (doc as any).lastAutoTable.finalY + 10;
