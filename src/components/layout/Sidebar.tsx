@@ -55,8 +55,42 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Monografi",
-    path: "/monografi",
+    path: "/",
     icon: <FileText size={20} />,
+    submenu: [
+      {
+        title: "Agama",
+        path: "/monografi/agama",
+      },
+      {
+        title: "Jenis Kelamin",
+        path: "/monografi/gender",
+      },
+      {
+        title: "Golongan Darah",
+        path: "/monografi/goldarah",
+      },
+      {
+        title: "Kepala Keluarga",
+        path: "/monografi/kk",
+      },
+      {
+        title: "Pekerjaan",
+        path: "/monografi/pekerjaan",
+      },
+      {
+        title: "Pendidikan",
+        path: "/monografi/pendidikan",
+      },
+      {
+        title: "Status Pernikahan",
+        path: "/monografi/perkawinan",
+      },
+      {
+        title: "Umur",
+        path: "/monografi/umur",
+      },
+    ],
   },
   {
     title: "Surat",

@@ -19,19 +19,6 @@ const MonografiPage = () => {
     getAllResidents().then(setResidents);
   }, []);
 
-  const countBy = (field, value) =>
-    residents.filter((r) => r[field] === value).length;
-
-  const countByGender = (field, value, gender) =>
-    residents.filter((r) => r[field] === value && r.gender === gender).length;
-
-  const countAgeGroup = (min, max) =>
-    residents.filter((r) => {
-      const age =
-        r.age || new Date().getFullYear() - new Date(r.birthDate).getFullYear();
-      return age >= min && age <= max;
-    }).length;
-
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-center">

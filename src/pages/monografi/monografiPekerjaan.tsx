@@ -145,50 +145,52 @@ const MonografiPekerjaan = ({ residents }: { residents: Resident[] }) => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-900">
-          Monografi Berdasarkan Pekerjaan
-        </h1>
-        <button
-          onClick={generatePDF}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-        >
-          Download PDF
-        </button>
-      </div>
+    <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+      <div className="space-y-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-blue-900">
+            Monografi Berdasarkan Pekerjaan
+          </h1>
+          <button
+            onClick={generatePDF}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          >
+            Download PDF
+          </button>
+        </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border text-sm">
-          <thead className="bg-blue-100 text-blue-900">
-            <tr>
-              <th className="border px-2 py-1">NO</th>
-              <th className="border px-2 py-1">PEKERJAAN</th>
-              <th className="border px-2 py-1">LK</th>
-              <th className="border px-2 py-1">PR</th>
-              <th className="border px-2 py-1">JUMLAH</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => (
-              <tr key={row.no} className="text-center">
-                <td className="border px-2 py-1">{row.no}</td>
-                <td className="border px-2 py-1 text-left">{row.job}</td>
-                <td className="border px-2 py-1">{row.male}</td>
-                <td className="border px-2 py-1">{row.female}</td>
-                <td className="border px-2 py-1">{row.total}</td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border text-sm">
+            <thead className="bg-blue-100 text-blue-900">
+              <tr>
+                <th className="border px-2 py-1">NO</th>
+                <th className="border px-2 py-1">PEKERJAAN</th>
+                <th className="border px-2 py-1">LK</th>
+                <th className="border px-2 py-1">PR</th>
+                <th className="border px-2 py-1">JUMLAH</th>
               </tr>
-            ))}
-            <tr className="font-bold text-center bg-blue-50">
-              <td className="border px-2 py-1" colSpan={2}>
-                TOTAL
-              </td>
-              <td className="border px-2 py-1">{totalL}</td>
-              <td className="border px-2 py-1">{totalP}</td>
-              <td className="border px-2 py-1">{totalAll}</td>
-            </tr>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((row) => (
+                <tr key={row.no} className="text-center">
+                  <td className="border px-2 py-1">{row.no}</td>
+                  <td className="border px-2 py-1 text-left">{row.job}</td>
+                  <td className="border px-2 py-1">{row.male}</td>
+                  <td className="border px-2 py-1">{row.female}</td>
+                  <td className="border px-2 py-1">{row.total}</td>
+                </tr>
+              ))}
+              <tr className="font-bold text-center bg-blue-50">
+                <td className="border px-2 py-1" colSpan={2}>
+                  TOTAL
+                </td>
+                <td className="border px-2 py-1">{totalL}</td>
+                <td className="border px-2 py-1">{totalP}</td>
+                <td className="border px-2 py-1">{totalAll}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

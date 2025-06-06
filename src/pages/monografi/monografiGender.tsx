@@ -163,61 +163,63 @@ const MonografiGender = ({ residents }: Props) => {
   };
 
   return (
-    <div>
-      <h2 className="font-semibold text-xl mb-4 flex justify-between items-center">
-        <span>Jenis Kelamin (RW/RT)</span>
-        <button
-          onClick={exportPDF}
-          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
-        >
-          Export PDF
-        </button>
-      </h2>
+    <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+      <div>
+        <h2 className="font-semibold text-xl mb-4 flex justify-between items-center">
+          <span>Jenis Kelamin (RW/RT)</span>
+          <button
+            onClick={exportPDF}
+            className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded"
+          >
+            Export PDF
+          </button>
+        </h2>
 
-      {Object.entries(grouped).map(([rw, rts], idx) => {
-        let totalMale = 0,
-          totalFemale = 0;
-        return (
-          <div key={rw} className="mb-6 border rounded p-2 bg-white shadow">
-            <h3 className="font-semibold text-md mb-2">NO RW : {rw}</h3>
-            <table className="table-auto w-full text-sm border">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="border px-2">NO</th>
-                  <th className="border px-2">NO RT</th>
-                  <th className="border px-2">LAKI-LAKI</th>
-                  <th className="border px-2">PEREMPUAN</th>
-                  <th className="border px-2">JUMLAH</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(rts).map(([rt, count], index) => {
-                  const total = count["Laki-laki"] + count["Perempuan"];
-                  totalMale += count["Laki-laki"];
-                  totalFemale += count["Perempuan"];
-                  return (
-                    <tr key={rt} className="hover:bg-gray-100 text-center">
-                      <td className="border px-2">{index + 1}</td>
-                      <td className="border px-2">RT. {rt}</td>
-                      <td className="border px-2">{count["Laki-laki"]}</td>
-                      <td className="border px-2">{count["Perempuan"]}</td>
-                      <td className="border px-2">{total}</td>
-                    </tr>
-                  );
-                })}
-                <tr className="font-bold bg-gray-100 text-center">
-                  <td className="border px-2" colSpan={2}>
-                    JUMLAH RW : {rw}
-                  </td>
-                  <td className="border px-2">{totalMale}</td>
-                  <td className="border px-2">{totalFemale}</td>
-                  <td className="border px-2">{totalMale + totalFemale}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        );
-      })}
+        {Object.entries(grouped).map(([rw, rts], idx) => {
+          let totalMale = 0,
+            totalFemale = 0;
+          return (
+            <div key={rw} className="mb-6 border rounded p-2 bg-white shadow">
+              <h3 className="font-semibold text-md mb-2">NO RW : {rw}</h3>
+              <table className="table-auto w-full text-sm border">
+                <thead className="bg-gray-200">
+                  <tr>
+                    <th className="border px-2">NO</th>
+                    <th className="border px-2">NO RT</th>
+                    <th className="border px-2">LAKI-LAKI</th>
+                    <th className="border px-2">PEREMPUAN</th>
+                    <th className="border px-2">JUMLAH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(rts).map(([rt, count], index) => {
+                    const total = count["Laki-laki"] + count["Perempuan"];
+                    totalMale += count["Laki-laki"];
+                    totalFemale += count["Perempuan"];
+                    return (
+                      <tr key={rt} className="hover:bg-gray-100 text-center">
+                        <td className="border px-2">{index + 1}</td>
+                        <td className="border px-2">RT. {rt}</td>
+                        <td className="border px-2">{count["Laki-laki"]}</td>
+                        <td className="border px-2">{count["Perempuan"]}</td>
+                        <td className="border px-2">{total}</td>
+                      </tr>
+                    );
+                  })}
+                  <tr className="font-bold bg-gray-100 text-center">
+                    <td className="border px-2" colSpan={2}>
+                      JUMLAH RW : {rw}
+                    </td>
+                    <td className="border px-2">{totalMale}</td>
+                    <td className="border px-2">{totalFemale}</td>
+                    <td className="border px-2">{totalMale + totalFemale}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

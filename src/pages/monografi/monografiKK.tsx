@@ -174,87 +174,92 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold text-gray-800">
-          Monografi Kepala Keluarga
-        </h1>
-        <button
-          onClick={generatePDF}
-          className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded"
-        >
-          Download PDF
-        </button>
+    <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+      <div className="space-y-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-xl font-bold text-gray-800">
+            Monografi Kepala Keluarga
+          </h1>
+          <button
+            onClick={generatePDF}
+            className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded"
+          >
+            Download PDF
+          </button>
+        </div>
+
+        {Object.entries(grouped).map(([rw, rtData]) => {
+          let totalL = 0;
+          let totalP = 0;
+
+          return (
+            <div
+              key={rw}
+              className="bg-white rounded shadow-md overflow-x-auto"
+            >
+              <h2 className="text-lg font-semibold px-4 py-2">
+                NO RW : {rw.padStart(3, "0")}
+              </h2>
+              <table className="min-w-full text-sm border border-collapse">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border px-3 py-2" rowSpan={2}>
+                      NO
+                    </th>
+                    <th className="border px-3 py-2" rowSpan={2}>
+                      NO RT
+                    </th>
+                    <th className="border px-3 py-2" colSpan={3}>
+                      JUMLAH KEPALA KELUARGA
+                    </th>
+                  </tr>
+                  <tr>
+                    <th className="border px-3 py-1">LAKI-LAKI</th>
+                    <th className="border px-3 py-1">PEREMPUAN</th>
+                    <th className="border px-3 py-1">JUMLAH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(rtData).map(([rt, list], idx) => {
+                    const kepala = list.filter(
+                      (r) => r.shdk === "Kepala Keluarga"
+                    );
+                    const l = kepala.filter(
+                      (r) => r.gender === "Laki-laki"
+                    ).length;
+                    const p = kepala.filter(
+                      (r) => r.gender === "Perempuan"
+                    ).length;
+                    totalL += l;
+                    totalP += p;
+                    return (
+                      <tr key={rt} className="text-center">
+                        <td className="border px-2 py-1">{idx + 1}</td>
+                        <td className="border px-2 py-1">
+                          RT. {rt.padStart(3, "0")}
+                        </td>
+                        <td className="border px-2 py-1">{l}</td>
+                        <td className="border px-2 py-1">{p}</td>
+                        <td className="border px-2 py-1 font-semibold">
+                          {l + p}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  <tr className="font-bold bg-gray-200">
+                    <td className="border px-2 py-1" colSpan={2}>
+                      JUMLAH RW : {rw.padStart(3, "0")}
+                    </td>
+                    <td className="border px-2 py-1">{totalL}</td>
+                    <td className="border px-2 py-1">{totalP}</td>
+                    <td className="border px-2 py-1">{totalL + totalP}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          );
+        })}
       </div>
-
-      {Object.entries(grouped).map(([rw, rtData]) => {
-        let totalL = 0;
-        let totalP = 0;
-
-        return (
-          <div key={rw} className="bg-white rounded shadow-md overflow-x-auto">
-            <h2 className="text-lg font-semibold px-4 py-2">
-              NO RW : {rw.padStart(3, "0")}
-            </h2>
-            <table className="min-w-full text-sm border border-collapse">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border px-3 py-2" rowSpan={2}>
-                    NO
-                  </th>
-                  <th className="border px-3 py-2" rowSpan={2}>
-                    NO RT
-                  </th>
-                  <th className="border px-3 py-2" colSpan={3}>
-                    JUMLAH KEPALA KELUARGA
-                  </th>
-                </tr>
-                <tr>
-                  <th className="border px-3 py-1">LAKI-LAKI</th>
-                  <th className="border px-3 py-1">PEREMPUAN</th>
-                  <th className="border px-3 py-1">JUMLAH</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(rtData).map(([rt, list], idx) => {
-                  const kepala = list.filter(
-                    (r) => r.shdk === "Kepala Keluarga"
-                  );
-                  const l = kepala.filter(
-                    (r) => r.gender === "Laki-laki"
-                  ).length;
-                  const p = kepala.filter(
-                    (r) => r.gender === "Perempuan"
-                  ).length;
-                  totalL += l;
-                  totalP += p;
-                  return (
-                    <tr key={rt} className="text-center">
-                      <td className="border px-2 py-1">{idx + 1}</td>
-                      <td className="border px-2 py-1">
-                        RT. {rt.padStart(3, "0")}
-                      </td>
-                      <td className="border px-2 py-1">{l}</td>
-                      <td className="border px-2 py-1">{p}</td>
-                      <td className="border px-2 py-1 font-semibold">
-                        {l + p}
-                      </td>
-                    </tr>
-                  );
-                })}
-                <tr className="font-bold bg-gray-200">
-                  <td className="border px-2 py-1" colSpan={2}>
-                    JUMLAH RW : {rw.padStart(3, "0")}
-                  </td>
-                  <td className="border px-2 py-1">{totalL}</td>
-                  <td className="border px-2 py-1">{totalP}</td>
-                  <td className="border px-2 py-1">{totalL + totalP}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        );
-      })}
     </div>
   );
 };
