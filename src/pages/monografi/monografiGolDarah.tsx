@@ -353,7 +353,7 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
         className="mb-8 bg-white rounded-lg shadow-sm overflow-hidden"
       >
         {/* RW Header */}
-        <div className="bg-blue-600 px-4 py-3">
+        <div className="bg-green-900 px-4 py-3">
           <h2 className="text-lg font-semibold text-white">
             RW {rw.padStart(3, "0")}
           </h2>
@@ -380,14 +380,14 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
                   <th
                     key={type}
                     colSpan={3}
-                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider border bg-blue-100"
+                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider border bg-green-100"
                   >
                     {type}
                   </th>
                 ))}
                 <th
                   colSpan={3}
-                  className="px-3 py-3 text-center font-medium text-gray-700 uppercase tracking-wider border bg-blue-200"
+                  className="px-3 py-3 text-center font-medium text-gray-700 uppercase tracking-wider border bg-green-200"
                 >
                   TOTAL
                 </th>
@@ -396,30 +396,30 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
                 {BLOOD_TYPES.flatMap((type) => [
                   <th
                     key={`${type}-l`}
-                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-blue-50"
+                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-green-50"
                   >
                     L
                   </th>,
                   <th
                     key={`${type}-p`}
-                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-blue-50"
+                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-green-50"
                   >
                     P
                   </th>,
                   <th
                     key={`${type}-jml`}
-                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-blue-50"
+                    className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-green-50"
                   >
                     JML
                   </th>,
                 ])}
-                <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-blue-100">
+                <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-green-100">
                   L
                 </th>
-                <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-blue-100">
+                <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-green-100">
                   P
                 </th>
-                <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-blue-100">
+                <th className="px-2 py-2 text-center font-medium text-gray-700 uppercase tracking-wider text-xs border bg-green-100">
                   JML
                 </th>
               </tr>
@@ -504,7 +504,7 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
               })}
 
               {/* RW Total Row */}
-              <tr className="bg-blue-50 font-semibold">
+              <tr className="bg-green-50 font-semibold">
                 <td colSpan={2} className="px-3 py-2 text-center border">
                   TOTAL RW {rw.padStart(3, "0")}
                 </td>
@@ -548,7 +548,7 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
                     </td>,
                     <td
                       key="total-jml"
-                      className="px-2 py-2 text-center font-bold text-blue-700 border"
+                      className="px-2 py-2 text-center font-bold text-green-700 border"
                     >
                       {totalL + totalP}
                     </td>,
@@ -566,12 +566,12 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
       <div className="space-y-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-blue-900">
+          <h1 className="text-2xl font-bold text-green-900">
             Monografi Berdasarkan Golongan Darah
           </h1>
           <button
             onClick={exportPDF}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2  bg-green-900 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

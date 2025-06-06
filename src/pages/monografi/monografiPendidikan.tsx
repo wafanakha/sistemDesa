@@ -275,13 +275,25 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
       <div className="space-y-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-blue-900">
+          <h1 className="text-2xl font-bold text-green-900">
             Monografi Berdasarkan Pendidikan
           </h1>
           <button
             onClick={generatePDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+            className="flex items-center gap-2  bg-green-900 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
             Download PDF
           </button>
         </div>
@@ -292,7 +304,7 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
             className="mb-8 bg-white rounded-lg shadow-sm overflow-hidden"
           >
             {/* RW Header */}
-            <div className="bg-blue-600 px-4 py-3">
+            <div className="bg-green-800 px-4 py-3">
               <h2 className="text-lg font-semibold text-white">
                 RW {rw.padStart(3, "0")}
               </h2>
@@ -453,7 +465,7 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
                   })}
 
                   {/* RW Total Row */}
-                  <tr className="bg-blue-50 font-semibold">
+                  <tr className="bg-green-50 font-semibold">
                     <td colSpan={2} className="px-3 py-2 text-center border">
                       TOTAL RW {rw.padStart(3, "0")}
                     </td>
@@ -511,7 +523,7 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
                         </td>,
                         <td
                           key="total-jml"
-                          className="px-2 py-2 text-center font-bold text-blue-700 border"
+                          className="px-2 py-2 text-center font-bold text-green-700 border"
                         >
                           {totalL + totalP}
                         </td>,

@@ -311,7 +311,7 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
           </h1>
           <button
             onClick={() => generatePDF(residents)}
-            className="flex items-center gap-2 bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2  bg-green-900 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -325,7 +325,7 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
                 clipRule="evenodd"
               />
             </svg>
-            Download PDF (F4)
+            Download PDF
           </button>
         </div>
 

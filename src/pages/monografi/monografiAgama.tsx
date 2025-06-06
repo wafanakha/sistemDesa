@@ -277,7 +277,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           </h1>
           <button
             onClick={generatePDF}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2  bg-green-900 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
