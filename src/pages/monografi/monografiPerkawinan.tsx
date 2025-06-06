@@ -76,8 +76,11 @@ const MonografiStatusPernikahan = ({
     let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
+      doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
+      doc.setTextColor(0);
       doc.text(`NO RW : ${rw}`, 14, y);
+      doc.setFont("helvetica", "normal");
       y += 4;
 
       const body: any[] = [];
@@ -225,28 +228,6 @@ const MonografiStatusPernikahan = ({
             }
           }
         },
-        // columnStyles: {
-        //   0: { cellWidth: 8 },
-        //   1: { cellWidth: 14 },
-        //   ...Object.fromEntries(
-        //     Array.from(
-        //       { length: STATUS_PERNIKAHAN_LIST.length * 3 },
-        //       (_, i) => [2 + i, { cellWidth: 15 }]
-        //     )
-        //   ),
-        //   [2 + STATUS_PERNIKAHAN_LIST.length * 3]: {
-        //     cellWidth: 10,
-        //     fontStyle: "bold",
-        //   },
-        //   [3 + STATUS_PERNIKAHAN_LIST.length * 3]: {
-        //     cellWidth: 10,
-        //     fontStyle: "bold",
-        //   },
-        //   [4 + STATUS_PERNIKAHAN_LIST.length * 3]: {
-        //     cellWidth: 10,
-        //     fontStyle: "bold",
-        //   },
-        // },
         didDrawCell: (data: any) => {
           // Highlight baris total RW
           if (
@@ -265,6 +246,19 @@ const MonografiStatusPernikahan = ({
           }
         },
       });
+
+      const pageCount = (doc as any).internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(
+          `Halaman ${i} dari ${pageCount}`,
+          pageWidth / 2,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "center" }
+        );
+      }
 
       y = (doc as any).lastAutoTable.finalY + 10;
       if (y > 180) {

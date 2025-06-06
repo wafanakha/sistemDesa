@@ -19,7 +19,7 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = () => {
-    const doc = new jsPDF("landscape");
+    const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
@@ -32,12 +32,22 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
     doc.text("DESA/KELURAHAN KEDUNGWRINGIN", pageWidth / 2, 26, {
       align: "center",
     });
-
+    // Title with underline
     doc.setFontSize(13);
-    doc.text("REKAPITULASI JUMLAH KEPALA KELUARGA", pageWidth / 2, 34, {
-      align: "center",
-    });
+    doc.setFont("helvetica", "bold");
+    const title =
+      "REKAPITULASI JUMLAH KEPALA KELUARGA BERDASARKAN JENIS KELAMIN";
+    const titleY = 34;
 
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
@@ -50,7 +60,20 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
     let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
+      doc.setTextColor(0);
+      doc.setFont("helvetica", "bold");
+
+      doc.setFontSize(12);
+      doc.text(`NO RW : ${rw}`, 14, y);
+      doc.setFont("helvetica", "normal");
+
+      y += 4;
+
       const body: any[] = [];
+      const rwTotals: (string | number)[] = [
+        "",
+        `JML RW : ${rw.padStart(3, "0")}`,
+      ];
       let totalL = 0;
       let totalP = 0;
 
@@ -62,15 +85,8 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
         totalL += l;
         totalP += p;
       });
-
-      // RW Total Row
-      body.push([
-        "",
-        `JUMLAH RW : ${rw.padStart(3, "0")}`,
-        totalL,
-        totalP,
-        totalL + totalP,
-      ]);
+      rwTotals.push(totalL, totalP, totalL + totalP);
+      body.push(rwTotals);
 
       (doc as any).autoTable({
         head: [
@@ -92,24 +108,27 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
         body,
         startY: y,
         theme: "grid",
-        headStyles: {
-          fillColor: [80, 80, 80],
-          textColor: 255,
-          fontStyle: "bold",
-        },
         styles: {
-          fontSize: 9,
-          cellPadding: 3,
+          fontSize: 10,
           halign: "center",
           valign: "middle",
+          cellPadding: 1,
+          lineColor: [0, 0, 0], // Set grid lines to black
+          lineWidth: 0.2,
+          textColor: 0,
         },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          fontStyle: "bold",
+        },
         didDrawCell: (data: any) => {
           if (
             data.row.index === body.length - 1 &&
             data.row.raw[1]?.toString().includes("JUMLAH RW")
           ) {
-            doc.setFillColor(220, 240, 255);
+            doc.setFillColor(225, 235, 255);
+
             doc.rect(
               data.cell.x,
               data.cell.y,
@@ -121,7 +140,26 @@ const MonografiKepalaKeluarga = ({ residents }: { residents: Resident[] }) => {
             doc.setFont("helvetica", "bold");
           }
         },
+        didParseCell: (data: any) => {
+          // Highlight the last row (summary row) with gray background
+          if (data.row.index === body.length - 1) {
+            data.cell.styles.fillColor = [221, 221, 221]; // Light gray
+            data.cell.styles.fontStyle = "bold"; // Optional: make text bold
+          }
+        },
       });
+      const pageCount = (doc as any).internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(
+          `Halaman ${i} dari ${pageCount}`,
+          pageWidth / 2,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "center" }
+        );
+      }
 
       y = (doc as any).lastAutoTable.finalY + 10;
       if (y > 180) {

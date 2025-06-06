@@ -76,8 +76,12 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
     let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData]) => {
+      doc.setFont("helvetica", "bold");
+
+      doc.setTextColor(0);
       doc.setFontSize(12);
       doc.text(`NO RW : ${rw}`, 14, y);
+      doc.setFont("helvetica", "normal");
       y += 4;
 
       const body: any[] = [];
@@ -241,6 +245,19 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
           }
         },
       });
+
+      const pageCount = (doc as any).internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(
+          `Halaman ${i} dari ${pageCount}`,
+          pageWidth / 2,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "center" }
+        );
+      }
 
       y = (doc as any).lastAutoTable.finalY + 10;
       if (y > 180) {
