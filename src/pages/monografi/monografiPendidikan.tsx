@@ -31,7 +31,7 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = () => {
-    const doc = new jsPDF("landscape");
+    const doc = new jsPDF("landscape", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
@@ -50,12 +50,18 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
     // Title with underline
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    doc.text(
-      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN PENDIDIKAN",
-      pageWidth / 2,
-      34,
-      { align: "center" }
-    );
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN PENDIDIKAN";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
+
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
@@ -139,7 +145,7 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
             styles: { halign: "center", valign: "middle" },
           })),
           {
-            content: "TOTAL",
+            content: "JUMLAH",
             colSpan: 3,
             styles: { halign: "center", valign: "middle" },
           },
@@ -148,11 +154,23 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
           ...PENDIDIKAN_LIST.flatMap(() => [
             { content: "L" },
             { content: "P" },
-            { content: "JML" },
+            {
+              content: "L+P",
+              styles: {
+                fillColor: [255, 213, 153], // yellow highlight
+                fontStyle: "bold",
+              },
+            },
           ]),
           { content: "L" },
           { content: "P" },
-          { content: "JML" },
+          {
+            content: "L+P",
+            styles: {
+              fillColor: [255, 213, 153], // yellow highlight
+              fontStyle: "bold",
+            },
+          },
         ],
       ];
 
@@ -160,19 +178,21 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
         head,
         body,
         startY: y,
-        margin: { left: 5, right: 5 },
+        margin: { left: 10, right: 10 },
         styles: {
           fontSize: 7,
           halign: "center",
           valign: "middle",
-          cellPadding: 2,
+          cellPadding: 1,
+          lineColor: [0, 0, 0], // Set grid lines to black
+          lineWidth: 0.2,
+          textColor: 0,
         },
         headStyles: {
-          fillColor: [102, 126, 234],
-          textColor: 255,
+          fillColor: [220, 220, 220],
+          textColor: 0,
           fontStyle: "bold",
         },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
         theme: "grid",
         didDrawCell: (data: any) => {
           if (
@@ -191,25 +211,33 @@ const MonografiPendidikan = ({ residents }: { residents: Resident[] }) => {
           }
         },
         didParseCell: (data: any) => {
-          // More precise JML column detection
           const isJMLColumn =
             data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
 
-          if (data.section === "body" && isJMLColumn) {
-            data.cell.styles.fillColor = [255, 239, 184];
-            data.cell.styles.fontStyle = "bold";
-          }
-
-          // RW summary row styling
-          if (
+          const isJMLRWRow =
             data.section === "body" &&
             data.row.index === body.length - 1 &&
             typeof data.row.raw?.[1] === "string" &&
-            data.row.raw[1].toString().includes("JML RW")
-          ) {
-            data.cell.styles.fillColor = [220, 240, 255];
+            data.row.raw[1].toString().includes("JML RW");
+
+          // Highlight "L+P" columns in any row
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 213, 153]; // Yellowish
+            data.cell.styles.fontStyle = "bold";
+          }
+
+          // Additionally style the entire "JML RW" row
+          if (isJMLRWRow) {
             data.cell.styles.textColor = [0, 0, 0];
             data.cell.styles.fontStyle = "bold";
+
+            // Optional: apply a base light grey background
+            data.cell.styles.fillColor = [220, 220, 220];
+
+            // If it's also a JML column, override it with yellow
+            if (isJMLColumn) {
+              data.cell.styles.fillColor = [255, 213, 153];
+            }
           }
         },
       });

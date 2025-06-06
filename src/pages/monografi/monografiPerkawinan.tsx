@@ -30,7 +30,7 @@ const MonografiStatusPernikahan = ({
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = () => {
-    const doc = new jsPDF("landscape");
+    const doc = new jsPDF("landscape", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
@@ -49,12 +49,19 @@ const MonografiStatusPernikahan = ({
     // Title with underline
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    doc.text(
-      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN STATUS PERNIKAHAN",
-      pageWidth / 2,
-      34,
-      { align: "center" }
-    );
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
+
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
@@ -138,7 +145,7 @@ const MonografiStatusPernikahan = ({
             styles: { halign: "center", valign: "middle" },
           })),
           {
-            content: "TOTAL",
+            content: "JUMLAH",
             colSpan: 3,
             styles: { halign: "center", valign: "middle" },
           },
@@ -147,11 +154,23 @@ const MonografiStatusPernikahan = ({
           ...STATUS_PERNIKAHAN_LIST.flatMap(() => [
             { content: "L" },
             { content: "P" },
-            { content: "JML" },
+            {
+              content: "L+P",
+              styles: {
+                fillColor: [255, 225, 160], // yellow highlight
+                fontStyle: "bold",
+              },
+            },
           ]),
           { content: "L" },
           { content: "P" },
-          { content: "JML" },
+          {
+            content: "L+P",
+            styles: {
+              fillColor: [255, 225, 160], // yellow highlight
+              fontStyle: "bold",
+            },
+          },
         ],
       ];
 
@@ -159,71 +178,82 @@ const MonografiStatusPernikahan = ({
         head,
         body,
         startY: y,
-        margin: { left: 5, right: 5 },
+        margin: { left: 15, right: 15 },
         styles: {
-          fontSize: 7,
+          fontSize: 10,
           halign: "center",
           valign: "middle",
-          cellPadding: 2,
+          cellPadding: 1,
+          lineColor: [0, 0, 0], // Set grid lines to black
+          lineWidth: 0.2,
+          textColor: 0,
         },
         headStyles: {
-          fillColor: [34, 197, 94], // Green color
-          textColor: 255,
+          fillColor: [220, 220, 220],
+          textColor: 0,
           fontStyle: "bold",
         },
         alternateRowStyles: { fillColor: [245, 245, 245] },
         theme: "grid",
         didParseCell: (data: any) => {
-          // More precise JML column detection
           const isJMLColumn =
             data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
 
-          if (data.section === "body" && isJMLColumn) {
-            data.cell.styles.fillColor = [255, 239, 184];
-            data.cell.styles.fontStyle = "bold";
-          }
-
-          // RW summary row styling
-          if (
+          const isJMLRWRow =
             data.section === "body" &&
             data.row.index === body.length - 1 &&
             typeof data.row.raw?.[1] === "string" &&
-            data.row.raw[1].toString().includes("JML RW")
-          ) {
-            data.cell.styles.fillColor = [220, 240, 255];
-            data.cell.styles.textColor = [0, 0, 0];
+            data.row.raw[1].toString().includes("JML RW");
+
+          // Highlight "L+P" columns in any row
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 225, 160]; // Yellowish
             data.cell.styles.fontStyle = "bold";
           }
+
+          // Additionally style the entire "JML RW" row
+          if (isJMLRWRow) {
+            data.cell.styles.textColor = [0, 0, 0];
+            data.cell.styles.fontStyle = "bold";
+
+            // Optional: apply a base light grey background
+            data.cell.styles.fillColor = [220, 220, 220];
+
+            // If it's also a JML column, override it with yellow
+            if (isJMLColumn) {
+              data.cell.styles.fillColor = [255, 225, 160];
+            }
+          }
         },
-        columnStyles: {
-          0: { cellWidth: 8 },
-          1: { cellWidth: 14 },
-          ...Object.fromEntries(
-            Array.from(
-              { length: STATUS_PERNIKAHAN_LIST.length * 3 },
-              (_, i) => [2 + i, { cellWidth: 15 }]
-            )
-          ),
-          [2 + STATUS_PERNIKAHAN_LIST.length * 3]: {
-            cellWidth: 10,
-            fontStyle: "bold",
-          },
-          [3 + STATUS_PERNIKAHAN_LIST.length * 3]: {
-            cellWidth: 10,
-            fontStyle: "bold",
-          },
-          [4 + STATUS_PERNIKAHAN_LIST.length * 3]: {
-            cellWidth: 10,
-            fontStyle: "bold",
-          },
-        },
+        // columnStyles: {
+        //   0: { cellWidth: 8 },
+        //   1: { cellWidth: 14 },
+        //   ...Object.fromEntries(
+        //     Array.from(
+        //       { length: STATUS_PERNIKAHAN_LIST.length * 3 },
+        //       (_, i) => [2 + i, { cellWidth: 15 }]
+        //     )
+        //   ),
+        //   [2 + STATUS_PERNIKAHAN_LIST.length * 3]: {
+        //     cellWidth: 10,
+        //     fontStyle: "bold",
+        //   },
+        //   [3 + STATUS_PERNIKAHAN_LIST.length * 3]: {
+        //     cellWidth: 10,
+        //     fontStyle: "bold",
+        //   },
+        //   [4 + STATUS_PERNIKAHAN_LIST.length * 3]: {
+        //     cellWidth: 10,
+        //     fontStyle: "bold",
+        //   },
+        // },
         didDrawCell: (data: any) => {
           // Highlight baris total RW
           if (
             data.row.index === body.length - 1 &&
             data.row.raw[1] === "JML RW"
           ) {
-            doc.setFillColor(220, 252, 231); // Light green
+            doc.setFillColor(225, 235, 255); // Light green
             doc.rect(
               data.cell.x,
               data.cell.y,

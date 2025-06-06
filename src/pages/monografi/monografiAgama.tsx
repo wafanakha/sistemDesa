@@ -29,7 +29,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = () => {
-    const doc = new jsPDF("landscape");
+    const doc = new jsPDF("landscape", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
@@ -48,12 +48,18 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
     // Title with underline
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    doc.text(
-      "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA",
-      pageWidth / 2,
-      34,
-      { align: "center" }
-    );
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
@@ -148,7 +154,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
             {
               content: "L+P",
               styles: {
-                fillColor: [255, 239, 184], // yellow highlight
+                fillColor: [255, 225, 160], // yellow highlight
                 fontStyle: "bold",
               },
             },
@@ -158,7 +164,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           {
             content: "L+P",
             styles: {
-              fillColor: [255, 239, 184], // yellow highlight
+              fillColor: [255, 225, 160], // yellow highlight
               fontStyle: "bold",
             },
           },
@@ -169,9 +175,9 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
         head,
         body,
         startY: y,
-        margin: { left: 2, right: 2 },
+        margin: { left: 20, right: 20 },
         styles: {
-          fontSize: 7,
+          fontSize: 10,
           halign: "center",
           valign: "middle",
           cellPadding: 1,
@@ -180,7 +186,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           textColor: 0,
         },
         headStyles: {
-          fillColor: [230, 230, 230],
+          fillColor: [220, 220, 220],
           textColor: 0,
           fontStyle: "bold",
         },
@@ -213,7 +219,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
 
           // Highlight "L+P" columns in any row
           if (data.section === "body" && isJMLColumn) {
-            data.cell.styles.fillColor = [255, 239, 184]; // Yellowish
+            data.cell.styles.fillColor = [255, 225, 160]; // Yellowish
             data.cell.styles.fontStyle = "bold";
           }
 
@@ -223,11 +229,11 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
             data.cell.styles.fontStyle = "bold";
 
             // Optional: apply a base light grey background
-            data.cell.styles.fillColor = [230, 230, 230];
+            data.cell.styles.fillColor = [220, 220, 220];
 
             // If it's also a JML column, override it with yellow
             if (isJMLColumn) {
-              data.cell.styles.fillColor = [255, 239, 184];
+              data.cell.styles.fillColor = [255, 225, 160];
             }
           }
         },
