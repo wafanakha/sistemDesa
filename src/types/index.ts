@@ -23,10 +23,29 @@ export interface Resident {
   education:
     | "Tidak/belum sekolah"
     | "Belum Tamat SD/Sederajat"
+    | "Tamat SD/Sederajat"
     | "SLTP/Sederajat"
-    | "Diploma IV/Strata1";
+    | "SLTA/Sederajat"
+    | "Diploma IV/Strata1"
+    | "Diploma I/II"
+    | "Akademi/Diploma III/S. Muda"
+    | "Strata II"
+    | "Strata III";
   religion: "Islam" | "Protestan" | "Katolik" | "Hindu" | "Buddha" | "Konghucu";
-  bloodType?: "A" | "B" | "O" | "AB";
+  bloodType?:
+    | "A"
+    | "B"
+    | "O"
+    | "AB"
+    | "A+"
+    | "A-"
+    | "B+"
+    | "B-"
+    | "AB+"
+    | "AB-"
+    | "O+"
+    | "O-"
+    | "TIDAK TAHU";
   occupation: string;
   physicalDisability?:
     | "Tidak ada"
