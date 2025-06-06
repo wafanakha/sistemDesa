@@ -38,35 +38,6 @@ const groupResidentsByRWRT = (residents: Resident[]) => {
   return result;
 };
 
-const getAgeGroup = (age: number): string => {
-  if (isNaN(age)) return "unknown";
-
-  const ranges = [
-    [0, 4],
-    [5, 9],
-    [10, 14],
-    [15, 19],
-    [20, 24],
-    [25, 29],
-    [30, 34],
-    [35, 39],
-    [40, 44],
-    [45, 49],
-    [50, 54],
-    [55, 59],
-    [60, 64],
-    [65, 69],
-    [70, 74],
-  ];
-
-  for (const [min, max] of ranges) {
-    if (age >= min && age <= max) return `${min}-${max}`;
-  }
-
-  if (age >= 75) return ">=75";
-  return "unknown";
-};
-
 const getAge = (birthDate: string): number => {
   const birth = new Date(birthDate);
   const today = new Date();
@@ -82,101 +53,253 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
   const grouped = groupResidentsByRWRT(residents);
 
   const generatePDF = (residents: Resident[]) => {
-    const doc = new jsPDF("l", "mm", "f4"); // landscape, mm, F4 size
+    const doc = new jsPDF("l", "mm", "a4"); // landscape, mm, F4 size
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text("Monografi Berdasarkan Kelompok Umur", 10, 10);
 
+    // Pemerintah heading
+    doc.text("PEMERINTAH KABUPATEN BANYUMAS", pageWidth / 2, 14, {
+      align: "center",
+    });
+    doc.text("KECAMATAN PATIKRAJA", pageWidth / 2, 20, {
+      align: "center",
+    });
+    doc.text("DESA/KELURAHAN KEDUNGWRINGIN", pageWidth / 2, 26, {
+      align: "center",
+    });
+
+    // Title with underline
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN UMUR";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      `Tgl. ${new Date().toLocaleDateString("id-ID")}`,
+      pageWidth / 2,
+      40,
+      {
+        align: "center",
+      }
+    );
     const grouped = groupResidentsByRWRT(residents);
-    let yOffset = 20;
+    let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData], rwIndex) => {
-      doc.text(`RW ${rw.padStart(3, "0")}`, 10, yOffset);
-      yOffset += 6;
+      doc.text(`RW ${rw.padStart(3, "0")}`, 10, y);
+      y += 6;
 
-      const headerRow = [
-        "NO",
-        "RT",
-        ...AGE_GROUPS.flatMap(([min, max]) => {
-          const label = max === null ? "≥75" : `${min}-${max}`;
-          return [`${label} L`, `${label} P`, `${label} JML`];
-        }),
-        "L TOTAL",
-        "P TOTAL",
-        "JML TOTAL",
-      ];
+      const body: any[] = [];
 
-      const rows: any[] = [];
-
-      Object.entries(rtData).forEach(([rt, list], idx) => {
-        const row: any[] = [];
-        row.push(idx + 1);
-        row.push(`RT ${rt.padStart(3, "0")}`);
+      Object.entries(rtData).forEach(([rt], i) => {
+        const list = rtData[rt];
+        const row: any[] = [i + 1, `RT.${rt.padStart(3, "0")}`];
 
         AGE_GROUPS.forEach(([min, max]) => {
-          const group = list.filter((r) => {
+          const l = list.filter((r) => {
             const age = getAge(r.birthDate);
-            return age >= min && (max === null || age <= max);
-          });
-          const l = group.filter((r) => r.gender === "Laki-laki").length;
-          const p = group.filter((r) => r.gender === "Perempuan").length;
+            return (
+              r.gender === "Laki-laki" &&
+              age >= min &&
+              (max === null || age <= max)
+            );
+          }).length;
+
+          const p = list.filter((r) => {
+            const age = getAge(r.birthDate);
+            return (
+              r.gender === "Perempuan" &&
+              age >= min &&
+              (max === null || age <= max)
+            );
+          }).length;
+
           row.push(l, p, l + p);
         });
 
-        const totalL = list.filter((r) => r.gender === "Laki-laki").length;
-        const totalP = list.filter((r) => r.gender === "Perempuan").length;
-        row.push(totalL, totalP, totalL + totalP);
-
-        rows.push(row);
+        const lTotal = list.filter((r) => r.gender === "Laki-laki").length;
+        const pTotal = list.filter((r) => r.gender === "Perempuan").length;
+        row.push(lTotal, pTotal, lTotal + pTotal);
+        body.push(row);
       });
 
-      // Add total row for RW
-      const totalRow: any[] = ["", `TOTAL RW ${rw.padStart(3, "0")}`];
+      // Add RW totals row
+      const rwTotals: (string | number)[] = [
+        "",
+        `JML RW : ${rw.padStart(3, "0")}`,
+      ];
+
+      let totalL = 0;
+      let totalP = 0;
+
       AGE_GROUPS.forEach(([min, max]) => {
-        const group = Object.values(rtData)
+        const l = Object.values(rtData)
           .flat()
           .filter((r) => {
             const age = getAge(r.birthDate);
-            return age >= min && (max === null || age <= max);
-          });
-        const l = group.filter((r) => r.gender === "Laki-laki").length;
-        const p = group.filter((r) => r.gender === "Perempuan").length;
-        totalRow.push(l, p, l + p);
+            return (
+              r.gender === "Laki-laki" &&
+              age >= min &&
+              (max === null || age <= max)
+            );
+          }).length;
+
+        const p = Object.values(rtData)
+          .flat()
+          .filter((r) => {
+            const age = getAge(r.birthDate);
+            return (
+              r.gender === "Perempuan" &&
+              age >= min &&
+              (max === null || age <= max)
+            );
+          }).length;
+
+        rwTotals.push(l, p, l + p);
+        totalL += l;
+        totalP += p;
       });
 
-      const allResidents = Object.values(rtData).flat();
-      const totalL = allResidents.filter(
-        (r) => r.gender === "Laki-laki"
-      ).length;
-      const totalP = allResidents.filter(
-        (r) => r.gender === "Perempuan"
-      ).length;
-      totalRow.push(totalL, totalP, totalL + totalP);
+      rwTotals.push(totalL, totalP, totalL + totalP);
+      body.push(rwTotals);
 
-      rows.push(totalRow);
+      // Create the header structure
+      const head = [
+        [
+          {
+            content: "NO",
+            rowSpan: 2,
+            styles: { valign: "middle", halign: "center" },
+          },
+          {
+            content: "NO RT",
+            rowSpan: 2,
+            styles: { valign: "middle", halign: "center" },
+          },
+          ...AGE_GROUPS.map(([min, max]) => ({
+            content: max == null ? `>= ${min}` : `${min}-${max}`,
+            colSpan: 3,
+            styles: { halign: "center", valign: "middle" },
+          })),
+          {
+            content: "JUMLAH",
+            colSpan: 3,
+            styles: { halign: "center", valign: "middle" },
+          },
+        ],
+        [
+          ...AGE_GROUPS.flatMap(() => [
+            { content: "L" },
+            { content: "P" },
+            {
+              content: "L+P",
+              styles: {
+                fillColor: [255, 225, 160], // yellow highlight
+                fontStyle: "bold",
+              },
+            },
+          ]),
+          { content: "L" },
+          { content: "P" },
+          {
+            content: "L+P",
+            styles: {
+              fillColor: [255, 225, 160], // yellow highlight
+              fontStyle: "bold",
+            },
+          },
+        ],
+      ];
 
       (doc as any).autoTable({
-        startY: yOffset,
-        head: [headerRow],
-        body: rows,
-        theme: "grid",
-        headStyles: { fillColor: [34, 139, 34] },
+        head,
+        body,
+        startY: y,
+        margin: { left: 5, right: 5 },
         styles: {
-          fontSize: 6,
+          fontSize: 8,
+          halign: "center",
+          valign: "middle",
           cellPadding: 1,
+          lineColor: [0, 0, 0], // Set grid lines to black
+          lineWidth: 0.2,
+          textColor: 0,
         },
-        columnStyles: {
-          0: { cellWidth: 10 }, // NO
-          1: { cellWidth: 20 }, // RT
-          // Optionally, compress other columns to fit
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          fontStyle: "bold",
         },
-        margin: { left: 10, right: 10 },
-        pageBreak: "auto",
+        theme: "grid",
+        didDrawCell: (data: any) => {
+          if (
+            data.row.index === body.length - 1 &&
+            data.row.raw[1] === "JML RW"
+          ) {
+            doc.setFillColor(225, 235, 255);
+            doc.rect(
+              data.cell.x,
+              data.cell.y,
+              data.cell.width,
+              data.cell.height,
+              "F"
+            );
+            doc.setTextColor(0, 0, 0);
+          }
+        },
+        didParseCell: (data: any) => {
+          const isJMLColumn =
+            data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
+
+          const isJMLRWRow =
+            data.section === "body" &&
+            data.row.index === body.length - 1 &&
+            typeof data.row.raw?.[1] === "string" &&
+            data.row.raw[1].toString().includes("JML RW");
+
+          // Highlight "L+P" columns in any row
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 225, 160]; // Yellowish
+            data.cell.styles.fontStyle = "bold";
+          }
+
+          // Additionally style the entire "JML RW" row
+          if (isJMLRWRow) {
+            data.cell.styles.textColor = [0, 0, 0];
+            data.cell.styles.fontStyle = "bold";
+
+            // Optional: apply a base light grey background
+            data.cell.styles.fillColor = [220, 220, 220];
+
+            // If it's also a JML column, override it with yellow
+            if (isJMLColumn) {
+              data.cell.styles.fillColor = [255, 225, 160];
+            }
+          }
+        },
       });
 
-      yOffset = (doc as any).lastAutoTable.finalY + 10;
+      y = (doc as any).lastAutoTable.finalY + 10;
+      if (y > 180) {
+        doc.addPage();
+        y = 20;
+      }
     });
 
-    doc.save("monografi-umur.pdf");
+    doc.save(`monografi-umur-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
   return (
