@@ -136,7 +136,7 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
             styles: { halign: "center", valign: "middle" },
           })),
           {
-            content: "TOTAL",
+            content: "JUMLAH",
             colSpan: 3,
             styles: { halign: "center", valign: "middle" },
           },
@@ -145,11 +145,23 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
           ...AGAMA_LIST.flatMap(() => [
             { content: "L" },
             { content: "P" },
-            { content: "JML" },
+            {
+              content: "L+P",
+              styles: {
+                fillColor: [255, 239, 184], // yellow highlight
+                fontStyle: "bold",
+              },
+            },
           ]),
           { content: "L" },
           { content: "P" },
-          { content: "JML" },
+          {
+            content: "L+P",
+            styles: {
+              fillColor: [255, 239, 184], // yellow highlight
+              fontStyle: "bold",
+            },
+          },
         ],
       ];
 
@@ -157,54 +169,66 @@ const MonografiAgama = ({ residents }: { residents: Resident[] }) => {
         head,
         body,
         startY: y,
-        margin: "auto", // Center table
-        tableWidth: "auto", // Fit to content
+        margin: { left: 2, right: 2 },
         styles: {
           fontSize: 7,
           halign: "center",
           valign: "middle",
-          cellPadding: 2,
+          cellPadding: 1,
+          lineColor: [0, 0, 0], // Set grid lines to black
+          lineWidth: 0.2,
+          textColor: 0,
         },
         headStyles: {
-          fillColor: [0, 122, 204],
-          textColor: 255,
+          fillColor: [230, 230, 230],
+          textColor: 0,
           fontStyle: "bold",
         },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
         theme: "grid",
-        columnStyles: {
-          0: { cellWidth: 8 },
-          1: { cellWidth: 14 },
-          ...Object.fromEntries(
-            Array.from({ length: AGAMA_LIST.length * 3 }, (_, i) => [
-              2 + i,
-              { cellWidth: 10 },
-            ])
-          ),
-          [2 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
-          [3 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
-          [4 + AGAMA_LIST.length * 3]: { cellWidth: 10, fontStyle: "bold" },
+        didDrawCell: (data: any) => {
+          if (
+            data.row.index === body.length - 1 &&
+            data.row.raw[1] === "JML RW"
+          ) {
+            doc.setFillColor(225, 235, 255);
+            doc.rect(
+              data.cell.x,
+              data.cell.y,
+              data.cell.width,
+              data.cell.height,
+              "F"
+            );
+            doc.setTextColor(0, 0, 0);
+          }
         },
         didParseCell: (data: any) => {
-          // More precise JML column detection
           const isJMLColumn =
             data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
 
-          if (data.section === "body" && isJMLColumn) {
-            data.cell.styles.fillColor = [255, 239, 184];
-            data.cell.styles.fontStyle = "bold";
-          }
-
-          // RW summary row styling
-          if (
+          const isJMLRWRow =
             data.section === "body" &&
             data.row.index === body.length - 1 &&
             typeof data.row.raw?.[1] === "string" &&
-            data.row.raw[1].toString().includes("JML RW")
-          ) {
-            data.cell.styles.fillColor = [220, 240, 255];
+            data.row.raw[1].toString().includes("JML RW");
+
+          // Highlight "L+P" columns in any row
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 239, 184]; // Yellowish
+            data.cell.styles.fontStyle = "bold";
+          }
+
+          // Additionally style the entire "JML RW" row
+          if (isJMLRWRow) {
             data.cell.styles.textColor = [0, 0, 0];
             data.cell.styles.fontStyle = "bold";
+
+            // Optional: apply a base light grey background
+            data.cell.styles.fillColor = [230, 230, 230];
+
+            // If it's also a JML column, override it with yellow
+            if (isJMLColumn) {
+              data.cell.styles.fillColor = [255, 239, 184];
+            }
           }
         },
       });
