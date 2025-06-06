@@ -41,62 +41,56 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
   ) => list.filter((r) => r.bloodType === type && r.gender === gender).length;
 
   const exportPDF = () => {
-    const doc = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-    });
-
-    // Set document metadata
-    doc.setProperties({
-      title: "Monografi Golongan Darah",
-      subject: "Data Penduduk Berdasarkan Golongan Darah",
-      author: "Sistem Informasi Desa",
-    });
-
-    // Add header
-    doc.setFontSize(16);
-    doc.setTextColor(33, 37, 41);
+    const doc = new jsPDF("landscape", "mm", "a4");
+    const pageWidth = doc.internal.pageSize.getWidth();
     doc.setFont("helvetica", "bold");
-    doc.text("MONOGRAFI BERDASARKAN GOLONGAN DARAH", 14, 15);
+    doc.setFontSize(12);
 
-    // Add subtitle
-    doc.setFontSize(10);
-    doc.setTextColor(108, 117, 125);
+    // Pemerintah heading
+    doc.text("PEMERINTAH KABUPATEN BANYUMAS", pageWidth / 2, 14, {
+      align: "center",
+    });
+    doc.text("KECAMATAN PATIKRAJA", pageWidth / 2, 20, {
+      align: "center",
+    });
+    doc.text("DESA/KELURAHAN KEDUNGWRINGIN", pageWidth / 2, 26, {
+      align: "center",
+    });
+
+    // Title with underline
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN GOLONGAN DARAH";
+    const titleY = 34;
+
+    doc.text(title, pageWidth / 2, titleY, { align: "center" });
+
+    // Draw underline manually
+    const textWidth = doc.getTextWidth(title);
+    const lineXStart = (pageWidth - textWidth) / 2;
+    const lineXEnd = lineXStart + textWidth;
+
+    doc.setLineWidth(0.5);
+    doc.line(lineXStart, titleY + 1.5, lineXEnd, titleY + 1.5);
+
+    doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     doc.text(
-      `Dicetak pada: ${new Date().toLocaleDateString("id-ID")}`,
-      240,
-      12
+      `Tgl. ${new Date().toLocaleDateString("id-ID")}`,
+      pageWidth / 2,
+      40,
+      {
+        align: "center",
+      }
     );
 
-    // Table settings
-    const tableConfig = {
-      headStyles: {
-        fillColor: [41, 128, 185],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        fontSize: 8,
-      },
-      bodyStyles: {
-        textColor: [33, 37, 41],
-        fontSize: 7,
-      },
-      alternateRowStyles: {
-        fillColor: [248, 249, 250],
-      },
-      margin: { left: 10, right: 10 },
-      styles: {
-        cellPadding: 1.5,
-        overflow: "linebreak",
-        halign: "center",
-      },
-      columnStyles: {
-        0: { cellWidth: 8 }, // NO column
-        1: { cellWidth: 15 }, // RT column
-      },
-    };
+    let y = 48;
 
     Object.entries(grouped).forEach(([rw, rtData], rwIndex) => {
+      doc.setFontSize(12);
+      doc.text(`NO RW : ${rw}`, 14, y);
+      y += 4;
+
       const allRTResidents = Object.values(rtData).flat();
 
       // Prepare data
@@ -162,7 +156,6 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
             content: l + p,
             styles: {
               halign: "center",
-              fillColor: [233, 236, 239],
               fontStyle: "bold",
             },
           }
@@ -198,67 +191,132 @@ const MonografiGolonganDarah = ({ residents }: { residents: Resident[] }) => {
             halign: "center",
             fillColor: [233, 236, 239],
             fontStyle: "bold",
-            textColor: [41, 128, 185],
           },
         }
       );
 
       body.push(totalRow);
 
-      // Create headers
-      const headers = [
+      const head = [
         [
           {
             content: "NO",
-            colSpan: 1,
-            styles: { halign: "center" },
+            rowSpan: 2,
+            styles: { valign: "middle", halign: "center" },
           },
           {
-            content: "RT",
-            colSpan: 1,
-            styles: { halign: "center" },
+            content: "NO RT",
+            rowSpan: 2,
+            styles: { valign: "middle", halign: "center" },
           },
-          ...BLOOD_TYPES.flatMap((type) => [
-            {
-              content: type,
-              colSpan: 3,
-              styles: { halign: "center" },
-            },
-          ]),
-          {
-            content: "TOTAL",
+          ...BLOOD_TYPES.map((agama) => ({
+            content: agama,
             colSpan: 3,
-            styles: { halign: "center" },
+            styles: { halign: "center", valign: "middle" },
+          })),
+          {
+            content: "JUMLAH",
+            colSpan: 3,
+            styles: { halign: "center", valign: "middle" },
           },
         ],
         [
-          { content: "", styles: { fillColor: [41, 128, 185] } },
-          { content: "", styles: { fillColor: [41, 128, 185] } },
           ...BLOOD_TYPES.flatMap(() => [
-            { content: "L", styles: { fillColor: [52, 152, 219] } },
-            { content: "P", styles: { fillColor: [52, 152, 219] } },
-            { content: "JML", styles: { fillColor: [52, 152, 219] } },
+            { content: "L" },
+            { content: "P" },
+            {
+              content: "L+P",
+              styles: {
+                fillColor: [255, 225, 160], // yellow highlight
+                fontStyle: "bold",
+              },
+            },
           ]),
-          { content: "L", styles: { fillColor: [41, 128, 185] } },
-          { content: "P", styles: { fillColor: [41, 128, 185] } },
-          { content: "JML", styles: { fillColor: [41, 128, 185] } },
+          { content: "L" },
+          { content: "P" },
+          {
+            content: "L+P",
+            styles: {
+              fillColor: [255, 225, 160], // yellow highlight
+              fontStyle: "bold",
+            },
+          },
         ],
       ];
 
       // Create table
-      autoTable(doc, {
-        ...tableConfig,
-        startY: rwIndex === 0 ? 20 : (doc as any).lastAutoTable.finalY + 10,
-        head: headers,
-        body: body,
-        didDrawPage: (data) => {
-          // Add RW title
-          doc.setFontSize(12);
-          doc.setTextColor(41, 128, 185);
-          doc.setFont("helvetica", "bold");
-          doc.text(`RW ${rw.padStart(3, "0")}`, 14, data.cursor.y - 5);
+      (doc as any).autoTable({
+        head,
+        body,
+        startY: y,
+        margin: { left: 10, right: 10 },
+        styles: {
+          fontSize: 9,
+          halign: "center",
+          valign: "middle",
+          cellPadding: 1,
+          lineColor: [0, 0, 0], // Set grid lines to black
+          lineWidth: 0.2,
+          textColor: 0,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: 0,
+          fontStyle: "bold",
+        },
+        theme: "grid",
+        didDrawCell: (data: any) => {
+          if (
+            data.row.index === body.length - 1 &&
+            data.row.raw[1] === "JML RW"
+          ) {
+            doc.setFillColor(225, 235, 255);
+            doc.rect(
+              data.cell.x,
+              data.cell.y,
+              data.cell.width,
+              data.cell.height,
+              "F"
+            );
+            doc.setTextColor(0, 0, 0);
+          }
+        },
+        didParseCell: (data: any) => {
+          const isJMLColumn =
+            data.column.index >= 2 && (data.column.index - 2) % 3 === 2;
+
+          const isJMLRWRow =
+            data.section === "body" &&
+            data.row.index === body.length - 1 &&
+            typeof data.row.raw?.[1] === "string" &&
+            data.row.raw[1].toString().includes("JML RW");
+
+          // Highlight "L+P" columns in any row
+          if (data.section === "body" && isJMLColumn) {
+            data.cell.styles.fillColor = [255, 225, 160]; // Yellowish
+            data.cell.styles.fontStyle = "bold";
+          }
+
+          // Additionally style the entire "JML RW" row
+          if (isJMLRWRow) {
+            data.cell.styles.textColor = [0, 0, 0];
+            data.cell.styles.fontStyle = "bold";
+
+            // Optional: apply a base light grey background
+            data.cell.styles.fillColor = [220, 220, 220];
+
+            // If it's also a JML column, override it with yellow
+            if (isJMLColumn) {
+              data.cell.styles.fillColor = [255, 225, 160];
+            }
+          }
         },
       });
+      y = (doc as any).lastAutoTable.finalY + 10;
+      if (y > 180) {
+        doc.addPage();
+        y = 20;
+      }
     });
 
     // Save PDF

@@ -5,12 +5,12 @@ import { Resident } from "../../types"; // pastikan path sesuai
 import { AlignCenter } from "lucide-react";
 
 const AGAMA_LIST = [
-  "Islam",
-  "Kristen",
-  "Katolik",
-  "Hindu",
-  "Budha",
-  "Konghucu",
+  "ISLAM",
+  "KRISTEN",
+  "KATOLIK",
+  "HINDU",
+  "BUDHA",
+  "KONGHUCU",
 ];
 
 const groupResidentsByRWRT = (residents: Resident[]) => {
