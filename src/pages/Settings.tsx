@@ -1,14 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Save, Upload, Download, HardDrive, FileUp, FileDown, Image, FileSignature as Signature } from 'lucide-react';
-import { villageService } from '../database/villageService';
-import { exportService } from '../services/exportService';
-import { VillageInfo } from '../types';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import Card from '../components/ui/Card';
-import Modal from '../components/ui/Modal';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect, useRef } from "react";
+import { db } from "../database/db";
+import { useForm, Controller } from "react-hook-form";
+import {
+  Save,
+  Upload,
+  Download,
+  HardDrive,
+  FileUp,
+  FileDown,
+  Image,
+  FileSignature as Signature,
+} from "lucide-react";
+import { villageService } from "../database/villageService";
+import { exportService } from "../services/exportService";
+import { VillageInfo } from "../types";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import Card from "../components/ui/Card";
+import Modal from "../components/ui/Modal";
+import { toast } from "react-toastify";
 
 const Settings: React.FC = () => {
   const [villageInfo, setVillageInfo] = useState<VillageInfo | null>(null);
@@ -19,93 +29,101 @@ const Settings: React.FC = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
   const [isUploadLogoModalOpen, setIsUploadLogoModalOpen] = useState(false);
-  const [isUploadSignatureModalOpen, setIsUploadSignatureModalOpen] = useState(false);
+  const [isUploadSignatureModalOpen, setIsUploadSignatureModalOpen] =
+    useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  
+
   const logoInputRef = useRef<HTMLInputElement>(null);
   const signatureInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
-  
-  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<VillageInfo>();
-  
+  const [importedFile, setImportedFile] = useState<File | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<VillageInfo>();
+
   useEffect(() => {
     loadVillageInfo();
   }, []);
-  
+
   const loadVillageInfo = async () => {
     setIsLoading(true);
     try {
       const info = await villageService.getVillageInfo();
       setVillageInfo(info);
-      
+
       if (info) {
         // Set form values
-        setValue('name', info.name);
-        setValue('address', info.address);
-        setValue('districtName', info.districtName);
-        setValue('regencyName', info.regencyName);
-        setValue('provinceName', info.provinceName);
-        setValue('postalCode', info.postalCode);
-        setValue('phoneNumber', info.phoneNumber);
-        setValue('email', info.email || '');
-        setValue('website', info.website || '');
-        setValue('leaderName', info.leaderName);
-        setValue('leaderTitle', info.leaderTitle);
-        
+        setValue("name", info.name);
+        setValue("address", info.address);
+        setValue("districtName", info.districtName);
+        setValue("regencyName", info.regencyName);
+        setValue("provinceName", info.provinceName);
+        setValue("postalCode", info.postalCode);
+        setValue("phoneNumber", info.phoneNumber);
+        setValue("email", info.email || "");
+        setValue("website", info.website || "");
+        setValue("leaderName", info.leaderName);
+        setValue("leaderTitle", info.leaderTitle);
+
         // Set previews
         if (info.logoUrl) {
           setLogoPreview(info.logoUrl);
         }
-        
+
         if (info.signatureUrl) {
           setSignaturePreview(info.signatureUrl);
         }
       }
     } catch (error) {
-      console.error('Error loading village info:', error);
-      toast.error('Gagal memuat informasi desa');
+      console.error("Error loading village info:", error);
+      toast.error("Gagal memuat informasi desa");
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const onSubmit = async (data: VillageInfo) => {
     setIsSubmitting(true);
-    
+
     try {
       await villageService.updateVillageInfo(data);
-      toast.success('Informasi desa berhasil diperbarui');
+      toast.success("Informasi desa berhasil diperbarui");
       loadVillageInfo();
     } catch (error) {
-      console.error('Error updating village info:', error);
-      toast.error('Gagal memperbarui informasi desa');
+      console.error("Error updating village info:", error);
+      toast.error("Gagal memperbarui informasi desa");
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleExportData = async () => {
     setIsExporting(true);
     try {
       await exportService.exportDatabase();
-      toast.success('Data berhasil diekspor');
+      toast.success("Data berhasil diekspor");
     } catch (error) {
-      console.error('Error exporting data:', error);
-      toast.error('Gagal mengekspor data');
+      console.error("Error exporting data:", error);
+      toast.error("Gagal mengekspor data");
     } finally {
       setIsExporting(false);
     }
   };
-  
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    
+
     const file = e.target.files[0];
-    if (!file.type.includes('image/')) {
-      toast.error('File harus berupa gambar');
+    if (!file.type.includes("image/")) {
+      toast.error("File harus berupa gambar");
       return;
     }
-    
+
     // Read the file and convert to data URL
     const reader = new FileReader();
     reader.onload = (loadEvent) => {
@@ -115,16 +133,16 @@ const Settings: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    
+
     const file = e.target.files[0];
-    if (!file.type.includes('image/')) {
-      toast.error('File harus berupa gambar');
+    if (!file.type.includes("image/")) {
+      toast.error("File harus berupa gambar");
       return;
     }
-    
+
     // Read the file and convert to data URL
     const reader = new FileReader();
     reader.onload = (loadEvent) => {
@@ -134,73 +152,97 @@ const Settings: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
+  interface ImportModalProps {
+    isOpen: boolean;
+    setIsImportModalOpen: (open: boolean) => void;
+  }
+
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    
-    const file = e.target.files[0];
-    if (!file.type.includes('application/json')) {
-      toast.error('File harus berupa JSON');
-      return;
+    const file = e.target.files?.[0];
+    if (file) {
+      setImportedFile(file);
     }
-    
-    // Confirm before importing
-    // (Import logic will be triggered by the "Konfirmasi" button)
   };
-  
   const confirmImport = async () => {
-    if (!importInputRef.current?.files || importInputRef.current.files.length === 0) {
-      toast.error('Silakan pilih file terlebih dahulu');
+    const reader = new FileReader();
+    if (!importedFile) {
+      toast.error("Tidak ada file yang dipilih");
       return;
     }
-    
-    const file = importInputRef.current.files[0];
-    
-    setIsImporting(true);
-    try {
-      await exportService.importDatabase(file);
-      toast.success('Data berhasil diimpor');
-      setIsImportModalOpen(false);
-      loadVillageInfo();
-    } catch (error) {
-      console.error('Error importing data:', error);
-      toast.error('Gagal mengimpor data');
-    } finally {
-      setIsImporting(false);
-    }
+    reader.readAsText(importedFile);
+    reader.onload = async (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+
+        if (!json.residents || !Array.isArray(json.residents)) {
+          toast.error("Format file tidak valid (tidak ada field 'residents')");
+          return;
+        }
+
+        // Optional: Bersihkan database dulu
+        await db.residents.clear();
+
+        // Optional: Hitung ulang usia
+        const today = new Date();
+        const parsedResidents = json.residents.map((r: any) => ({
+          ...r,
+          age:
+            today.getFullYear() -
+            new Date(r.birthDate).getFullYear() -
+            (today <
+            new Date(
+              today.getFullYear(),
+              new Date(r.birthDate).getMonth(),
+              new Date(r.birthDate).getDate()
+            )
+              ? 1
+              : 0),
+          createdAt: new Date(r.createdAt),
+          updatedAt: new Date(r.updatedAt),
+        }));
+
+        await db.residents.bulkAdd(parsedResidents);
+        toast.success("Impor data berhasil");
+        setIsImportModalOpen(false);
+      } catch (err) {
+        console.error(err);
+        toast.error("Gagal mengimpor file JSON");
+      }
+    };
   };
-  
+
   const saveLogo = async () => {
     if (!logoPreview) return;
-    
+
     try {
       await villageService.setVillageLogo(logoPreview);
-      toast.success('Logo desa berhasil diperbarui');
+      toast.success("Logo desa berhasil diperbarui");
       setIsUploadLogoModalOpen(false);
     } catch (error) {
-      console.error('Error saving logo:', error);
-      toast.error('Gagal menyimpan logo desa');
+      console.error("Error saving logo:", error);
+      toast.error("Gagal menyimpan logo desa");
     }
   };
-  
+
   const saveSignature = async () => {
     if (!signaturePreview) return;
-    
+
     try {
       await villageService.setLeaderSignature(signaturePreview);
-      toast.success('Tanda tangan berhasil diperbarui');
+      toast.success("Tanda tangan berhasil diperbarui");
       setIsUploadSignatureModalOpen(false);
     } catch (error) {
-      console.error('Error saving signature:', error);
-      toast.error('Gagal menyimpan tanda tangan');
+      console.error("Error saving signature:", error);
+      toast.error("Gagal menyimpan tanda tangan");
     }
   };
-  
+
   if (isLoading) {
     return (
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-gray-800">Pengaturan</h2>
-        
+
         <div className="animate-pulse space-y-6">
           <Card>
             <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
@@ -217,97 +259,105 @@ const Settings: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Pengaturan</h2>
-      
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Village Information */}
         <Card title="Informasi Desa">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Nama Desa"
-              {...register('name', { required: 'Nama desa wajib diisi' })}
+              {...register("name", { required: "Nama desa wajib diisi" })}
               error={errors.name?.message}
               fullWidth
             />
-            
+
             <Input
               label="Alamat"
-              {...register('address', { required: 'Alamat desa wajib diisi' })}
+              {...register("address", { required: "Alamat desa wajib diisi" })}
               error={errors.address?.message}
               fullWidth
             />
-            
+
             <Input
               label="Kecamatan"
-              {...register('districtName', { required: 'Nama kecamatan wajib diisi' })}
+              {...register("districtName", {
+                required: "Nama kecamatan wajib diisi",
+              })}
               error={errors.districtName?.message}
               fullWidth
             />
-            
+
             <Input
               label="Kabupaten/Kota"
-              {...register('regencyName', { required: 'Nama kabupaten wajib diisi' })}
+              {...register("regencyName", {
+                required: "Nama kabupaten wajib diisi",
+              })}
               error={errors.regencyName?.message}
               fullWidth
             />
-            
+
             <Input
               label="Provinsi"
-              {...register('provinceName', { required: 'Nama provinsi wajib diisi' })}
+              {...register("provinceName", {
+                required: "Nama provinsi wajib diisi",
+              })}
               error={errors.provinceName?.message}
               fullWidth
             />
-            
+
             <Input
               label="Kode Pos"
-              {...register('postalCode', { required: 'Kode pos wajib diisi' })}
+              {...register("postalCode", { required: "Kode pos wajib diisi" })}
               error={errors.postalCode?.message}
               fullWidth
             />
-            
+
             <Input
               label="Nomor Telepon"
-              {...register('phoneNumber', { required: 'Nomor telepon wajib diisi' })}
+              {...register("phoneNumber", {
+                required: "Nomor telepon wajib diisi",
+              })}
               error={errors.phoneNumber?.message}
               fullWidth
             />
-            
+
             <Input
               label="Email"
               type="email"
-              {...register('email')}
+              {...register("email")}
               fullWidth
             />
-            
-            <Input
-              label="Website"
-              {...register('website')}
-              fullWidth
-            />
+
+            <Input label="Website" {...register("website")} fullWidth />
           </div>
         </Card>
-        
+
         {/* Leader Information */}
         <Card title="Informasi Kepala Desa">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Nama Kepala Desa"
-              {...register('leaderName', { required: 'Nama kepala desa wajib diisi' })}
+              {...register("leaderName", {
+                required: "Nama kepala desa wajib diisi",
+              })}
               error={errors.leaderName?.message}
               fullWidth
             />
-            
+
             <Input
               label="Jabatan"
-              {...register('leaderTitle', { required: 'Jabatan kepala desa wajib diisi' })}
+              {...register("leaderTitle", {
+                required: "Jabatan kepala desa wajib diisi",
+              })}
               error={errors.leaderTitle?.message}
               fullWidth
             />
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -316,7 +366,11 @@ const Settings: React.FC = () => {
               <div className="border rounded-md p-4 text-center">
                 {logoPreview ? (
                   <div className="flex flex-col items-center">
-                    <img src={logoPreview} alt="Logo Desa" className="h-24 object-contain mb-4" />
+                    <img
+                      src={logoPreview}
+                      alt="Logo Desa"
+                      className="h-24 object-contain mb-4"
+                    />
                     <Button
                       type="button"
                       variant="outline"
@@ -343,7 +397,7 @@ const Settings: React.FC = () => {
                 )}
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Tanda Tangan Kepala Desa
@@ -351,7 +405,11 @@ const Settings: React.FC = () => {
               <div className="border rounded-md p-4 text-center">
                 {signaturePreview ? (
                   <div className="flex flex-col items-center">
-                    <img src={signaturePreview} alt="Tanda Tangan" className="h-24 object-contain mb-4" />
+                    <img
+                      src={signaturePreview}
+                      alt="Tanda Tangan"
+                      className="h-24 object-contain mb-4"
+                    />
                     <Button
                       type="button"
                       variant="outline"
@@ -380,7 +438,7 @@ const Settings: React.FC = () => {
             </div>
           </div>
         </Card>
-        
+
         <div className="flex justify-end">
           <Button
             type="submit"
@@ -392,14 +450,15 @@ const Settings: React.FC = () => {
           </Button>
         </div>
       </form>
-      
+
       {/* Data Backup */}
       <Card title="Backup & Restore Data">
         <p className="text-sm text-gray-700 mb-6">
           Backup data desa secara berkala untuk menghindari kehilangan data.
-          Data yang dibackup mencakup semua informasi warga, surat, template, dan pengaturan desa.
+          Data yang dibackup mencakup semua informasi warga, surat, template,
+          dan pengaturan desa.
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="border rounded-md p-6 flex flex-col items-center text-center">
             <div className="bg-teal-100 p-3 rounded-full mb-4">
@@ -419,7 +478,7 @@ const Settings: React.FC = () => {
               Ekspor Data
             </Button>
           </div>
-          
+
           <div className="border rounded-md p-6 flex flex-col items-center text-center">
             <div className="bg-blue-100 p-3 rounded-full mb-4">
               <FileUp size={24} className="text-blue-700" />
@@ -440,7 +499,7 @@ const Settings: React.FC = () => {
           </div>
         </div>
       </Card>
-      
+
       {/* Upload Logo Modal */}
       <Modal
         isOpen={isUploadLogoModalOpen}
@@ -453,11 +512,15 @@ const Settings: React.FC = () => {
             Unggah logo desa yang akan ditampilkan pada kop surat dan aplikasi.
             Gunakan format gambar (JPG, PNG) dengan ukuran maksimal 2MB.
           </p>
-          
+
           <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
             {logoPreview ? (
               <div className="flex flex-col items-center">
-                <img src={logoPreview} alt="Logo Preview" className="h-32 object-contain mb-4" />
+                <img
+                  src={logoPreview}
+                  alt="Logo Preview"
+                  className="h-32 object-contain mb-4"
+                />
                 <Button
                   type="button"
                   variant="outline"
@@ -472,7 +535,9 @@ const Settings: React.FC = () => {
                 <div className="flex justify-center mb-4">
                   <Image size={48} className="text-gray-400" />
                 </div>
-                <p className="text-gray-500 mb-4">Klik untuk memilih file atau drag & drop file di sini</p>
+                <p className="text-gray-500 mb-4">
+                  Klik untuk memilih file atau drag & drop file di sini
+                </p>
                 <Button
                   type="button"
                   variant="outline"
@@ -482,7 +547,7 @@ const Settings: React.FC = () => {
                 </Button>
               </div>
             )}
-            
+
             <input
               type="file"
               ref={logoInputRef}
@@ -491,7 +556,7 @@ const Settings: React.FC = () => {
               className="hidden"
             />
           </div>
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
@@ -511,7 +576,7 @@ const Settings: React.FC = () => {
           </div>
         </div>
       </Modal>
-      
+
       {/* Upload Signature Modal */}
       <Modal
         isOpen={isUploadSignatureModalOpen}
@@ -521,14 +586,19 @@ const Settings: React.FC = () => {
       >
         <div className="space-y-4">
           <p className="text-sm text-gray-700">
-            Unggah tanda tangan kepala desa yang akan ditampilkan pada surat-surat resmi.
-            Gunakan format gambar (JPG, PNG) dengan latar belakang transparan untuk hasil terbaik.
+            Unggah tanda tangan kepala desa yang akan ditampilkan pada
+            surat-surat resmi. Gunakan format gambar (JPG, PNG) dengan latar
+            belakang transparan untuk hasil terbaik.
           </p>
-          
+
           <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
             {signaturePreview ? (
               <div className="flex flex-col items-center">
-                <img src={signaturePreview} alt="Signature Preview" className="h-32 object-contain mb-4" />
+                <img
+                  src={signaturePreview}
+                  alt="Signature Preview"
+                  className="h-32 object-contain mb-4"
+                />
                 <Button
                   type="button"
                   variant="outline"
@@ -543,7 +613,9 @@ const Settings: React.FC = () => {
                 <div className="flex justify-center mb-4">
                   <Signature size={48} className="text-gray-400" />
                 </div>
-                <p className="text-gray-500 mb-4">Klik untuk memilih file atau drag & drop file di sini</p>
+                <p className="text-gray-500 mb-4">
+                  Klik untuk memilih file atau drag & drop file di sini
+                </p>
                 <Button
                   type="button"
                   variant="outline"
@@ -553,7 +625,7 @@ const Settings: React.FC = () => {
                 </Button>
               </div>
             )}
-            
+
             <input
               type="file"
               ref={signatureInputRef}
@@ -562,7 +634,7 @@ const Settings: React.FC = () => {
               className="hidden"
             />
           </div>
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
@@ -582,7 +654,7 @@ const Settings: React.FC = () => {
           </div>
         </div>
       </Modal>
-      
+
       {/* Import Modal */}
       <Modal
         isOpen={isImportModalOpen}
@@ -594,16 +666,18 @@ const Settings: React.FC = () => {
           <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mb-4">
             <p className="text-amber-700 text-sm font-medium">Perhatian!</p>
             <p className="text-amber-600 text-sm mt-1">
-              Mengimpor data akan menimpa semua data yang ada. 
+              Mengimpor data akan <strong>menimpa semua data yang ada</strong>.
               Pastikan Anda telah membuat backup sebelum melakukan impor.
             </p>
           </div>
-          
+
           <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
             <div className="flex justify-center mb-4">
               <HardDrive size={48} className="text-gray-400" />
             </div>
-            <p className="text-gray-500 mb-4">Pilih file backup JSON untuk diimpor</p>
+            <p className="text-gray-500 mb-4">
+              Pilih file backup JSON untuk diimpor
+            </p>
             <Button
               type="button"
               variant="outline"
@@ -611,7 +685,7 @@ const Settings: React.FC = () => {
             >
               Pilih File Backup
             </Button>
-            
+
             <input
               type="file"
               ref={importInputRef}
@@ -619,14 +693,14 @@ const Settings: React.FC = () => {
               accept=".json,application/json"
               className="hidden"
             />
-            
-            {importInputRef.current?.files && importInputRef.current.files.length > 0 && (
+
+            {importedFile && (
               <p className="mt-4 text-sm text-gray-700">
-                File terpilih: {importInputRef.current.files[0].name}
+                File terpilih: {importedFile.name}
               </p>
             )}
           </div>
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
@@ -640,7 +714,7 @@ const Settings: React.FC = () => {
               variant="primary"
               onClick={confirmImport}
               isLoading={isImporting}
-              disabled={!importInputRef.current?.files || importInputRef.current.files.length === 0}
+              disabled={!importedFile}
             >
               Konfirmasi Impor
             </Button>
