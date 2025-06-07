@@ -14,6 +14,12 @@ import EditLetter from "./pages/letters/EditLetter";
 import LetterTemplates from "./pages/letters/LetterTemplates";
 import Settings from "./pages/Settings";
 import HelpPage from "./pages/HelpPage";
+import CreateKeramaianLetter from "./pages/letters/CreateKeramaianLetter";
+import CreateUsahaLetter from "./pages/letters/CreateUsahaLetter";
+import CreateDomisiliLetter from "./pages/letters/CreateDomisiliLetter";
+import CreateTidakMampuLetter from "./pages/letters/CreateTidakMampuLetter";
+import CreatePengantarLetter from "./pages/letters/CreatePengantarLetter";
+import CreateKelahiranLetter from "./pages/letters/CreateKelahiranLetter";
 
 function App() {
   return (
@@ -33,6 +39,12 @@ function App() {
           {/* Letters */}
           <Route path="letters" element={<LettersList />} />
           <Route path="letters/create" element={<CreateLetter />} />
+          <Route path="letters/create/keramaian" element={<CreateKeramaianLetter />} />
+          <Route path="letters/create/usaha" element={<CreateUsahaLetter />} />
+          <Route path="letters/create/domisili" element={<CreateDomisiliLetter />} />
+          <Route path="letters/create/tidak-mampu" element={<CreateTidakMampuLetter />} />
+          <Route path="letters/create/pengantar" element={<CreatePengantarLetter />} />
+          <Route path="letters/create/kelahiran" element={<CreateKelahiranLetter />} />
           <Route path="letters/view/:id" element={<ViewLetter />} />
           <Route path="letters/edit/:id" element={<EditLetter />} />
           <Route path="letters/templates" element={<LetterTemplates />} />

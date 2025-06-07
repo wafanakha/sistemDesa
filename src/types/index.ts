@@ -83,12 +83,27 @@ export interface Letter {
   updatedAt: Date;
 }
 
+export interface LetterTemplateField {
+  name: string; // key, e.g. 'name', 'nik', 'purpose'
+  label: string; // label untuk form
+  type: 'text' | 'number' | 'date' | 'select';
+  required?: boolean;
+  options?: string[]; // untuk select
+}
+
+export interface LetterTemplateSigner {
+  name: string;
+  title: string;
+}
+
 export interface LetterTemplate {
   id?: number;
   name: string;
   type: LetterType;
-  template: string;
+  template: string; // legacy, bisa diabaikan untuk surat baru
   isDefault: boolean;
+  fields?: LetterTemplateField[]; // <-- Tambahan untuk form dinamis
+  signers?: LetterTemplateSigner[]; // <-- Tambahan untuk penandatangan
   createdAt: Date;
   updatedAt: Date;
 }
