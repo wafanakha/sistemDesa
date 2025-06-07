@@ -63,7 +63,7 @@ export const seedResidents = async () => {
     `3210${(1000000000 + i).toString().slice(1)}`;
   const generateName = (index: number) => `Warga ${index + 1}`;
 
-  const families = 50; // Number of KK
+  const families = 2000; // Number of KK
   const residents: Resident[] = [];
 
   for (let i = 0; i < families; i++) {
@@ -81,7 +81,6 @@ export const seedResidents = async () => {
       const shdk = isHead ? "Kepala Keluarga" : randomFromArray(shdks);
 
       residents.push({
-        id: idCounter++,
         kk,
         nik: generateNIK(idCounter),
         ktpEl: Math.random() < 0.8,

@@ -33,6 +33,12 @@ function App() {
   useEffect(() => {
     getAllResidents().then(setResidents);
     seedResidents();
+    seedResidents();
+    seedResidents();
+    seedResidents();
+    seedResidents();
+    seedResidents();
+    seedResidents();
   }, []);
 
   return (
