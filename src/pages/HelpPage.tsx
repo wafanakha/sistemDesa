@@ -16,7 +16,7 @@ const HelpPage: React.FC = () => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Bantuan</h2>
 
-      <Card title="Tentang Sistem Administrasi Desa">
+      <Card title="Tentang Datuk Pengging (Data Untuk Penduduk Kedungwringin)">
         <div className="space-y-4">
           <p className="text-gray-700">
             Sistem Data untuk penduduk kedungwringin adalah aplikasi manajemen
@@ -57,7 +57,6 @@ const HelpPage: React.FC = () => {
               - Menambahkan data warga baru
               - Mengedit dan memperbarui data warga
               - Mencari data warga berdasarkan nama atau NIK
-              - Menambahkan field kustom sesuai kebutuhan desa
             `}
           />
 
@@ -79,15 +78,21 @@ const HelpPage: React.FC = () => {
           />
 
           <HelpSection
-            icon={<Pen className="h-6 w-6 text-amber-600" />}
-            title="Template Surat"
+            icon={<FileText className="h-6 w-6 text-teal-600" />}
+            title="Cetak Monografi"
             content={`
-              Kelola template untuk berbagai jenis surat:
+              Cetak berbagai jenis monografi/rekapitulasi warga:
               
-              - Gunakan template default yang tersedia
-              - Buat template kustom sesuai kebutuhan
-              - Edit template yang sudah ada
-              - Tambahkan placeholder untuk mengisi data secara otomatis
+              - Monografi Agama
+              - Monografi Jenis Kelamin
+              - Monografi Golongan darah
+              - Monografi Kepala Keluarga menurut Jenis kelamin
+              - Monografi Pekerjaan
+              - Monografi Pendidikan
+              - Monografi Status Pernikahan
+              - Monografi Umur
+              
+              Data pada monografi akan terisi sesuai daftar warga.
             `}
           />
 
@@ -103,20 +108,6 @@ const HelpPage: React.FC = () => {
               Surat yang diekspor akan menyertakan kop surat resmi desa dan dapat ditambahkan tanda tangan digital.
             `}
           />
-
-          <HelpSection
-            icon={<Settings className="h-6 w-6 text-gray-600" />}
-            title="Pengaturan"
-            content={`
-              Konfigurasi sistem sesuai kebutuhan desa:
-              
-              - Pengaturan informasi desa (nama, alamat, dll)
-              - Pengaturan kepala desa
-              - Unggah logo desa untuk kop surat
-              - Unggah tanda tangan kepala desa
-              - Backup dan restore data
-            `}
-          />
         </div>
       </Card>
 
@@ -125,19 +116,34 @@ const HelpPage: React.FC = () => {
           <HelpAccordion
             title="Cara Menambahkan Warga Baru"
             content={`
-              1. Buka menu "Data Warga" di sidebar
+              1. Buka menu "Data Warga" di menu
               2. Klik tombol "Tambah Warga"
               3. Isi semua informasi yang diperlukan (NIK, nama, dll)
               4. Klik tombol "Simpan" untuk menyimpan data warga
               
-              Setelah warga disimpan, data mereka akan tersedia untuk digunakan dalam pembuatan surat.
+              Setelah warga disimpan, akan ditampilkan pada daftar warga.
+            `}
+          />
+
+          <HelpAccordion
+            title="Cara Mengubah Data Warga"
+            content={`
+              1. Buka menu "Data Warga" di menu
+              3. Klik tombol "Daftar Warga"
+              2. Cari Data warga yang ingin diubah
+              3. Klik Warga Tersebut
+              4. Klik tombol edit pada kanan atas
+              5. Ubah Data Warga tersbut
+              4. Klik tombol "Simpan perubahan" pada kanan bawah untuk menyimpan data warga
+              
+              Setelah warga disimpan, akan ditampilkan pada daftar warga.
             `}
           />
 
           <HelpAccordion
             title="Cara Membuat Surat"
             content={`
-              1. Buka menu "Surat" di sidebar
+              1. Buka menu "Surat" di menu
               2. Klik tombol "Buat Surat"
               3. Pilih jenis surat yang ingin dibuat
               4. Pilih warga yang terkait dengan surat
@@ -146,21 +152,6 @@ const HelpPage: React.FC = () => {
               7. Klik tombol "Simpan Surat" untuk menyimpan surat
               
               Setelah surat disimpan, Anda dapat melihat, mengedit, atau mengekspornya ke PDF/DOCX.
-            `}
-          />
-
-          <HelpAccordion
-            title="Cara Mengelola Template Surat"
-            content={`
-              1. Buka menu "Surat" di sidebar
-              2. Klik submenu "Template Surat"
-              3. Untuk membuat template baru, klik "Tambah Template"
-              4. Untuk mengedit template yang ada, klik ikon edit di samping template
-              
-              Dalam template, Anda dapat menggunakan placeholder seperti [RESIDENT_NAME],
-              [RESIDENT_NIK], dll. yang akan otomatis diganti dengan data warga saat membuat surat.
-              
-              Lihat bagian "Panduan Placeholder Template" untuk daftar lengkap placeholder yang tersedia.
             `}
           />
 
