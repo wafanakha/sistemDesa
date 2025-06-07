@@ -47,11 +47,10 @@ export const letterService = {
     return `${formattedCount}/${typeCode}/${formattedMonth}/${year}`;
   },
 
-  addLetter: async (letter: Letter) => {
+  addLetter: async function (letter: Letter) { // Ubah ke function agar 'this' merujuk ke letterService
     if (!letter.letterNumber) {
-      letter.letterNumber = await this.generateLetterNumber(letter.letterType);
+      letter.letterNumber = await letterService.generateLetterNumber(letter.letterType);
     }
-    
     const now = new Date();
     return db.letters.add({
       ...letter,
@@ -169,7 +168,9 @@ function getLetterTypeCode(type: LetterType): string {
     case 'introduction': return 'PENGANTAR';
     case 'business': return 'KET-USAHA';
     case 'birth': return 'KET-LAHIR';
+    case 'keramaian': return 'KERAMAIAN'; // Tambahkan kode untuk keramaian
     case 'custom': return 'CUSTOM';
+    case 'wali-nikah': return 'WN';
     default: return 'SURAT';
   }
 }

@@ -26,8 +26,6 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isMobile }) => {
     if (path.startsWith('/letters')) {
       if (path === '/letters') return 'Daftar Surat';
       if (path === '/letters/create') return 'Buat Surat';
-      if (path === '/letters/templates') return 'Template Surat';
-      if (path.includes('/edit')) return 'Edit Surat';
       if (path.includes('/view')) return 'Detail Surat';
       return 'Manajemen Surat';
     }

@@ -66,10 +66,6 @@ const menuItems: MenuItem[] = [
         title: "Buat Surat",
         path: "/letters/create",
       },
-      {
-        title: "Template Surat",
-        path: "/letters/templates",
-      },
     ],
   },
   {

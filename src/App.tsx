@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/Dashboard";
@@ -19,9 +20,18 @@ import CreateUsahaLetter from "./pages/letters/CreateUsahaLetter";
 import CreateDomisiliLetter from "./pages/letters/CreateDomisiliLetter";
 import CreateTidakMampuLetter from "./pages/letters/CreateTidakMampuLetter";
 import CreatePengantarLetter from "./pages/letters/CreatePengantarLetter";
-import CreateKelahiranLetter from "./pages/letters/CreateKelahiranLetter";
+import CreateKeteranganLetter from "./pages/letters/CreateKeteranganLetter";
+import CreateDomisiliUsahaLetter from "./pages/letters/CreateDomisiliUsahaLetter";
+import CreateSkckLetter from "./pages/letters/CreateSkckLetter";
+import CreateAhliWarisLetter from "./pages/letters/CreateAhliWarisLetter";
+import CreateWaliNikahLetter from "./pages/letters/CreateWaliNikahLetter";
+import { seedResidents } from "./utils/fakeResidents";
+
 
 function App() {
+  useEffect(() => {
+    seedResidents();
+  }, []);
   return (
     <Router>
       <Routes>
@@ -44,10 +54,14 @@ function App() {
           <Route path="letters/create/domisili" element={<CreateDomisiliLetter />} />
           <Route path="letters/create/tidak-mampu" element={<CreateTidakMampuLetter />} />
           <Route path="letters/create/pengantar" element={<CreatePengantarLetter />} />
-          <Route path="letters/create/kelahiran" element={<CreateKelahiranLetter />} />
+          <Route path="letters/create/keterangan" element={<CreateKeteranganLetter />} />
+          <Route path="letters/create/domisili-usaha" element={<CreateDomisiliUsahaLetter />} />
+          <Route path="letters/create/skck" element={<CreateSkckLetter />} />
+          <Route path="letters/create/ahli-waris" element={<CreateAhliWarisLetter />} />
+          <Route path="letters/create/wali-nikah" element={<CreateWaliNikahLetter />} />
           <Route path="letters/view/:id" element={<ViewLetter />} />
-          <Route path="letters/edit/:id" element={<EditLetter />} />
-          <Route path="letters/templates" element={<LetterTemplates />} />
+          {/* <Route path="letters/edit/:id" element={<EditLetter />} /> */}
+          {/* <Route path="letters/templates" element={<LetterTemplates />} /> */}
 
           {/* Settings & Help */}
           <Route path="settings" element={<Settings />} />

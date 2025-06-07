@@ -131,5 +131,26 @@ export const residentService = {
         value
       });
     }
-  }
+  },
+
+  // Cari KK dan anggota keluarga berdasarkan query KK
+  searchKk: async (query: string) => {
+    const lowerQuery = query.toLowerCase();
+    // Ambil semua warga yang KK-nya mengandung query
+    const residents = await db.residents
+      .filter(r => r.kk.toLowerCase().includes(lowerQuery))
+      .toArray();
+    // Kelompokkan per KK
+    const grouped: Record<string, Resident[]> = {};
+    residents.forEach(r => {
+      if (!grouped[r.kk]) grouped[r.kk] = [];
+      grouped[r.kk].push(r);
+    });
+    // Format hasil: [{ kk, headName, members: [...] }]
+    return Object.entries(grouped).map(([kk, members]) => ({
+      kk,
+      headName: members.find(m => m.shdk === 'Kepala Keluarga')?.name || members[0]?.name || '-',
+      members,
+    }));
+  },
 };

@@ -13,7 +13,7 @@ export interface Resident {
   rw: string;
   shdk: "Kepala Keluarga" | "Anak" | "Istri" | "Lainnya";
   photoUrl?: string;
-  maritalStatus: "Belum Kawin" | "Kawin Tercatat";
+  maritalStatus: "Belum Kawin" | "Kawin" | "Cerai Hidup" | "Cerai Mati";
   marriageCertificate: boolean;
   marriageCertificateNumber?: string;
   divorceCertificate: boolean;
@@ -23,10 +23,29 @@ export interface Resident {
   education:
     | "Tidak/belum sekolah"
     | "Belum Tamat SD/Sederajat"
+    | "Tamat SD/Sederajat"
     | "SLTP/Sederajat"
-    | "Diploma IV/Strata1";
+    | "SLTA/Sederajat"
+    | "Diploma IV/Strata1"
+    | "Diploma I/II"
+    | "Akademi/Diploma III/S. Muda"
+    | "Strata II"
+    | "Strata III";
   religion: "Islam" | "Protestan" | "Katolik" | "Hindu" | "Buddha" | "Konghucu";
-  bloodType?: "A" | "B" | "O" | "AB";
+  bloodType?:
+    | "A"
+    | "B"
+    | "O"
+    | "AB"
+    | "A+"
+    | "A-"
+    | "B+"
+    | "B-"
+    | "AB+"
+    | "AB-"
+    | "O+"
+    | "O-"
+    | "TIDAK TAHU";
   occupation: string;
   physicalDisability?:
     | "Tidak ada"
@@ -63,7 +82,9 @@ export type LetterType =
   | "introduction"
   | "business"
   | "birth"
-  | "custom";
+  | "keramaian" // Tambahkan tipe keramaian
+  | "custom"
+  | "wali-nikah";
 
 export type LetterStatus = "draft" | "completed" | "signed";
 
