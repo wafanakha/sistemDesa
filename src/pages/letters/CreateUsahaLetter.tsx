@@ -182,11 +182,9 @@ const CreateUsahaLetter: React.FC<{ editData?: Letter; isEditMode?: boolean }> =
             <tr><td>7. Alamat Pemohon</td><td>:</td><td>{form.alamat}</td></tr>
           </tbody>
         </table>
-        <p>Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor {form.rt} Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan mempunyai usaha {form.namaUsaha}</p>
-        <p></p>
-        <p>Surat Keterangan ini diperlukan untuk {form.keperluan}</p>
-        <p></p>
-        <p>Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan dan dapat dipergunakan sebagaimana mestinya</p>
+        <p style={{textIndent: '2em'}}>Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor {form.rt} Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan mempunyai usaha {form.namaUsaha}</p>
+        <p style={{textIndent: '2em'}}>Surat Keterangan ini diperlukan untuk {form.keperluan}</p>
+        <p style={{textIndent: '2em'}}>Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan dan dapat dipergunakan sebagaimana mestinya</p>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 40 }}>
           <div className="signature" style={{ width: '30%', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 180 }}>
             <div className="compact" style={{ textAlign: 'center' }}>
