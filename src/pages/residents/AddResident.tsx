@@ -21,6 +21,17 @@ const AddResident: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const getAge = (birthDate: string): number => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const {
     register,
     handleSubmit,
@@ -61,6 +72,8 @@ const AddResident: React.FC = () => {
 
     try {
       // Add resident
+      data.age = getAge(data.birthDate);
+
       const residentId = await residentService.addResident(data);
 
       // Save custom field values
@@ -146,13 +159,6 @@ const AddResident: React.FC = () => {
                     required: "Tanggal lahir wajib diisi",
                   })}
                   error={errors.birthDate?.message}
-                  fullWidth
-                />
-                <Input
-                  label="Umur"
-                  type="number"
-                  {...register("age", { required: "Umur wajib diisi" })}
-                  error={errors.age?.message}
                   fullWidth
                 />
               </div>
