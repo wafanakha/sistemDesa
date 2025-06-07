@@ -275,7 +275,7 @@ const ResidentsList: React.FC = () => {
           </div>
 
           {isExpanded && (
-            <div className="border-t">
+            <div className="border-t text-gray-900 text-sm font-medium">
               <Table
                 columns={columns}
                 data={familyMembers}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Column<T> {
   header: string;
@@ -23,16 +23,16 @@ function Table<T>({
   onRowClick,
   isLoading = false,
   emptyMessage = "Tidak ada data yang tersedia",
-  className = '',
+  className = "",
 }: TableProps<T>) {
   const renderCell = (row: T, column: Column<T>) => {
-    if (typeof column.accessor === 'function') {
+    if (typeof column.accessor === "function") {
       return column.accessor(row);
     }
-    
+
     return row[column.accessor];
   };
-  
+
   if (isLoading) {
     return (
       <div className="border rounded-lg overflow-hidden">
@@ -47,7 +47,7 @@ function Table<T>({
       </div>
     );
   }
-  
+
   return (
     <div className={`border rounded-lg overflow-hidden ${className}`}>
       <div className="overflow-x-auto">
@@ -58,25 +58,31 @@ function Table<T>({
                 <th
                   key={index}
                   scope="col"
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${column.className || ''}`}
+                  className={`px-6 py-3 text-left text-s font-medium text-gray-800 uppercase tracking-wider ${
+                    column.className || ""
+                  }`}
                 >
                   {column.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-400">
             {data.length > 0 ? (
               data.map((row) => (
                 <tr
                   key={String(row[keyField])}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
+                  className={
+                    onRowClick ? "cursor-pointer hover:bg-gray-300" : ""
+                  }
                 >
                   {columns.map((column, index) => (
                     <td
                       key={index}
-                      className={`px-6 py-4 whitespace-nowrap text-sm text-gray-500 ${column.className || ''}`}
+                      className={`px-6 py-4 whitespace-nowrap text-base text-gray-800 ${
+                        column.className || ""
+                      }`}
                     >
                       {renderCell(row, column)}
                     </td>
@@ -87,7 +93,7 @@ function Table<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-6 py-10 text-center text-sm text-gray-500"
+                  className="px-6 py-10 text-center text-sm text-gray-800"
                 >
                   {emptyMessage}
                 </td>
