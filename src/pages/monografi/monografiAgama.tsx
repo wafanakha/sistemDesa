@@ -7,10 +7,10 @@ import { Style } from "docx";
 
 const AGAMA_LIST = [
   "Islam",
-  "Kristen",
+  "Protestan",
   "Katolik",
   "Hindu",
-  "Budha",
+  "Buddha",
   "Konghucu",
 ];
 

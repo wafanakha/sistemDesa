@@ -25,12 +25,14 @@ import MonografiPekerjaan from "./pages/monografi/monografiPekerjaan";
 import MonografiPendidikan from "./pages/monografi/monografiPendidikan";
 import MonografiStatusPernikahan from "./pages/monografi/monografiPerkawinan";
 import MonografiUmur from "./pages/monografi/monografiUmur";
+import { seedResidents } from "./utils/fakeResidents";
 
 function App() {
   const [residents, setResidents] = useState<Resident[]>([]);
 
   useEffect(() => {
     getAllResidents().then(setResidents);
+    seedResidents();
   }, []);
 
   return (

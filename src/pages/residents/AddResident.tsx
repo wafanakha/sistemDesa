@@ -36,6 +36,10 @@ const AddResident: React.FC = () => {
       religion: "Islam",
       occupation: "",
       maritalStatus: "Belum Kawin",
+      bloodType: "TIDAK TAHU",
+      education: "Tidak/belum sekolah",
+      shdk: "Kepala Keluarga",
+      physicalDisability: "Tidak ada",
     },
   });
 

@@ -458,10 +458,31 @@ const EditResident: React.FC = () => {
                         value: "Belum Tamat SD/Sederajat",
                         label: "Belum Tamat SD/Sederajat",
                       },
+                      {
+                        value: "Tamat SD/Sederajat",
+                        label: "Tamat SD/Sederajat",
+                      },
                       { value: "SLTP/Sederajat", label: "SLTP/Sederajat" },
+                      { value: "SLTA/Sederajat", label: "SLTA/Sederajat" },
                       {
                         value: "Diploma IV/Strata1",
                         label: "Diploma IV/Strata1",
+                      },
+                      {
+                        value: "Diploma I/II",
+                        label: "Diploma I/II",
+                      },
+                      {
+                        value: "Akademi/Diploma III/S. Muda",
+                        label: "Akademi/Diploma III/S. Muda",
+                      },
+                      {
+                        value: "Strata II",
+                        label: "Strata II",
+                      },
+                      {
+                        value: "Strata III",
+                        label: "Strata III",
                       },
                     ]}
                     {...field}
@@ -515,7 +536,16 @@ const EditResident: React.FC = () => {
                       { value: "A", label: "A" },
                       { value: "B", label: "B" },
                       { value: "AB", label: "AB" },
+                      { value: "A+", label: "A+" },
+                      { value: "A-", label: "A-" },
+                      { value: "B+", label: "B+" },
+                      { value: "B-", label: "B-" },
+                      { value: "AB+", label: "AB+" },
+                      { value: "AB-", label: "AB-" },
+                      { value: "O-", label: "O-" },
+                      { value: "O+", label: "O+" },
                       { value: "O", label: "O" },
+                      { value: "TIDAK TAHU", label: "TIDAK TAHU" },
                     ]}
                     {...field}
                     fullWidth

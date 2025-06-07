@@ -13,7 +13,7 @@ export interface Resident {
   rw: string;
   shdk: "Kepala Keluarga" | "Anak" | "Istri" | "Lainnya";
   photoUrl?: string;
-  maritalStatus: "Belum Kawin" | "Kawin Tercatat";
+  maritalStatus: "Belum Kawin" | "Kawin" | "Cerai Hidup" | "Cerai Mati";
   marriageCertificate: boolean;
   marriageCertificateNumber?: string;
   divorceCertificate: boolean;
