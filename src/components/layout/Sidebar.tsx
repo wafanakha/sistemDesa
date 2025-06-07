@@ -230,7 +230,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
 
       <aside className={sidebarClasses}>
         <div className="p-4 border-b flex items-center justify-between">
-          <h1 className="text-xl font-bold text-teal-700">SistemDesa</h1>
+          <h1 className="text-xl font-bold text-teal-700">Datuk Pengging</h1>
           {isMobile && (
             <button onClick={onToggle} className="p-1">
               <X size={24} className="text-gray-500" />
