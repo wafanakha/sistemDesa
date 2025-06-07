@@ -48,7 +48,7 @@ function App() {
           {/* Dashboard */}
           <Route index element={<Dashboard />} />
           {/* Residents */}
-          <Route path="residents" element={<ResidentsList />} />
+          <Route path="residents/list" element={<ResidentsList />} />
           <Route path="residents/add" element={<AddResident />} />
           <Route path="residents/edit/:id" element={<EditResident />} />
           <Route path="residents/view/:id" element={<ViewResident />} />

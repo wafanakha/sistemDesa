@@ -12,28 +12,6 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isMobile }) => {
 
   // Get the page title based on the current route
   const getPageTitle = () => {
-    const path = location.pathname;
-
-    if (path === "/") return "Dashboard";
-    if (path.startsWith("/residents")) {
-      if (path === "/residents") return "Daftar Warga";
-      if (path === "/residents/add") return "Tambah Warga";
-      if (path === "/residents/custom-fields") return "Field Kustom";
-      if (path.includes("/edit")) return "Edit Warga";
-      if (path.includes("/view")) return "Detail Warga";
-      return "Data Warga";
-    }
-    if (path.startsWith("/letters")) {
-      if (path === "/letters") return "Daftar Surat";
-      if (path === "/letters/create") return "Buat Surat";
-      if (path === "/letters/templates") return "Template Surat";
-      if (path.includes("/edit")) return "Edit Surat";
-      if (path.includes("/view")) return "Detail Surat";
-      return "Manajemen Surat";
-    }
-    if (path === "/settings") return "Pengaturan";
-    if (path === "/help") return "Bantuan";
-
     return "Sistem Data Untuk Penduduk Kedungwringin";
   };
 
