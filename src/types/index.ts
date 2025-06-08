@@ -84,7 +84,14 @@ export type LetterType =
   | "birth"
   | "keramaian" // Tambahkan tipe keramaian
   | "custom"
-  | "wali-nikah";
+  | "wali-nikah"
+  | "pengantar-numpang-nikah"
+  | "belum-menikah" // Tambahkan tipe belum menikah
+  | "kematian" // Tambahkan tipe kematian
+  | "pengantar-nikah" // Tambahkan tipe pengantar nikah
+  | "permohonan-kehendak-nikah" // Tambahkan tipe permohonan kehendak nikah
+  | "persetujuan-calon-pengantin" // Tambahkan tipe persetujuan calon pengantin
+  | "izin-orang-tua"; // Tambahkan tipe izin orang tua
 
 export type LetterStatus = "draft" | "completed" | "signed";
 

@@ -25,7 +25,14 @@ import CreateDomisiliUsahaLetter from "./pages/letters/CreateDomisiliUsahaLetter
 import CreateSkckLetter from "./pages/letters/CreateSkckLetter";
 import CreateAhliWarisLetter from "./pages/letters/CreateAhliWarisLetter";
 import CreateWaliNikahLetter from "./pages/letters/CreateWaliNikahLetter";
+import CreatePengantarNumpangNikahLetter from "./pages/letters/CreatePengantarNumpangNikahLetter";
+import CreateBelumMenikahLetter from "./pages/letters/CreateBelumMenikahLetter";
+import CreateKematianLetter from "./pages/letters/CreateKematianLetter";
 import { seedResidents } from "./utils/fakeResidents";
+import CreatePengantarNikahLetter from "./pages/letters/CreatePengantarNikahLetter";
+import CreatePermohonanKehendakNikahLetter from "./pages/letters/CreatePermohonanKehendakNikahLetter";
+import CreatePersetujuanCalonPengantinLetter from "./pages/letters/CreatePersetujuanCalonPengantinLetter";
+import CreateIzinOrangTuaLetter from "./pages/letters/CreateIzinOrangTuaLetter";
 
 
 function App() {
@@ -59,6 +66,13 @@ function App() {
           <Route path="letters/create/skck" element={<CreateSkckLetter />} />
           <Route path="letters/create/ahli-waris" element={<CreateAhliWarisLetter />} />
           <Route path="letters/create/wali-nikah" element={<CreateWaliNikahLetter />} />
+          <Route path="letters/create/pengantar-numpang-nikah" element={<CreatePengantarNumpangNikahLetter />} />
+          <Route path="letters/create/pengantar-nikah" element={<CreatePengantarNikahLetter />} />
+          <Route path="letters/create/belum-menikah" element={<CreateBelumMenikahLetter />} />
+          <Route path="letters/create/kematian" element={<CreateKematianLetter />} />
+          <Route path="letters/create/permohonan-kehendak-nikah" element={<CreatePermohonanKehendakNikahLetter />} />
+          <Route path="letters/create/persetujuan-calon-pengantin" element={<CreatePersetujuanCalonPengantinLetter />} />
+          <Route path="letters/create/izin-orang-tua" element={<CreateIzinOrangTuaLetter />} />
           <Route path="letters/view/:id" element={<ViewLetter />} />
           {/* <Route path="letters/edit/:id" element={<EditLetter />} /> */}
           {/* <Route path="letters/templates" element={<LetterTemplates />} /> */}

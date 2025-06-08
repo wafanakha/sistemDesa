@@ -34,7 +34,8 @@ export const letterService = {
     // Get count of letters of this type in the current year
     const count = await db.letters
       .filter(letter => {
-        const letterYear = letter.issuedDate.getFullYear();
+        const issuedDateObj = typeof letter.issuedDate === 'string' ? new Date(letter.issuedDate) : letter.issuedDate;
+        const letterYear = issuedDateObj.getFullYear();
         return letter.letterType === letterType && letterYear === year;
       })
       .count();
@@ -171,6 +172,7 @@ function getLetterTypeCode(type: LetterType): string {
     case 'keramaian': return 'KERAMAIAN'; // Tambahkan kode untuk keramaian
     case 'custom': return 'CUSTOM';
     case 'wali-nikah': return 'WN';
+    case 'pengantar-numpang-nikah': return 'PNN';
     default: return 'SURAT';
   }
 }
