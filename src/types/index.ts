@@ -76,7 +76,6 @@ export interface ResidentCustomField {
   value: string;
 }
 
-
 export type LetterType =
   | "domicile"
   | "poverty"
@@ -115,7 +114,7 @@ export interface Letter {
 export interface LetterTemplateField {
   name: string; // key, e.g. 'name', 'nik', 'purpose'
   label: string; // label untuk form
-  type: 'text' | 'number' | 'date' | 'select';
+  type: "text" | "number" | "date" | "select";
   required?: boolean;
   options?: string[]; // untuk select
 }
@@ -137,7 +136,6 @@ export interface LetterTemplate {
   updatedAt: Date;
 }
 
-
 export interface VillageInfo {
   id?: number;
   name: string;
@@ -145,12 +143,8 @@ export interface VillageInfo {
   districtName: string;
   regencyName: string;
   provinceName: string;
-  postalCode: string;
+  VillageCode: string;
   phoneNumber: string;
-  email?: string;
-  website?: string;
-  logoUrl?: string;
   leaderName: string;
   leaderTitle: string;
-  signatureUrl?: string;
 }

@@ -63,21 +63,10 @@ const Settings: React.FC = () => {
         setValue("districtName", info.districtName);
         setValue("regencyName", info.regencyName);
         setValue("provinceName", info.provinceName);
-        setValue("postalCode", info.postalCode);
         setValue("phoneNumber", info.phoneNumber);
-        setValue("email", info.email || "");
-        setValue("website", info.website || "");
         setValue("leaderName", info.leaderName);
         setValue("leaderTitle", info.leaderTitle);
-
-        // Set previews
-        if (info.logoUrl) {
-          setLogoPreview(info.logoUrl);
-        }
-
-        if (info.signatureUrl) {
-          setSignaturePreview(info.signatureUrl);
-        }
+        setValue("VillageCode", info.VillageCode);
       }
     } catch (error) {
       console.error("Error loading village info:", error);
@@ -113,44 +102,6 @@ const Settings: React.FC = () => {
     } finally {
       setIsExporting(false);
     }
-  };
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const file = e.target.files[0];
-    if (!file.type.includes("image/")) {
-      toast.error("File harus berupa gambar");
-      return;
-    }
-
-    // Read the file and convert to data URL
-    const reader = new FileReader();
-    reader.onload = (loadEvent) => {
-      if (loadEvent.target?.result) {
-        setLogoPreview(loadEvent.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const file = e.target.files[0];
-    if (!file.type.includes("image/")) {
-      toast.error("File harus berupa gambar");
-      return;
-    }
-
-    // Read the file and convert to data URL
-    const reader = new FileReader();
-    reader.onload = (loadEvent) => {
-      if (loadEvent.target?.result) {
-        setSignaturePreview(loadEvent.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   interface ImportModalProps {
@@ -210,32 +161,6 @@ const Settings: React.FC = () => {
         toast.error("Gagal mengimpor file JSON");
       }
     };
-  };
-
-  const saveLogo = async () => {
-    if (!logoPreview) return;
-
-    try {
-      await villageService.setVillageLogo(logoPreview);
-      toast.success("Logo desa berhasil diperbarui");
-      setIsUploadLogoModalOpen(false);
-    } catch (error) {
-      console.error("Error saving logo:", error);
-      toast.error("Gagal menyimpan logo desa");
-    }
-  };
-
-  const saveSignature = async () => {
-    if (!signaturePreview) return;
-
-    try {
-      await villageService.setLeaderSignature(signaturePreview);
-      toast.success("Tanda tangan berhasil diperbarui");
-      setIsUploadSignatureModalOpen(false);
-    } catch (error) {
-      console.error("Error saving signature:", error);
-      toast.error("Gagal menyimpan tanda tangan");
-    }
   };
 
   if (isLoading) {
@@ -310,9 +235,9 @@ const Settings: React.FC = () => {
             />
 
             <Input
-              label="Kode Pos"
-              {...register("postalCode", { required: "Kode pos wajib diisi" })}
-              error={errors.postalCode?.message}
+              label="Kode Desa"
+              {...register("VillageCode", { required: "Kode pos wajib diisi" })}
+              error={errors.VillageCode?.message}
               fullWidth
             />
 
@@ -324,15 +249,6 @@ const Settings: React.FC = () => {
               error={errors.phoneNumber?.message}
               fullWidth
             />
-
-            <Input
-              label="Email"
-              type="email"
-              {...register("email")}
-              fullWidth
-            />
-
-            <Input label="Website" {...register("website")} fullWidth />
           </div>
         </Card>
 
@@ -357,86 +273,6 @@ const Settings: React.FC = () => {
               fullWidth
             />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Logo Desa
-              </label>
-              <div className="border rounded-md p-4 text-center">
-                {logoPreview ? (
-                  <div className="flex flex-col items-center">
-                    <img
-                      src={logoPreview}
-                      alt="Logo Desa"
-                      className="h-24 object-contain mb-4"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      icon={<Image size={16} />}
-                      onClick={() => setIsUploadLogoModalOpen(true)}
-                    >
-                      Ganti Logo
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="py-4">
-                    <p className="text-gray-500 mb-4">Belum ada logo desa</p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      icon={<Upload size={16} />}
-                      onClick={() => setIsUploadLogoModalOpen(true)}
-                    >
-                      Unggah Logo
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tanda Tangan Kepala Desa
-              </label>
-              <div className="border rounded-md p-4 text-center">
-                {signaturePreview ? (
-                  <div className="flex flex-col items-center">
-                    <img
-                      src={signaturePreview}
-                      alt="Tanda Tangan"
-                      className="h-24 object-contain mb-4"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      icon={<Signature size={16} />}
-                      onClick={() => setIsUploadSignatureModalOpen(true)}
-                    >
-                      Ganti Tanda Tangan
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="py-4">
-                    <p className="text-gray-500 mb-4">Belum ada tanda tangan</p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      icon={<Upload size={16} />}
-                      onClick={() => setIsUploadSignatureModalOpen(true)}
-                    >
-                      Unggah Tanda Tangan
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
         </Card>
 
         <div className="flex justify-end">
@@ -455,8 +291,8 @@ const Settings: React.FC = () => {
       <Card title="Backup & Restore Data">
         <p className="text-sm text-gray-700 mb-6">
           Backup data desa secara berkala untuk menghindari kehilangan data.
-          Data yang dibackup mencakup semua informasi warga, surat, template,
-          dan pengaturan desa.
+          Data yang dibackup mencakup semua informasi warga, surat, dan
+          pengaturan desa.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -499,161 +335,6 @@ const Settings: React.FC = () => {
           </div>
         </div>
       </Card>
-
-      {/* Upload Logo Modal */}
-      <Modal
-        isOpen={isUploadLogoModalOpen}
-        onClose={() => setIsUploadLogoModalOpen(false)}
-        title="Unggah Logo Desa"
-        size="md"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-700">
-            Unggah logo desa yang akan ditampilkan pada kop surat dan aplikasi.
-            Gunakan format gambar (JPG, PNG) dengan ukuran maksimal 2MB.
-          </p>
-
-          <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-            {logoPreview ? (
-              <div className="flex flex-col items-center">
-                <img
-                  src={logoPreview}
-                  alt="Logo Preview"
-                  className="h-32 object-contain mb-4"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => logoInputRef.current?.click()}
-                >
-                  Ganti Gambar
-                </Button>
-              </div>
-            ) : (
-              <div className="py-4">
-                <div className="flex justify-center mb-4">
-                  <Image size={48} className="text-gray-400" />
-                </div>
-                <p className="text-gray-500 mb-4">
-                  Klik untuk memilih file atau drag & drop file di sini
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => logoInputRef.current?.click()}
-                >
-                  Pilih File
-                </Button>
-              </div>
-            )}
-
-            <input
-              type="file"
-              ref={logoInputRef}
-              onChange={handleLogoUpload}
-              accept="image/*"
-              className="hidden"
-            />
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsUploadLogoModalOpen(false)}
-            >
-              Batal
-            </Button>
-            <Button
-              type="button"
-              variant="primary"
-              onClick={saveLogo}
-              disabled={!logoPreview}
-            >
-              Simpan Logo
-            </Button>
-          </div>
-        </div>
-      </Modal>
-
-      {/* Upload Signature Modal */}
-      <Modal
-        isOpen={isUploadSignatureModalOpen}
-        onClose={() => setIsUploadSignatureModalOpen(false)}
-        title="Unggah Tanda Tangan"
-        size="md"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-700">
-            Unggah tanda tangan kepala desa yang akan ditampilkan pada
-            surat-surat resmi. Gunakan format gambar (JPG, PNG) dengan latar
-            belakang transparan untuk hasil terbaik.
-          </p>
-
-          <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-            {signaturePreview ? (
-              <div className="flex flex-col items-center">
-                <img
-                  src={signaturePreview}
-                  alt="Signature Preview"
-                  className="h-32 object-contain mb-4"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => signatureInputRef.current?.click()}
-                >
-                  Ganti Gambar
-                </Button>
-              </div>
-            ) : (
-              <div className="py-4">
-                <div className="flex justify-center mb-4">
-                  <Signature size={48} className="text-gray-400" />
-                </div>
-                <p className="text-gray-500 mb-4">
-                  Klik untuk memilih file atau drag & drop file di sini
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => signatureInputRef.current?.click()}
-                >
-                  Pilih File
-                </Button>
-              </div>
-            )}
-
-            <input
-              type="file"
-              ref={signatureInputRef}
-              onChange={handleSignatureUpload}
-              accept="image/*"
-              className="hidden"
-            />
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsUploadSignatureModalOpen(false)}
-            >
-              Batal
-            </Button>
-            <Button
-              type="button"
-              variant="primary"
-              onClick={saveSignature}
-              disabled={!signaturePreview}
-            >
-              Simpan Tanda Tangan
-            </Button>
-          </div>
-        </div>
-      </Modal>
 
       {/* Import Modal */}
       <Modal
