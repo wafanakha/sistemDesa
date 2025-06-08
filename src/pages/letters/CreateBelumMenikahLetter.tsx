@@ -9,44 +9,73 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Modal from '../../components/ui/Modal';
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
 
 const initialForm = {
   residentId: '',
   issuedDate: new Date().toISOString().slice(0, 10),
 };
 
-// Helper to generate the letter content as a string for export
-function generateBelumMenikahLetterContent(resident: Resident, village: VillageInfo, issuedDate: string) {
-  return [
-    'Yang bertanda tangan di bawah ini :',
-    '',
-    `Nama Lengkap         : ${resident.name}`,
-    `Tempat/tanggal lahir : ${resident.birthPlace}, ${resident.birthDate}`,
-    `Pekerjaan            : ${resident.occupation}`,
-    `NIK                  : ${resident.nik}`,
-    `Agama                : ${resident.religion}`,
-    `Alamat               : ${resident.address}`,
-    '',
-    'Dengan ini menyatakan yang sesungguhnya dan sebenarnya, bahwa saya sampai saat ini belum pernah menikah dengan seorang Perempuan, baik secara resmi maupun di bawah tangan (masih Lajang). Surat pernyataan ini saya buat untuk melengkapi persyaratan menikah.',
-    '',
-    'Demikian surat pernyataan ini saya buat, dan ditanda tangani dalam keadaan sehat jasmani dan rohani, tanpa ada paksaan dan bujukan dari siapapun, dan apabila surat pernyataan ini tidak benar, maka saya sedia bertanggung jawab di hadapan hukum yang berlaku.',
-    '',
-    `${village.name}, ${issuedDate && new Date(issuedDate).toLocaleDateString('id-ID')}`,
-    'Yang menyatakan',
-    '',
-    '',
-    '',
-    resident.name,
-    '',
-    '',
-    `Mengetahui`,
-    `Kepala Desa ${village.name}`,
-    '',
-    '',
-    '',
-    village.leaderName,
-  ].join('\n');
-}
+const exportBelumMenikahPDF = (resident: Resident, village: VillageInfo, issuedDate: string) => {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 20;
+
+  // Header
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('SURAT PERNYATAAN BELUM MENIKAH', pageWidth / 2, y, { align: 'center' });
+  y += 2;
+  const titleWidth = doc.getTextWidth('SURAT PERNYATAAN BELUM MENIKAH');
+  doc.setLineWidth(0.7);
+  doc.line(pageWidth / 2 - titleWidth / 2, y + 1, pageWidth / 2 + titleWidth / 2, y + 1);
+  y += 8;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.text('Yang bertanda tangan di bawah ini :', 20, y);
+  y += 8;
+
+  // Data Warga
+  const data = [
+    ['Nama Lengkap', resident.name],
+    ['Tempat/Tanggal Lahir', `${resident.birthPlace}, ${resident.birthDate && new Date(resident.birthDate).toLocaleDateString('id-ID')}`],
+    ['Pekerjaan', resident.occupation],
+    ['NIK', resident.nik],
+    ['Agama', resident.religion],
+    ['Alamat', resident.address],
+  ];
+  data.forEach(([label, value]) => {
+    doc.text(`${label}`, 25, y);
+    doc.text(':', 70, y);
+    doc.text(value || '-', 75, y);
+    y += 7;
+  });
+  y += 2;
+
+  // Isi Surat
+  const isi1 = 'Dengan ini menyatakan yang sesungguhnya dan sebenarnya, bahwa saya sampai saat ini belum pernah menikah dengan seorang Perempuan, baik secara resmi maupun di bawah tangan (masih Lajang). Surat pernyataan ini saya buat untuk melengkapi persyaratan menikah.';
+  const isi2 = 'Demikian surat pernyataan ini saya buat, dan ditanda tangani dalam keadaan sehat jasmani dan rohani, tanpa ada paksaan dan bujukan dari siapapun, dan apabila surat pernyataan ini tidak benar, maka saya sedia bertanggung jawab di hadapan hukum yang berlaku.';
+  doc.text(doc.splitTextToSize(isi1, pageWidth - 40), 20, y);
+  y += doc.getTextDimensions(doc.splitTextToSize(isi1, pageWidth - 40)).h + 2;
+  doc.text(doc.splitTextToSize(isi2, pageWidth - 40), 20, y);
+  y += doc.getTextDimensions(doc.splitTextToSize(isi2, pageWidth - 40)).h + 8;
+
+  // Tanggal & TTD
+  doc.text(`${village.name}, ${issuedDate && new Date(issuedDate).toLocaleDateString('id-ID')}`, pageWidth - 20, y, { align: 'right' });
+  y += 7;
+  doc.text('Yang menyatakan', pageWidth - 20, y, { align: 'right' });
+  y += 20;
+  doc.text(resident.name, pageWidth - 20, y, { align: 'right' });
+  y += 14;
+  doc.text('Mengetahui', 25, y);
+  y += 7;
+  doc.text(`Kepala Desa ${village.name}`, 25, y);
+  y += 20;
+  doc.text(village.leaderName, 25, y);
+
+  doc.save('Surat-Pernyataan-Belum-Menikah.pdf');
+};
 
 const CreateBelumMenikahLetter: React.FC = () => {
   const [form, setForm] = useState<any>(initialForm);
@@ -104,17 +133,7 @@ const CreateBelumMenikahLetter: React.FC = () => {
         title: 'Surat Pernyataan Belum Menikah',
         residentId: form.residentId,
         issuedDate: form.issuedDate, // simpan sebagai string saja
-        content: generateBelumMenikahLetterContent({
-          ...resident,
-          name: form.name,
-          nik: form.nik,
-          birthPlace: form.birthPlace,
-          birthDate: form.birthDate,
-          gender: form.gender,
-          religion: form.religion,
-          occupation: form.occupation,
-          address: form.address,
-        }, village, form.issuedDate),
+        content: '', // Tidak perlu generate string, layout sudah diatur di preview & PDF
         status: 'draft',
       };
       if (location.state?.isEditMode && location.state?.editData?.id) {
@@ -133,30 +152,23 @@ const CreateBelumMenikahLetter: React.FC = () => {
   };
 
   const handleExportPdf = async () => {
-    const resident = residents.find(r => r.id === form.residentId);
+    const resident = residents.find(r => String(r.id) === String(form.residentId));
     if (!resident || !village) {
       toast.error('Lengkapi data warga dan desa terlebih dahulu');
       return;
     }
-    // Generate content string tanpa judul
-    const content = generateBelumMenikahLetterContent(resident, village, form.issuedDate);
     try {
-      const jsPDFmod = (await import('jspdf')).jsPDF;
-      const doc = new jsPDFmod();
-      // Judul surat
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
-      doc.text('SURAT PERNYATAAN BELUM MENIKAH', 105, 20, { align: 'center' });
-      // Underline judul
-      const titleWidth = doc.getTextWidth('SURAT PERNYATAAN BELUM MENIKAH');
-      doc.setLineWidth(0.7);
-      doc.line(105 - titleWidth/2, 22, 105 + titleWidth/2, 22);
-      // Isi surat
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(12);
-      const lines = doc.splitTextToSize(content, 180);
-      doc.text(lines, 15, 32);
-      doc.save('Surat-Pernyataan-Belum-Menikah.pdf');
+      exportBelumMenikahPDF({
+        ...resident,
+        name: form.name,
+        nik: form.nik,
+        birthPlace: form.birthPlace,
+        birthDate: form.birthDate,
+        gender: form.gender,
+        religion: form.religion,
+        occupation: form.occupation,
+        address: form.address,
+      }, village, form.issuedDate);
       toast.success('Surat berhasil diekspor ke PDF');
     } catch (error) {
       toast.error('Gagal mengekspor surat ke PDF');
@@ -252,11 +264,94 @@ const CreateBelumMenikahLetter: React.FC = () => {
         </div>
       </form>
       <Modal isOpen={previewOpen} onClose={() => setPreviewOpen(false)} title="Preview Surat">
-        <div className="p-4 bg-white">
+        <div className="bg-white p-8 border shadow max-w-[800px] mx-auto">
           {resident && village ? (
-            <div>
-              <div className="text-center font-bold underline mb-6 text-lg">SURAT PERNYATAAN BELUM MENIKAH</div>
-              <pre className="whitespace-pre-wrap font-sans text-base">{generateBelumMenikahLetterContent(resident, village, form.issuedDate)}</pre>
+            <div className="container" style={{ width: "210mm", minHeight: "297mm", padding: "1cm", margin: "auto", background: "white", boxSizing: "border-box" }}>
+              <div className="header" style={{ display: "flex", alignItems: "center", marginBottom: 1 }}>
+                <div className="instansi" style={{ textAlign: "center", flex: 1 }}>
+                  <div className="bold" style={{ fontWeight: "bold" }}>
+                    PEMERINTAHAN DESA KEDUNGWRINGIN
+                  </div>
+                  <div className="bold" style={{ fontWeight: "bold" }}>
+                    KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+                  </div>
+                  <div className="bold" style={{ fontWeight: "bold" }}>
+                    SEKERTARIAT DESA
+                  </div>
+                  <div className="bold" style={{ fontWeight: "bold" }}>
+                    Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171
+                  </div>
+                  <div className="bold" style={{ fontWeight: "bold" }}>
+                    Telp. (0281) 638395
+                  </div>
+                </div>
+              </div>
+              <hr style={{ border: "1px solid black", marginTop: 10 }} />
+              <p>Kode Desa: 02122013</p>
+              <h2 style={{ textAlign: "center", textDecoration: "underline", fontSize: "11pt" }}>
+                SURAT PERNYATAAN BELUM MENIKAH
+              </h2>
+              <div style={{ marginTop: 30 }}>
+                <p>Yang bertanda tangan di bawah ini :</p>
+                <table style={{ marginLeft: 20 }}>
+                  <tbody>
+                    <tr>
+                      <td>Nama Lengkap</td>
+                      <td>:</td>
+                      <td>{resident.name}</td>
+                    </tr>
+                    <tr>
+                      <td>Tempat/Tanggal Lahir</td>
+                      <td>:</td>
+                      <td>{resident.birthPlace}, {resident.birthDate && new Date(resident.birthDate).toLocaleDateString("id-ID")}</td>
+                    </tr>
+                    <tr>
+                      <td>Pekerjaan</td>
+                      <td>:</td>
+                      <td>{resident.occupation}</td>
+                    </tr>
+                    <tr>
+                      <td>NIK</td>
+                      <td>:</td>
+                      <td>{resident.nik}</td>
+                    </tr>
+                    <tr>
+                      <td>Agama</td>
+                      <td>:</td>
+                      <td>{resident.religion}</td>
+                    </tr>
+                    <tr>
+                      <td>Alamat</td>
+                      <td>:</td>
+                      <td>{resident.address}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style={{ marginTop: 16 }}>
+                  Dengan ini menyatakan yang sesungguhnya dan sebenarnya, bahwa saya sampai saat ini belum pernah menikah dengan seorang Perempuan, baik secara resmi maupun di bawah tangan (masih Lajang). Surat pernyataan ini saya buat untuk melengkapi persyaratan menikah.
+                </p>
+                <p style={{ marginTop: 8 }}>
+                  Demikian surat pernyataan ini saya buat, dan ditanda tangani dalam keadaan sehat jasmani dan rohani, tanpa ada paksaan dan bujukan dari siapapun, dan apabila surat pernyataan ini tidak benar, maka saya sedia bertanggung jawab di hadapan hukum yang berlaku.
+                </p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 40 }}>
+                <div className="signature" style={{ width: "40%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 120 }}>
+                  <div className="compact" style={{ textAlign: "center" }}>
+                    <p>{village.name}, {form.issuedDate && new Date(form.issuedDate).toLocaleDateString("id-ID")}</p>
+                    <p>Yang menyatakan</p>
+                  </div>
+                  <div style={{ marginTop: "auto" }}>
+                    <div className="ttd-space" style={{ minHeight: 50, borderBottom: "1px solid transparent" }}></div>
+                    <p><strong>{resident.name}</strong></p>
+                  </div>
+                </div>
+              </div>
+              <div style={{ marginTop: 40 }}>
+                <p>Mengetahui,</p>
+                <p>Kepala Desa {village.name}</p>
+                <div style={{ minHeight: 50 }}></div>
+                <p><strong>{village.leaderName}</strong></p>
+              </div>
             </div>
           ) : (
             <p>Lengkapi data warga dan desa untuk preview.</p>
