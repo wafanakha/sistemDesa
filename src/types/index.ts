@@ -76,13 +76,23 @@ export interface ResidentCustomField {
   value: string;
 }
 
+
 export type LetterType =
   | "domicile"
   | "poverty"
   | "introduction"
   | "business"
   | "birth"
-  | "custom";
+  | "keramaian" // Tambahkan tipe keramaian
+  | "custom"
+  | "wali-nikah"
+  | "pengantar-numpang-nikah"
+  | "belum-menikah" // Tambahkan tipe belum menikah
+  | "kematian" // Tambahkan tipe kematian
+  | "pengantar-nikah" // Tambahkan tipe pengantar nikah
+  | "permohonan-kehendak-nikah" // Tambahkan tipe permohonan kehendak nikah
+  | "persetujuan-calon-pengantin" // Tambahkan tipe persetujuan calon pengantin
+  | "izin-orang-tua"; // Tambahkan tipe izin orang tua
 
 export type LetterStatus = "draft" | "completed" | "signed";
 
@@ -102,15 +112,31 @@ export interface Letter {
   updatedAt: Date;
 }
 
+export interface LetterTemplateField {
+  name: string; // key, e.g. 'name', 'nik', 'purpose'
+  label: string; // label untuk form
+  type: 'text' | 'number' | 'date' | 'select';
+  required?: boolean;
+  options?: string[]; // untuk select
+}
+
+export interface LetterTemplateSigner {
+  name: string;
+  title: string;
+}
+
 export interface LetterTemplate {
   id?: number;
   name: string;
   type: LetterType;
-  template: string;
+  template: string; // legacy, bisa diabaikan untuk surat baru
   isDefault: boolean;
+  fields?: LetterTemplateField[]; // <-- Tambahan untuk form dinamis
+  signers?: LetterTemplateSigner[]; // <-- Tambahan untuk penandatangan
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 export interface VillageInfo {
   id?: number;

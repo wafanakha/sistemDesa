@@ -92,7 +92,7 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
-  {
+ {
     title: "Surat",
     path: "/letters",
     icon: <FileText size={20} />,
@@ -104,10 +104,6 @@ const menuItems: MenuItem[] = [
       {
         title: "Buat Surat",
         path: "/letters/create",
-      },
-      {
-        title: "Template Surat",
-        path: "/letters/templates",
       },
     ],
   },

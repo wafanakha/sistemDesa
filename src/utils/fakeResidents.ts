@@ -6,6 +6,7 @@ const randomFromArray = <T>(arr: readonly T[]) =>
 const randomDate = (start: Date, end: Date) =>
   new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 
+
 export const seedResidents = async () => {
   let idCounter = 1;
 
@@ -13,6 +14,7 @@ export const seedResidents = async () => {
   if (existing > 0) return;
 
   const genders = ["Laki-laki", "Perempuan"] as const;
+
   const religions = [
     "Islam",
     "Protestan",
@@ -40,7 +42,9 @@ export const seedResidents = async () => {
     "Cerai Mati",
   ] as const;
   const pekerjaan = ["Petani", "Guru", "Pastor", "Swasta", "Pedagang"] as const;
+
   const bloodTypes = [
+
     "A",
     "B",
     "O",
@@ -55,6 +59,7 @@ export const seedResidents = async () => {
     "O-",
     "TIDAK TAHU",
   ] as const;
+
   const shdks = ["Istri", "Anak", "Lainnya"] as const; // Kepala Keluarga assigned manually
 
   const generateNIK = (i: number) =>

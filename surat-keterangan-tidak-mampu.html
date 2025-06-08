@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Surat Pengantar Ijin Keramaian</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 2.5cm;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.0;
+      font-size: 12pt;
+      background: white;
+    }
+    .container {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 1cm;
+      margin: auto;
+      box-sizing: border-box;
+      background: white;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1px;
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
+      margin-right: 20px;
+    }
+    .instansi {
+      text-align: center;
+      flex: 1;
+    }
+    .instansi .bold {
+      font-weight: bold;
+    }
+    hr {
+      border: 1px solid black;
+      margin-top: 10px;
+    }
+    h2 {
+      text-align: center;
+      text-decoration: underline;
+      font-size: 11pt;
+    }
+    .content {
+      margin-top: 30px;
+    }
+    table {
+      margin-left: 20px;
+    }
+    table td {
+      vertical-align: top;
+      padding: 2px 5px;
+    }
+    .footer-info {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .footer-info table td {
+      padding: 4px 10px;
+    }
+    .signature-block {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .signature {
+      width: 30%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      /* pastikan tinggi sama */
+      min-height: 180px;
+    }
+    .ttd-space {
+      min-height: 70px; /* beri ruang tanda tangan yang cukup */
+      border-bottom: 1px solid transparent; /* buat spacer tanpa garis */
+    }
+    .print-btn {
+      display: block;
+      width: fit-content;
+      margin: 40px auto;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .compact p {
+    margin: 0;
+    line-height: 1.1; /* bisa disesuaikan, misal 1.0 atau 1.05 */
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <img src="logo-bms.png" alt="Logo Instansi" class="logo" />
+      <div class="instansi">
+        <div class="bold">PEMERINTAHAN DESA KEDUNGWRINGIN</div>
+        <div class="bold">KECAMATAN PATIKREJA KABUPATEN BANYUMAS</div>
+        <div class="bold">SEKERTARIAT DESA</div>
+        <div class="bold">Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171</div>
+        <div class="bold">Telp. (0281) 638395</div>
+      </div>
+    </div>
+
+    <hr />
+    <p>Kode Desa: 02122013</p>
+    <h2>SURAT KETERANGAN TIDAK MAMPU</h2>
+    <p style="text-align: center;">Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+
+    <div class="content">
+      <p>Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:</p>
+
+      <table>
+        <tr><td>1. Nama Lengkap</td><td>:</td><td>Sugiono Sutikno</td></tr>
+        <tr><td>2. Jenis Kelamin</td><td>:</td><td>Laki-laki</td></tr>
+        <tr><td>3. Tempat/Tgl Lahir</td><td>:</td><td>2 September 2025</td></tr>
+        <tr><td>4. Warganegara/Agama</td><td>:</td><td>KONOHA/SIGMA</td></tr>
+        <tr><td>5. No. KTP/NIK</td><td>:</td><td>3011301203829019</td></tr>
+        <tr><td>6. Pekerjaan</td><td>:</td><td>Begal</td></tr>
+        <tr><td>7. Alamat Pemohon</td><td>:</td><td>Kedungwringin</td></tr>
+      </table>
+
+      <p>Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya TIDAK MAMPU.</p>
+      <p>Surat keterangan ini diperlukan untuk...</p>
+      <p>Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan dan dapat dipergunakan sebagaimana mestinya.</p>
+    </div>
+  <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
+  <div class="signature">
+    <div class="compact" style="text-align: center;">
+      <p>Kedungwringin, 22 Mei 2025</p>
+      <p>An. KEPALA DESA KEDUNGWRINGIN</p>
+      <p>KASI PEMERINTAH</p>
+    </div>
+    <div style="margin-top: auto;">
+      <div class="ttd-space"></div>
+      <p><strong>[Nama Kepala Desa]</strong></p>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+    <button class="print-btn" onclick="downloadPDF()">Download PDF</button>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("p", "mm", "a4");
+
+      const content = document.querySelector('.container');
+      const canvas = await html2canvas(content, { scale: 2 });
+
+      const imgData = canvas.toDataURL('image/png');
+      const imgProps = doc.getImageProperties(imgData);
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      doc.save('surat-keramaian.pdf');
+    }
+  </script>
+</body>
+</html>
