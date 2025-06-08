@@ -7,6 +7,7 @@ import {
   LetterTemplate,
   VillageInfo,
   LetterType,
+  LetterHistory,
 } from "../types";
 
 class VillageAdministrationDB extends Dexie {
@@ -16,6 +17,7 @@ class VillageAdministrationDB extends Dexie {
   letters!: Table<Letter, number>;
   letterTemplates!: Table<LetterTemplate, number>;
   villageInfo!: Table<VillageInfo, number>;
+  letterHistory!: Table<LetterHistory, number>;
 
   constructor() {
     super("VillageAdministrationDB");
@@ -29,6 +31,7 @@ class VillageAdministrationDB extends Dexie {
         "++id, letterNumber, letterType, residentId, title, issuedDate, status, createdAt, updatedAt",
       letterTemplates: "++id, name, type, isDefault, createdAt, updatedAt",
       villageInfo: "++id, name",
+      letterHistory: "++id, name, letter, date, nik",
     });
 
     // Initialize default templates
