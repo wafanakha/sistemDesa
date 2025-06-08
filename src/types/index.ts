@@ -91,7 +91,13 @@ export type LetterType =
   | "pengantar-nikah" // Tambahkan tipe pengantar nikah
   | "permohonan-kehendak-nikah" // Tambahkan tipe permohonan kehendak nikah
   | "persetujuan-calon-pengantin" // Tambahkan tipe persetujuan calon pengantin
-  | "izin-orang-tua"; // Tambahkan tipe izin orang tua
+  | "izin-orang-tua"
+  | "ahli-waris"
+  | "domisili-usaha"
+  | "keterangan"
+  | "pengantar"
+  | "skck";
+// Tambahkan tipe izin orang tua
 
 export type LetterStatus = "draft" | "completed" | "signed";
 
@@ -147,4 +153,11 @@ export interface VillageInfo {
   phoneNumber: string;
   leaderName: string;
   kasipemerintah: string;
+}
+
+export interface LetterHistory {
+  id?: number;
+  name: string;
+  letter: LetterType;
+  date: string;
 }

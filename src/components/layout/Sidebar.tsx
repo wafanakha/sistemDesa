@@ -144,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
     const isExpanded = expandedMenus[item.title];
 
     return (
-      <div className="text-xl">
+      <div className="text-base">
         {hasSubmenu ? (
           <div className="mb-1">
             <button
@@ -165,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
             </button>
 
             {isExpanded && (
-              <div className="pl-10 mt-1 space-y-1 text-lg">
+              <div className="pl-10 mt-1 space-y-1 text-base">
                 {item.submenu!.map((subitem) => (
                   <NavLink
                     key={subitem.path}
