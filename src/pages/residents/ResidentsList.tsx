@@ -1,101 +1,124 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  PlusCircle,
-  Search,
-  UserPlus,
-  Trash2,
-  Edit,
-  Eye,
   ChevronDown,
   ChevronRight,
+  Edit,
+  Eye,
+  Search,
+  Trash2,
+  UserPlus,
 } from "lucide-react";
 import { residentService } from "../../database/residentService";
 import { Resident } from "../../types";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import Table from "../../components/ui/Table";
 import Modal from "../../components/ui/Modal";
 import Card from "../../components/ui/Card";
 import { toast } from "react-toastify";
-import { FixedSizeList as List } from "react-window";
+import { VariableSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+
+const ROW_HEIGHT = 60; // Height of each family member row
+const HEADER_HEIGHT = 80; // Height of family group header
+const GROUP_PADDING = 20; // Additional padding for each group
 
 const ResidentsList: React.FC = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
   const [groupedResidents, setGroupedResidents] = useState<
-    Record<string, Resident[]>
-  >({});
+    [string, Resident[]][]
+  >([]);
   const [expandedKKs, setExpandedKKs] = useState<Record<string, boolean>>({});
-  const [filteredResidents, setFilteredResidents] = useState<Resident[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedResident, setSelectedResident] = useState<Resident | null>(
     null
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([
+    "nik",
+    "name",
+    "gender",
+    "age",
+    "address",
+    "shdk",
+    "actions",
+  ]);
 
+  const listRef = useRef<List>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const loadResidents = async () => {
+      setIsLoading(true);
+      try {
+        const data = await residentService.getAllResidents();
+        setResidents(data);
+        groupResidentsByKK(data);
+      } catch (error) {
+        console.error("Error loading residents:", error);
+        toast.error("Gagal memuat data warga");
+      } finally {
+        setIsLoading(false);
+      }
+    };
     loadResidents();
   }, []);
 
-  const loadResidents = async () => {
-    setIsLoading(true);
-    try {
-      const data = await residentService.getAllResidents();
-      setResidents(data);
-      groupResidentsByKK(data);
-      setFilteredResidents(data);
-    } catch (error) {
-      console.error("Error loading residents:", error);
-      toast.error("Gagal memuat data warga");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const groupResidentsByKK = (residentsData: Resident[]) => {
-    const grouped: Record<string, Resident[]> = {};
+    const groupedMap: Record<string, Resident[]> = {};
     const expanded: Record<string, boolean> = {};
 
     residentsData.forEach((resident) => {
-      if (!grouped[resident.kk]) {
-        grouped[resident.kk] = [];
+      if (!groupedMap[resident.kk]) {
+        groupedMap[resident.kk] = [];
         expanded[resident.kk] = true; // Default to expanded
       }
-      grouped[resident.kk].push(resident);
+      groupedMap[resident.kk].push(resident);
     });
 
-    setGroupedResidents(grouped);
+    // Sort family members with Kepala Keluarga first
+    Object.keys(groupedMap).forEach((kk) => {
+      groupedMap[kk].sort((a, b) => {
+        if (a.shdk === "Kepala Keluarga") return -1;
+        if (b.shdk === "Kepala Keluarga") return 1;
+        return a.name.localeCompare(b.name);
+      });
+    });
+
+    const groupedEntries = Object.entries(groupedMap).sort((a, b) =>
+      a[0].localeCompare(b[0])
+    );
+    setGroupedResidents(groupedEntries);
     setExpandedKKs(expanded);
   };
 
-  const toggleKKGroup = (kk: string) => {
-    setExpandedKKs((prev) => ({
-      ...prev,
-      [kk]: !prev[kk],
-    }));
+  const toggleKKGroup = (kk: string, index: number) => {
+    setExpandedKKs((prev) => {
+      const newExpanded = { ...prev, [kk]: !prev[kk] };
+      setTimeout(() => {
+        listRef.current?.resetAfterIndex(index);
+      }, 0);
+      return newExpanded;
+    });
   };
 
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredResidents(residents);
-      groupResidentsByKK(residents);
-    } else {
-      const filtered = residents.filter(
-        (resident) =>
-          resident.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          resident.nik.includes(searchQuery) ||
-          resident.address.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredResidents(filtered);
-      groupResidentsByKK(filtered);
-    }
-  }, [searchQuery, residents]);
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (!query.trim()) {
+      groupResidentsByKK(residents);
+      return;
+    }
+
+    const filtered = residents.filter(
+      (r) =>
+        r.name.toLowerCase().includes(query.toLowerCase()) ||
+        r.nik.includes(query) ||
+        r.address.toLowerCase().includes(query.toLowerCase())
+    );
+    groupResidentsByKK(filtered);
   };
 
   const handleDeleteClick = (resident: Resident) => {
@@ -105,166 +128,102 @@ const ResidentsList: React.FC = () => {
 
   const confirmDelete = async () => {
     if (!selectedResident) return;
-
     try {
       await residentService.deleteResident(selectedResident.id!);
       toast.success("Warga berhasil dihapus");
-      loadResidents();
+      const updated = await residentService.getAllResidents();
+      setResidents(updated);
+      groupResidentsByKK(updated);
     } catch (error) {
       console.error("Error deleting resident:", error);
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Gagal menghapus data warga");
-      }
+      toast.error("Gagal menghapus data warga");
     } finally {
       setIsDeleteModalOpen(false);
       setSelectedResident(null);
     }
   };
 
-  const columns = [
-    {
-      header: "NIK",
-      accessor: "nik", // Valid as "nik" is a keyof Resident
-    },
-    {
-      header: "Nama",
-      accessor: "name", // Valid as "name" is a keyof Resident
-    },
-    {
-      header: "Memiliki KTP Elektronik",
-      accessor: (resident: Resident) => (resident.ktpEl ? "Ya" : "Tidak"),
-    },
-    {
-      header: "Alamat",
-      accessor: "address", // Valid as "address" is a keyof Resident
-    },
-    {
-      header: "Tanggal Lahir",
-      accessor: (resident: Resident) =>
-        new Date(resident.birthDate).toLocaleDateString("id-ID"), // Function accessor
-    },
-    {
-      header: "Tempat Lahir",
-      accessor: "birthPlace", // Valid as "birthPlace" is a keyof Resident
-    },
-    {
-      header: "Umur",
-      accessor: "age", // Valid as "age" is a keyof Resident (optional property is fine)
-    },
-    {
-      header: "Jenis Kelamin",
-      accessor: "gender", // Valid as "gender" is a keyof Resident
-    },
-    {
-      header: "RT",
-      accessor: "rt", // Valid as "rt" is a keyof Resident
-    },
-    {
-      header: "RW",
-      accessor: "rw", // Valid as "rw" is a keyof Resident
-    },
-    {
-      header: "Status Hubungan",
-      accessor: "shdk", // Valid as "shdk" is a keyof Resident
-    },
-    {
-      header: "Status Pernikahan",
-      accessor: "maritalStatus", // Valid as "maritalStatus" is a keyof Resident
-    },
-    {
-      header: "Pendidikan",
-      accessor: "education", // Valid as "education" is a keyof Resident
-    },
-    {
-      header: "Agama",
-      accessor: "religion", // Valid as "religion" is a keyof Resident
-    },
-    {
-      header: "Pekerjaan",
-      accessor: "occupation", // Valid as "occupation" is a keyof Resident
-    },
-    {
-      header: "Golongan Darah",
-      accessor: (resident: Resident) => resident.bloodType || "-",
-    },
-    {
-      header: "Disabilitas Fisik",
-      accessor: (resident: Resident) => resident.physicalDisability || "-",
-    },
-    {
-      header: "Nama Ayah",
-      accessor: "fatherName", // Valid as "fatherName" is a keyof Resident
-    },
-    {
-      header: "Nama Ibu",
-      accessor: "motherName", // Valid as "motherName" is a keyof Resident
-    },
-    {
+  const columnDefinitions = {
+    nik: { header: "NIK", accessor: "nik", width: 150 },
+    name: { header: "Nama", accessor: "name", width: 180 },
+    gender: { header: "Jenis Kelamin", accessor: "gender", width: 120 },
+    age: { header: "Umur", accessor: "age", width: 80 },
+    address: { header: "Alamat", accessor: "address", width: 200 },
+    shdk: { header: "Status Hubungan", accessor: "shdk", width: 150 },
+    actions: {
       header: "Aksi",
-      accessor: (resident: Resident) => (
-        <div className="flex space-x-2">
+      accessor: (r: Resident) => (
+        <div className="flex space-x-2 justify-center">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/residents/view/${resident.id}`);
+              navigate(`/residents/view/${r.id}`);
             }}
-            className="p-1 text-blue-600 hover:text-blue-800"
             title="Lihat"
+            className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
           >
             <Eye size={18} />
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/residents/edit/${resident.id}`);
+              navigate(`/residents/edit/${r.id}`);
             }}
-            className="p-1 text-amber-600 hover:text-amber-800"
             title="Edit"
+            className="p-1 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded"
           >
             <Edit size={18} />
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleDeleteClick(resident);
+              handleDeleteClick(r);
             }}
-            className="p-1 text-red-600 hover:text-red-800"
             title="Hapus"
+            className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
           >
             <Trash2 size={18} />
           </button>
         </div>
       ),
+      width: 120,
+      sticky: true,
     },
-  ];
+  };
 
-  const renderKKGroups = () => {
-    const groupedEntries = Object.entries(groupedResidents);
+  const columns = Object.entries(columnDefinitions)
+    .filter(([key]) => visibleColumns.includes(key))
+    .map(([_, value]) => value);
 
-    const Row = ({
-      index,
-      style,
-    }: {
-      index: number;
-      style: React.CSSProperties;
-    }) => {
-      const [kk, familyMembers] = groupedEntries[index];
-      const familyHead = familyMembers.find(
-        (m) => m.shdk === "Kepala Keluarga"
-      );
+  const getItemSize = useCallback(
+    (index: number) => {
+      const [kk, members] = groupedResidents[index];
       const isExpanded = expandedKKs[kk];
+      return isExpanded
+        ? HEADER_HEIGHT + members.length * ROW_HEIGHT + GROUP_PADDING
+        : HEADER_HEIGHT;
+    },
+    [groupedResidents, expandedKKs]
+  );
 
-      return (
-        <div
-          key={kk}
-          style={style}
-          className="mb-4 border rounded-lg overflow-hidden"
-        >
+  const Row = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+  }) => {
+    const [kk, familyMembers] = groupedResidents[index];
+    const isExpanded = expandedKKs[kk];
+    const familyHead = familyMembers.find((r) => r.shdk === "Kepala Keluarga");
+
+    return (
+      <div style={style}>
+        <div className="mb-4 border rounded-lg overflow-hidden bg-white shadow-sm">
+          {/* Family header */}
           <div
-            className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer"
-            onClick={() => toggleKKGroup(kk)}
+            className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+            onClick={() => toggleKKGroup(kk, index)}
           >
             <div className="flex items-center">
               <span className="mr-2">
@@ -286,36 +245,61 @@ const ResidentsList: React.FC = () => {
                 </p>
               </div>
             </div>
+            <span className="text-sm text-gray-500">
+              {isExpanded ? "Sembunyikan" : "Tampilkan"}
+            </span>
           </div>
 
           {isExpanded && (
-            <div className="border-t text-gray-900 text-sm font-medium">
-              <Table
-                columns={columns}
-                data={familyMembers}
-                keyField="id"
-                onRowClick={(resident) =>
-                  navigate(`/residents/view/${resident.id}`)
-                }
-                isLoading={false}
-                emptyMessage="Tidak ada anggota keluarga"
-                hideHeader
-              />
+            <div className="border-t">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <tbody>
+                    {familyMembers.map((member) => (
+                      <tr
+                        key={member.id}
+                        className="hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                        onClick={() => navigate(`/residents/view/${member.id}`)}
+                      >
+                        {columns.map((column) => (
+                          <td
+                            key={`${member.id}-${column.header}`}
+                            className="px-4 py-3 text-sm"
+                            style={{
+                              width: column.width,
+                              minWidth: column.width,
+                              maxWidth: column.width,
+                              ...(column.sticky
+                                ? {
+                                    position: "sticky",
+                                    right: 0,
+                                    background: "white",
+                                  }
+                                : {}),
+                            }}
+                          >
+                            {typeof column.accessor === "function"
+                              ? column.accessor(member)
+                              : member[column.accessor as keyof Resident]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
-      );
-    };
+      </div>
+    );
+  };
 
-    return (
-      <List
-        height={800} // Adjust to fit your layout
-        itemCount={groupedEntries.length}
-        itemSize={300} // Rough estimate per group height
-        width="100%"
-      >
-        {Row}
-      </List>
+  const toggleColumnVisibility = (columnKey: string) => {
+    setVisibleColumns((prev) =>
+      prev.includes(columnKey)
+        ? prev.filter((col) => col !== columnKey)
+        : [...prev, columnKey]
     );
   };
 
@@ -323,13 +307,24 @@ const ResidentsList: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h2 className="text-2xl font-bold text-gray-800">Daftar Warga</h2>
-        <Button
-          variant="primary"
-          icon={<UserPlus size={18} />}
-          onClick={() => navigate("/residents/add")}
-        >
-          Tambah Warga
-        </Button>
+        <div className="flex space-x-3">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              const modal = document.getElementById("columnModal");
+              if (modal) (modal as HTMLDialogElement).showModal();
+            }}
+          >
+            Kolom Tampilan
+          </Button>
+          <Button
+            variant="primary"
+            icon={<UserPlus size={18} />}
+            onClick={() => navigate("/residents/add")}
+          >
+            Tambah Warga
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -345,20 +340,30 @@ const ResidentsList: React.FC = () => {
 
         {isLoading ? (
           <div className="text-center py-8">Memuat data...</div>
+        ) : groupedResidents.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            Tidak ada data warga
+          </div>
         ) : (
-          <div className="space-y-4">
-            {Object.keys(groupedResidents).length > 0 ? (
-              renderKKGroups()
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                Belum ada data warga. Silakan tambahkan warga terlebih dahulu.
-              </div>
-            )}
+          <div style={{ height: "calc(100vh - 200px)" }}>
+            <AutoSizer>
+              {({ height, width }) => (
+                <List
+                  ref={listRef}
+                  height={height}
+                  width={width}
+                  itemCount={groupedResidents.length}
+                  itemSize={getItemSize}
+                  overscanCount={10}
+                >
+                  {Row}
+                </List>
+              )}
+            </AutoSizer>
           </div>
         )}
       </Card>
 
-      {/* Delete confirmation modal (keep the same) */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -367,7 +372,7 @@ const ResidentsList: React.FC = () => {
       >
         <div className="space-y-4">
           <p className="text-gray-700">
-            Apakah Anda yakin ingin menghapus data warga{" "}
+            Yakin ingin menghapus data warga{" "}
             <strong>{selectedResident?.name}</strong>?
           </p>
           <div className="flex justify-end space-x-3">
@@ -383,6 +388,33 @@ const ResidentsList: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Column Visibility Modal */}
+      <dialog id="columnModal" className="modal">
+        <div className="modal-box max-w-md">
+          <h3 className="font-bold text-lg mb-4">Pengaturan Kolom</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(columnDefinitions).map(([key, { header }]) => (
+              <div key={key} className="form-control">
+                <label className="label cursor-pointer justify-start gap-2">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.includes(key)}
+                    onChange={() => toggleColumnVisibility(key)}
+                    className="checkbox checkbox-sm"
+                  />
+                  <span className="label-text">{header}</span>
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Tutup</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
