@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Button from '../../components/ui/Button';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import logo from '../../../logo-bms.png';
-import { Letter } from '../../types';
-import { residentService } from '../../database/residentService';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Button from "../../components/ui/Button";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import logo from "../../../logo-bms.png";
+import { Letter } from "../../types";
+import { residentService } from "../../database/residentService";
 
 interface TidakMampuFormData {
   nama: string;
@@ -20,20 +20,23 @@ interface TidakMampuFormData {
 }
 
 const initialForm: TidakMampuFormData = {
-  nama: '',
-  nik: '',
-  tempatLahir: '',
-  tanggalLahir: '',
-  jenisKelamin: '',
-  agama: '',
-  pekerjaan: '',
-  alamat: '',
-  keperluan: '',
+  nama: "",
+  nik: "",
+  tempatLahir: "",
+  tanggalLahir: "",
+  jenisKelamin: "",
+  agama: "",
+  pekerjaan: "",
+  alamat: "",
+  keperluan: "",
 };
 
-const CreateTidakMampuLetter: React.FC<{ editData?: Letter; isEditMode?: boolean }> = ({ editData, isEditMode }) => {
+const CreateTidakMampuLetter: React.FC<{
+  editData?: Letter;
+  isEditMode?: boolean;
+}> = ({ editData, isEditMode }) => {
   const [form, setForm] = useState<TidakMampuFormData>(initialForm);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
   const navigate = useNavigate();
@@ -42,13 +45,15 @@ const CreateTidakMampuLetter: React.FC<{ editData?: Letter; isEditMode?: boolean
     if (editData) {
       let parsed: Partial<TidakMampuFormData> = {};
       try {
-        parsed = JSON.parse(editData.content || '{}');
+        parsed = JSON.parse(editData.content || "{}");
       } catch {}
       setForm({ ...initialForm, ...parsed });
     }
   }, [editData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -76,87 +81,137 @@ const CreateTidakMampuLetter: React.FC<{ editData?: Letter; isEditMode?: boolean
       pekerjaan: resident.occupation,
       alamat: resident.address,
     });
-    setSearch(resident.nik + ' - ' + resident.name);
+    setSearch(resident.nik + " - " + resident.name);
     setSearchResults([]);
   };
 
   const handleExportPDF = () => {
-    const doc = new jsPDF('p', 'mm', 'a4');
+    const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 18;
     // Logo
-    doc.addImage(logo, 'PNG', 15, 10, 24, 24);
+    doc.addImage(logo, "PNG", 15, 10, 24, 24);
     // Header
-    doc.setFont('helvetica', 'bold');
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text('PEMERINTAHAN DESA KEDUNGWRINGIN', pageWidth / 2, y, { align: 'center' });
+    doc.text("PEMERINTAHAN DESA KEDUNGWRINGIN", pageWidth / 2, y, {
+      align: "center",
+    });
     y += 7;
-    doc.text('KECAMATAN PATIKREJA KABUPATEN BANYUMAS', pageWidth / 2, y, { align: 'center' });
+    doc.text("KECAMATAN PATIKREJA KABUPATEN BANYUMAS", pageWidth / 2, y, {
+      align: "center",
+    });
     y += 7;
     doc.setFontSize(10);
-    doc.text('SEKERTARIAT DESA', pageWidth / 2, y, { align: 'center' });
+    doc.text("SEKERTARIAT DESA", pageWidth / 2, y, { align: "center" });
     y += 7;
-    doc.text('Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171', pageWidth / 2, y, { align: 'center' });
+    doc.text(
+      "Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171",
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 7;
-    doc.text('Telp. (0281) 638395', pageWidth / 2, y, { align: 'center' });
+    doc.text("Telp. (0281) 638395", pageWidth / 2, y, { align: "center" });
     y += 6;
     doc.setLineWidth(0.8);
     doc.line(15, y, pageWidth - 15, y);
-    y += 3;
-    doc.setFont('helvetica', 'normal');
+    y += 5;
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text('Kode Desa: 02122013', 15, y);
+    doc.text("Kode Desa: 02122013", 15, y);
     y += 8;
     // Judul
-    doc.setFont('helvetica', 'bold');
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(13);
-    doc.text('SURAT KETERANGAN TIDAK MAMPU', pageWidth / 2, y, { align: 'center' });
+    doc.text("SURAT KETERANGAN TIDAK MAMPU", pageWidth / 2, y, {
+      align: "center",
+    });
     y += 7;
-    doc.setFont('helvetica', 'normal');
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text('Nomor: 123/SKTM/[BULAN]/[TAHUN]', pageWidth / 2, y, { align: 'center' });
+    doc.text("Nomor:", pageWidth / 2, y, { align: "center" });
     y += 8;
     // Pembuka
-    doc.text('Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:', 15, y, { maxWidth: pageWidth - 30 });
+    doc.text(
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      15,
+      y,
+      { maxWidth: pageWidth - 30 }
+    );
     y += 12;
     // Data warga
     const data = [
-      ['1. Nama Lengkap', form.nama],
-      ['2. Jenis Kelamin', form.jenisKelamin],
-      ['3. Tempat/Tgl Lahir', `${form.tempatLahir}, ${form.tanggalLahir && new Date(form.tanggalLahir).toLocaleDateString('id-ID')}`],
-      ['4. Warganegara/Agama', `Indonesia/${form.agama}`],
-      ['5. No. KTP/NIK', form.nik],
-      ['6. Pekerjaan', form.pekerjaan],
-      ['7. Alamat Pemohon', form.alamat],
+      ["1. Nama Lengkap", form.nama],
+      ["2. Jenis Kelamin", form.jenisKelamin],
+      [
+        "3. Tempat/Tgl Lahir",
+        `${form.tempatLahir}, ${
+          form.tanggalLahir &&
+          new Date(form.tanggalLahir).toLocaleDateString("id-ID")
+        }`,
+      ],
+      ["4. Warganegara/Agama", `${form.agama}`],
+      ["5. No. KTP/NIK", form.nik],
+      ["6. Pekerjaan", form.pekerjaan],
+      ["7. Alamat Pemohon", form.alamat],
     ];
     data.forEach(([label, value], idx) => {
       doc.text(label, 18, y);
-      doc.text(':', 65, y);
-      doc.text(value || '-', 70, y);
+      doc.text(":", 65, y);
+      doc.text(value || "-", 70, y);
       y += 7;
     });
     y += 2;
-    doc.text('Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya TIDAK MAMPU.', 15, y, { maxWidth: pageWidth - 30 });
+    doc.text(
+      "Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya TIDAK MAMPU.",
+      15,
+      y,
+      { maxWidth: pageWidth - 30 }
+    );
     y += 12;
-    doc.text(`Surat keterangan ini diperlukan untuk ${form.keperluan || '...'} `, 15, y, { maxWidth: pageWidth - 30 });
+    doc.text(
+      `Surat keterangan ini diperlukan untuk ${form.keperluan || "..."} `,
+      15,
+      y,
+      { maxWidth: pageWidth - 30 }
+    );
     y += 10;
-    doc.text('Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan dan dapat dipergunakan sebagaimana mestinya.', 15, y, { maxWidth: pageWidth - 30 });
+    doc.text(
+      "Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan dan dapat dipergunakan sebagaimana mestinya.",
+      15,
+      y,
+      { maxWidth: pageWidth - 30 }
+    );
     y += 16;
     // TTD
     const ttdY = y;
-    doc.text(`Kedungwringin, ${new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, pageWidth - 15, ttdY, { align: 'right' });
+    doc.text(
+      `Kedungwringin, ${new Date().toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })}`,
+      pageWidth - 15,
+      ttdY,
+      { align: "right" }
+    );
     y += 6;
-    doc.text('An. KEPALA DESA KEDUNGWRINGIN', pageWidth - 15, y, { align: 'right' });
+    doc.text("An. KEPALA DESA KEDUNGWRINGIN", pageWidth - 15, y, {
+      align: "right",
+    });
     y += 6;
-    doc.text('KASI PEMERINTAH', pageWidth - 15, y, { align: 'right' });
+    doc.text("KASI PEMERINTAH", pageWidth - 15, y, { align: "right" });
     y += 24;
-    doc.text('[Nama Kepala Desa]', pageWidth - 15, y, { align: 'right' });
-    doc.save('surat-tidak-mampu.pdf');
+    doc.text("[Nama Kepala Desa]", pageWidth - 15, y, { align: "right" });
+    doc.save("surat-tidak-mampu.pdf");
   };
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4 text-center text-teal-800">Surat Keterangan Tidak Mampu</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center text-teal-800">
+        Surat Keterangan Tidak Mampu
+      </h1>
       <div className="mb-4">
         <input
           type="text"
@@ -181,54 +236,162 @@ const CreateTidakMampuLetter: React.FC<{ editData?: Letter; isEditMode?: boolean
         )}
       </div>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <input name="nama" value={form.nama} onChange={handleChange} placeholder="Nama" className="input" />
-        <input name="nik" value={form.nik} onChange={handleChange} placeholder="NIK" className="input" />
-        <input name="tempatLahir" value={form.tempatLahir} onChange={handleChange} placeholder="Tempat Lahir" className="input" />
-        <input name="tanggalLahir" value={form.tanggalLahir} onChange={handleChange} placeholder="Tanggal Lahir" type="date" className="input" />
-        <input name="jenisKelamin" value={form.jenisKelamin} onChange={handleChange} placeholder="Jenis Kelamin" className="input" />
-        <input name="agama" value={form.agama} onChange={handleChange} placeholder="Agama" className="input" />
-        <input name="pekerjaan" value={form.pekerjaan} onChange={handleChange} placeholder="Pekerjaan" className="input" />
-        <input name="alamat" value={form.alamat} onChange={handleChange} placeholder="Alamat" className="input" />
-        <textarea name="keperluan" value={form.keperluan} onChange={handleChange} placeholder="Keperluan" className="input col-span-2" />
+        <input
+          name="nama"
+          value={form.nama}
+          onChange={handleChange}
+          placeholder="Nama"
+          className="input"
+        />
+        <input
+          name="nik"
+          value={form.nik}
+          onChange={handleChange}
+          placeholder="NIK"
+          className="input"
+        />
+        <input
+          name="tempatLahir"
+          value={form.tempatLahir}
+          onChange={handleChange}
+          placeholder="Tempat Lahir"
+          className="input"
+        />
+        <input
+          name="tanggalLahir"
+          value={form.tanggalLahir}
+          onChange={handleChange}
+          placeholder="Tanggal Lahir"
+          type="date"
+          className="input"
+        />
+        <input
+          name="jenisKelamin"
+          value={form.jenisKelamin}
+          onChange={handleChange}
+          placeholder="Jenis Kelamin"
+          className="input"
+        />
+        <input
+          name="agama"
+          value={form.agama}
+          onChange={handleChange}
+          placeholder="Agama"
+          className="input"
+        />
+        <input
+          name="pekerjaan"
+          value={form.pekerjaan}
+          onChange={handleChange}
+          placeholder="Pekerjaan"
+          className="input"
+        />
+        <input
+          name="alamat"
+          value={form.alamat}
+          onChange={handleChange}
+          placeholder="Alamat"
+          className="input"
+        />
+        <textarea
+          name="keperluan"
+          value={form.keperluan}
+          onChange={handleChange}
+          placeholder="Keperluan"
+          className="input col-span-2"
+        />
       </form>
       <div className="flex gap-2 mb-6">
-        <Button variant="primary" onClick={handleExportPDF}>Export PDF</Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>Kembali</Button>
+        <Button variant="primary" onClick={handleExportPDF}>
+          Export PDF
+        </Button>
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          Kembali
+        </Button>
       </div>
-      <div id="tidakmampu-preview" className="bg-white p-8 border shadow max-w-[800px] mx-auto">
+      <div
+        id="tidakmampu-preview"
+        className="bg-white p-8 border shadow max-w-[800px] mx-auto"
+      >
         <div className="flex items-center mb-2">
           <img src={logo} alt="Logo Desa" className="h-16 mr-4" />
           <div className="text-center w-full">
-            <div className="font-bold text-lg">PEMERINTAH KABUPATEN BUMI MAKMUR SEJAHTERA</div>
+            <div className="font-bold text-lg">
+              PEMERINTAH KABUPATEN BUMI MAKMUR SEJAHTERA
+            </div>
             <div className="font-bold text-lg">KECAMATAN MAKMUR JAYA</div>
             <div className="font-bold text-xl">DESA BUMI MAKMUR</div>
-            <div className="text-sm">Jl. Raya Desa Bumi Makmur No. 1, Kode Pos 12345</div>
+            <div className="text-sm">
+              Jl. Raya Desa Bumi Makmur No. 1, Kode Pos 12345
+            </div>
           </div>
         </div>
         <hr className="border-t-2 border-black my-2" />
         <div className="text-center mt-4 mb-2">
-          <div className="font-bold underline text-lg">SURAT KETERANGAN TIDAK MAMPU</div>
+          <div className="font-bold underline text-lg">
+            SURAT KETERANGAN TIDAK MAMPU
+          </div>
           <div className="text-sm">Nomor: 470/_____/BM/____/2024</div>
         </div>
-        <div className="mb-2">Yang bertanda tangan di bawah ini Kepala Desa Bumi Makmur, Kecamatan Makmur Jaya, Kabupaten Bumi Makmur Sejahtera, menerangkan bahwa:</div>
+        <div className="mb-2">
+          Yang bertanda tangan di bawah ini Kepala Desa Bumi Makmur, Kecamatan
+          Makmur Jaya, Kabupaten Bumi Makmur Sejahtera, menerangkan bahwa:
+        </div>
         <table className="mb-2">
           <tbody>
-            <tr><td>Nama</td><td className="px-2">:</td><td>{form.nama}</td></tr>
-            <tr><td>NIK</td><td className="px-2">:</td><td>{form.nik}</td></tr>
-            <tr><td>Tempat/Tgl Lahir</td><td className="px-2">:</td><td>{form.tempatLahir}, {form.tanggalLahir}</td></tr>
-            <tr><td>Jenis Kelamin</td><td className="px-2">:</td><td>{form.jenisKelamin}</td></tr>
-            <tr><td>Agama</td><td className="px-2">:</td><td>{form.agama}</td></tr>
-            <tr><td>Pekerjaan</td><td className="px-2">:</td><td>{form.pekerjaan}</td></tr>
-            <tr><td>Alamat</td><td className="px-2">:</td><td>{form.alamat}</td></tr>
+            <tr>
+              <td>Nama</td>
+              <td className="px-2">:</td>
+              <td>{form.nama}</td>
+            </tr>
+            <tr>
+              <td>NIK</td>
+              <td className="px-2">:</td>
+              <td>{form.nik}</td>
+            </tr>
+            <tr>
+              <td>Tempat/Tgl Lahir</td>
+              <td className="px-2">:</td>
+              <td>
+                {form.tempatLahir}, {form.tanggalLahir}
+              </td>
+            </tr>
+            <tr>
+              <td>Jenis Kelamin</td>
+              <td className="px-2">:</td>
+              <td>{form.jenisKelamin}</td>
+            </tr>
+            <tr>
+              <td>Agama</td>
+              <td className="px-2">:</td>
+              <td>{form.agama}</td>
+            </tr>
+            <tr>
+              <td>Pekerjaan</td>
+              <td className="px-2">:</td>
+              <td>{form.pekerjaan}</td>
+            </tr>
+            <tr>
+              <td>Alamat</td>
+              <td className="px-2">:</td>
+              <td>{form.alamat}</td>
+            </tr>
           </tbody>
         </table>
-        <div className="mb-2">Adalah benar warga Desa Bumi Makmur yang tergolong keluarga kurang mampu. Surat ini dibuat untuk keperluan: <span className="font-semibold">{form.keperluan}</span></div>
-        <div className="mb-2">Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</div>
+        <div className="mb-2">
+          Adalah benar warga Desa Bumi Makmur yang tergolong keluarga kurang
+          mampu. Surat ini dibuat untuk keperluan:{" "}
+          <span className="font-semibold">{form.keperluan}</span>
+        </div>
+        <div className="mb-2">
+          Demikian surat keterangan ini dibuat untuk dapat dipergunakan
+          sebagaimana mestinya.
+        </div>
         <div className="flex justify-end mt-8">
           <div className="text-center">
             <div>Bumi Makmur, .................... 2024</div>
             <div className="font-bold">Kepala Desa Bumi Makmur</div>
-            <div style={{ height: '60px' }}></div>
+            <div style={{ height: "60px" }}></div>
             <div className="font-bold underline">(Nama Kepala Desa)</div>
           </div>
         </div>

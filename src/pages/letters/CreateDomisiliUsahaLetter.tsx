@@ -118,7 +118,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
       y += 6;
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.text("Nomor: 123/SKTM/[BULAN]/[TAHUN]", 105, y, { align: "center" });
+      pdf.text("Nomor:", 105, y, { align: "center" });
       y += 10;
 
       // Introduction
