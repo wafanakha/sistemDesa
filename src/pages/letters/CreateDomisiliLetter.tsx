@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import logo from '../../../logo-bms.png';
 import { Letter } from '../../types';
@@ -80,18 +79,43 @@ const CreateDomisiliLetter: React.FC<{ editData?: Letter; isEditMode?: boolean }
     setSearchResults([]);
   };
 
-  const handleExportPDF = async () => {
-    const preview = document.getElementById('domisili-preview');
-    if (!preview) return;
-    const canvas = await html2canvas(preview, { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pageWidth;
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('surat-domisili.pdf');
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    // Tambahkan logo di kiri atas
+    doc.addImage(logo, 'PNG', 20, 10, 24, 24);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('PEMERINTAHAN DESA KEDUNGWRINGIN', 105, 15, { align: 'center' });
+    doc.text('KECAMATAN PATIKREJA KABUPATEN BANYUMAS', 105, 22, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text('SEKERTARIAT DESA', 105, 28, { align: 'center' });
+    doc.text('Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171', 105, 34, { align: 'center' });
+    doc.text('Telp. (0281) 638395', 105, 40, { align: 'center' });
+    doc.setLineWidth(0.5);
+    doc.line(20, 44, 190, 44);
+    doc.setFontSize(11);
+    doc.text('SURAT KETERANGAN DOMISILI TEMPAT TINGGAL', 105, 54, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text('Nomor: 123/SKTM/[BULAN]/[TAHUN]', 105, 60, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.text('Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:', 15, 70, { maxWidth: 180 });
+    let y = 80;
+    doc.text(`1. Nama Lengkap         : ${form.nama}`, 20, y);
+    doc.text(`2. Jenis Kelamin        : ${form.jenisKelamin}`, 20, y + 6);
+    doc.text(`3. Bin/Binti            : `, 20, y + 12);
+    doc.text(`4. Tempat/Tgl Lahir     : ${form.tempatLahir}, ${form.tanggalLahir && new Date(form.tanggalLahir).toLocaleDateString('id-ID')}`, 20, y + 18);
+    doc.text(`5. Agama                : ${form.agama}`, 20, y + 24);
+    doc.text(`6. Warganegara          : Indonesia`, 20, y + 30);
+    doc.text(`7. No. KTP/NIK          : ${form.nik}`, 20, y + 36);
+    doc.text(`8. Pekerjaan            : ${form.pekerjaan}`, 20, y + 42);
+    doc.text(`9. Alamat               : ${form.alamat}`, 20, y + 48);
+    doc.text('Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.', 15, y + 60, { maxWidth: 180 });
+    doc.text('Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan agar yang berkepentingan mengetahui dan maklum.', 15, y + 75, { maxWidth: 180 });
+    doc.text(`Kedungwringin, .................... 2025`, 140, y + 95);
+    doc.text('An. KEPALA DESA KEDUNGWRINGIN', 140, y + 101);
+    doc.text('KASI PEMERINTAH', 140, y + 107);
+    doc.text('[Nama Kepala Desa]', 140, y + 127);
+    doc.save('surat-domisili.pdf');
   };
 
   return (

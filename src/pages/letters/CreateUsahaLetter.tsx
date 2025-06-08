@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import logo from '../../../logo-bms.png';
 import { Letter } from '../../types';
@@ -67,18 +66,87 @@ const CreateUsahaLetter: React.FC<{ editData?: Letter; isEditMode?: boolean }> =
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleExportPDF = async () => {
-    const preview = document.getElementById('usaha-preview');
-    if (!preview) return;
-    const canvas = await html2canvas(preview, { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pageWidth;
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('surat-usaha.pdf');
+  const handleExportPDF = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 18;
+
+    // Logo
+    doc.addImage(logo, 'PNG', 15, 10, 24, 24);
+
+    // Header
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('PEMERINTAHAN DESA KEDUNGWRINGIN', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+    doc.text('KECAMATAN PATIKREJA KABUPATEN BANYUMAS', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+    doc.text('SEKERTARIAT DESA', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+    doc.text('Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+    doc.text('Telp. (0281) 638395', pageWidth / 2, y, { align: 'center' });
+    y += 6;
+    doc.setLineWidth(0.8);
+    doc.line(15, y, pageWidth - 15, y);
+    y += 3;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Kode Desa: 02122013', 15, y);
+    y += 8;
+
+    // Judul
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('SURAT KETERANGAN USAHA', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Nomor: 123/SKU/[BULAN]/[TAHUN]`, pageWidth / 2, y, { align: 'center' });
+    y += 8;
+
+    // Pembuka
+    doc.setFontSize(10);
+    doc.text('Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:', 15, y, { maxWidth: pageWidth - 30 });
+    y += 12;
+
+    // Data warga
+    const data = [
+      ['1. Nama Lengkap', form.nama],
+      ['2. Jenis Kelamin', form.jenisKelamin],
+      ['3. Tempat/Tgl Lahir', `${form.tempatLahir}, ${form.tanggalLahir}`],
+      ['4. Kewarganegaraan', form.kewarganegaraan],
+      ['5. No. KTP/NIK', form.nik],
+      ['6. Pekerjaan', form.pekerjaan],
+      ['7. Alamat Pemohon', form.alamat],
+    ];
+    data.forEach(([label, value]) => {
+      doc.text(label, 18, y);
+      doc.text(':', 65, y);
+      doc.text(value || '-', 70, y);
+      y += 7;
+    });
+
+    // Isi utama
+    y += 2;
+    doc.text(`Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${form.rt} Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan mempunyai usaha ${form.namaUsaha}`, 15, y, { maxWidth: pageWidth - 30 });
+    y += 12;
+    doc.text(`Surat Keterangan ini diperlukan untuk ${form.keperluan || '-'}`, 15, y, { maxWidth: pageWidth - 30 });
+    y += 10;
+    doc.text('Demikian Surat Keterangan ini kami buat atas permintaan yang bersangkutan dan dapat dipergunakan sebagaimana mestinya', 15, y, { maxWidth: pageWidth - 30 });
+    y += 16;
+
+    // TTD
+    const ttdY = y;
+    doc.text(`Kedungwringin, ${new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, pageWidth - 15, ttdY, { align: 'right' });
+    y += 6;
+    doc.text('An. KEPALA DESA KEDUNGWRINGIN', pageWidth - 15, y, { align: 'right' });
+    y += 6;
+    doc.text('KASI PEMERINTAH', pageWidth - 15, y, { align: 'right' });
+    y += 24;
+    doc.text('[Nama Kepala Desa]', pageWidth - 15, y, { align: 'right' });
+
+    doc.save('surat-usaha.pdf');
   };
 
   // Pencarian warga

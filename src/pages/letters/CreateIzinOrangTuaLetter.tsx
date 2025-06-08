@@ -3,6 +3,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
+import { residentService } from '../../database/residentService';
 
 const initialForm = {
   ayahNama: "",
@@ -166,6 +167,12 @@ function generateSuratIzinOrangTuaN5(form: any) {
 const CreateIzinOrangTuaLetter: React.FC = () => {
   const [form, setForm] = useState<any>(initialForm);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [waliSearch, setWaliSearch] = useState('');
+  const [waliResults, setWaliResults] = useState<any[]>([]);
+  const [searchingWali, setSearchingWali] = useState(false);
+  const [selectedWali, setSelectedWali] = useState<any>(null);
+  const [anakList, setAnakList] = useState<any[]>([]);
+  const [kkMembers, setKkMembers] = useState<any[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -175,9 +182,96 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
     generateSuratIzinOrangTuaN5(form);
   };
 
+  const handleWaliSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWaliSearch(e.target.value);
+    if (e.target.value.length < 3) {
+      setWaliResults([]);
+      return;
+    }
+    setSearchingWali(true);
+    const results = await residentService.searchResidents(e.target.value);
+    setWaliResults(results);
+    setSearchingWali(false);
+  };
+
+  const handleSelectWali = async (wali: any) => {
+    setSelectedWali(wali);
+    setWaliSearch(wali.nik + ' - ' + wali.name);
+    setWaliResults([]);
+    // Cari semua anggota KK berdasarkan KK wali
+    setSearchingWali(true);
+    const allMembers = await residentService.searchResidents(wali.kk);
+    setSearchingWali(false);
+    setKkMembers(allMembers);
+    setAnakList(allMembers.filter((m: any) => m.shdk && m.shdk.toLowerCase().includes('anak')));
+    // Autofill data ayah/ibu sesuai gender wali
+    if (wali.gender === 'Laki-laki') {
+      setForm((f: any) => ({
+        ...f,
+        ayahNama: wali.name,
+        ayahBin: wali.fatherName || '',
+        ayahNik: wali.nik,
+        ayahTtl: `${wali.birthPlace}, ${wali.birthDate}`,
+        ayahKewarganegaraan: wali.nationality || 'INDONESIA',
+        ayahAgama: wali.religion,
+        ayahPekerjaan: wali.occupation,
+        ayahAlamat: wali.address,
+      }));
+    } else {
+      setForm((f: any) => ({
+        ...f,
+        ibuNama: wali.name,
+        ibuBinti: wali.fatherName || '',
+        ibuNik: wali.nik,
+        ibuTtl: `${wali.birthPlace}, ${wali.birthDate}`,
+        ibuKewarganegaraan: wali.nationality || 'INDONESIA',
+        ibuAgama: wali.religion,
+        ibuPekerjaan: wali.occupation,
+        ibuAlamat: wali.address,
+      }));
+    }
+  };
+
+  const handleSelectAnak = (anak: any) => {
+    setForm((f: any) => ({
+      ...f,
+      anakNama: anak.name,
+      anakBinti: anak.fatherName || '',
+      anakNik: anak.nik,
+      anakTtl: `${anak.birthPlace}, ${anak.birthDate}`,
+      anakKewarganegaraan: anak.nationality || 'INDONESIA',
+      anakAgama: anak.religion,
+      anakPekerjaan: anak.occupation,
+      anakAlamat: anak.address,
+    }));
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <h2 className="text-2xl font-bold">Surat Izin Orang Tua (N5)</h2>
+      <div className="mb-4">
+        <input
+          type="text"
+          className="input w-full"
+          placeholder="Cari wali (NIK/Nama)..."
+          value={waliSearch}
+          onChange={handleWaliSearch}
+        />
+        {searchingWali && <div className="text-sm text-gray-500">Mencari wali...</div>}
+        {waliResults.length > 0 && (
+          <div className="border rounded bg-white shadow max-h-48 overflow-y-auto z-10 relative">
+            {waliResults.map((r) => (
+              <div
+                key={r.id}
+                className="px-3 py-2 hover:bg-teal-100 cursor-pointer"
+                onClick={() => handleSelectWali(r)}
+              >
+                {r.nik} - {r.name} ({r.address})
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded shadow mb-4">
         <Input label="Nama Ayah" name="ayahNama" value={form.ayahNama} onChange={handleChange} required />
         <Input label="Bin Ayah" name="ayahBin" value={form.ayahBin} onChange={handleChange} />
@@ -230,6 +324,45 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
           </pre>
         </div>
       </Modal>
+      {selectedWali && kkMembers.length > 0 && (
+        <div className="mb-8">
+          <div className="bg-white rounded-lg shadow max-w-4xl mx-auto px-8 py-6">
+            <div className="font-semibold mb-4 text-lg text-center">Anggota Kartu Keluarga</div>
+            <div className="overflow-x-auto mb-6">
+              <table className="min-w-full border text-xs" style={{ minWidth: 700 }}>
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border px-6 py-3">Nama</th>
+                    <th className="border px-6 py-3">NIK</th>
+                    <th className="border px-6 py-3">SHDK</th>
+                    <th className="border px-6 py-3">TTL</th>
+                    <th className="border px-6 py-3">Alamat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {kkMembers.map((m: any) => (
+                    <tr key={m.id} className="hover:bg-teal-50">
+                      <td className="border px-6 py-3 whitespace-nowrap">{m.name}</td>
+                      <td className="border px-6 py-3 whitespace-nowrap">{m.nik}</td>
+                      <td className="border px-6 py-3 whitespace-nowrap">{m.shdk}</td>
+                      <td className="border px-6 py-3 whitespace-nowrap">{m.birthPlace}, {m.birthDate}</td>
+                      <td className="border px-6 py-3 whitespace-nowrap">{m.address}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="font-semibold mb-2 text-center">Pilih Anak yang akan diwalikan:</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-2">
+              {anakList.map((anak: any) => (
+                <Button key={anak.id} className="w-full py-3 text-base" variant="outline" onClick={() => handleSelectAnak(anak)}>
+                  {anak.name} ({anak.nik})
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

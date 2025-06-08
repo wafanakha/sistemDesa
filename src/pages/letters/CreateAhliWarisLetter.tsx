@@ -93,18 +93,81 @@ const CreateAhliWarisLetter: React.FC = () => {
   };
 
   // Export PDF
-  const handleExportPDF = async () => {
-    const preview = document.getElementById('ahli-waris-preview');
-    if (!preview) return;
-    const canvas = await html2canvas(preview, { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pageWidth;
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('surat-ahli-waris.pdf');
+  const handleExportPDF = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    // Logo
+    doc.addImage(logo, 'PNG', 20, 10, 24, 24);
+    // Header
+    doc.setFont('Times', 'Bold');
+    doc.setFontSize(12);
+    doc.text('PEMERINTAH KABUPATEN BANYUMAS', 105, 17, { align: 'center' });
+    doc.text('KECAMATAN PATIKRAJA', 105, 23, { align: 'center' });
+    doc.text('KEPALA DESA KEDUNGWRINGIN', 105, 29, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setFont('Times', 'Normal');
+    doc.text('Jalan Raya Kedungwringin No. 01 Telp. 0281 6438935 Kode Pos    53171', 105, 35, { align: 'center' });
+    doc.setLineWidth(0.5);
+    doc.line(20, 38, 190, 38);
+    // Title
+    doc.setFont('Times', 'Bold');
+    doc.setFontSize(12);
+    doc.text('SURAT KETERANGAN AHLI WARIS', 105, 48, { align: 'center' });
+    doc.setFont('Times', 'Normal');
+    doc.setFontSize(11);
+    doc.text('Nomor : 145/           /III/2025', 105, 55, { align: 'center' });
+    let y = 65;
+    doc.setFontSize(11);
+    doc.text('Yang bertanda tangan di bawah ini :', 20, y);
+    y += 7;
+    doc.text('Nama', 30, y); doc.text(': PARMINAH', 60, y);
+    y += 6;
+    doc.text('Jabatan', 30, y); doc.text(': Kepala Desa Kedungwringin', 60, y);
+    y += 8;
+    doc.text('Dengan ini menerangkan dengan sebenarnya, Bahwa :', 20, y);
+    y += 7;
+    doc.text('Nama', 30, y); doc.text(`: ${pewaris.nama}`, 60, y);
+    y += 6;
+    doc.text('Umur', 30, y); doc.text(`: ${pewaris.umur}`, 60, y);
+    y += 6;
+    doc.text('Alamat', 30, y); doc.text(`: ${pewaris.alamat}`, 60, y);
+    y += 8;
+    doc.text(`Telah meninggal dunia pada hari ${pewaris.hariWafat || '...'} tanggal ${pewaris.tanggalWafat || '...'} di ${pewaris.tempatWafat || '...'},`, 20, y);
+    y += 6;
+    doc.text(`sebagaimana tercatat pada Akta Kematian No. ${pewaris.aktaKematian || '...'} tanggal ${pewaris.tanggalAkta || '...'}.`, 20, y);
+    y += 7;
+    doc.text('Bahwa berdasarkan data yang ditunjukkan sesuai ketentuan hukum yang berlaku, yang menjadi ahli waris dari', 20, y);
+    y += 6;
+    doc.text('pewaris adalah sebagai berikut :', 20, y);
+    // Ahli waris list
+    ahliWaris.forEach((a, i) => {
+      y += 8;
+      doc.setFont('Times', 'Bold');
+      doc.text(`${i + 1}.`, 23, y);
+      doc.setFont('Times', 'Normal');
+      doc.text('Nama', 30, y); doc.text(`: ${a.nama}`, 60, y);
+      y += 6;
+      doc.text('Tempat/Tgl Lahir', 30, y); doc.text(`: ${a.tempatLahir}, ${a.tanggalLahir}`, 60, y);
+      y += 6;
+      doc.text('No KTP/NIK', 30, y); doc.text(`: ${a.nik}`, 60, y);
+      y += 6;
+      doc.text('Alamat', 30, y); doc.text(`: ${a.alamat}`, 60, y);
+      y += 6;
+      doc.text('Hubungan dengan ahli waris', 30, y); doc.text(`: ${a.hubungan}`, 90, y);
+    });
+    y += 10;
+    doc.text('Bahwa selain ahli waris tersebut di atas, tidak ada lagi ahli waris lain dari pewaris,', 20, y);
+    y += 6;
+    doc.text('Demikian Surat Keterangan Ahli Waris ini kami buat dengan sebenarnya. Dan untuk dapat dipergunakan', 20, y);
+    y += 6;
+    doc.text('sebagaimana mestinya.', 20, y);
+    y += 12;
+    doc.text(`Kedungwringin, ${new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, 135, y);
+    y += 7;
+    doc.text('Kepala Desa', 145, y);
+    y += 20;
+    doc.setFont('Times', 'Bold');
+    doc.text('PARMINAH', 145, y);
+    doc.save('surat_ahli_waris.pdf');
   };
 
   return (
