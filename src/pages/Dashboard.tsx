@@ -19,7 +19,6 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // Get counts from database
         const residentsCount = await db.residents.count();
         const lettersCount = await db.letters.count();
         const completedCount = await db.letters
@@ -29,7 +28,6 @@ const Dashboard: React.FC = () => {
           .equals("signed")
           .count();
 
-        // Count unique letter types
         const letters = await db.letters.toArray();
         const uniqueTypes = new Set(letters.map((letter) => letter.letterType));
 

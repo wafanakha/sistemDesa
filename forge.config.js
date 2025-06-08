@@ -1,15 +1,23 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+const { Icon } = require("lucide-react");
 
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: path.resolve(__dirname, "assets/logo-bms"),
   },
   rebuildConfig: {},
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
-      config: {},
+      config: {
+        name: "datuk_pengging",
+        setupIcon: path.resolve(__dirname, "assets/logo-bms.ico"),
+        iconUrl:
+          "https://id.wikipedia.org/wiki/Berkas:Lambang_Kabupaten_Banyumas.png",
+      },
+      shortcutName: "Datuk Pengging",
     },
     {
       name: "@electron-forge/maker-zip",
