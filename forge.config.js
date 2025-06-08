@@ -5,7 +5,7 @@ const { Icon } = require("lucide-react");
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: path.resolve(__dirname, "assets/logo-bms"),
+    icon: "./asset/logo-bms.ico",
   },
   rebuildConfig: {},
   makers: [
@@ -13,9 +13,9 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       config: {
         name: "datuk_pengging",
-        setupIcon: path.resolve(__dirname, "assets/logo-bms.ico"),
+        setupIcon: "./asset/logo-bms.ico",
         iconUrl:
-          "https://id.wikipedia.org/wiki/Berkas:Lambang_Kabupaten_Banyumas.png",
+          "https://github.com/wafanakha/sistemDesa/blob/master/asset/logo-bms.ico",
       },
       shortcutName: "Datuk Pengging",
     },
