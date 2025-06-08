@@ -36,7 +36,7 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Data Warga",
-    path: "/",
+    path: "/residents",
     icon: <Users size={20} />,
     submenu: [
       {
@@ -92,7 +92,7 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
- {
+  {
     title: "Surat",
     path: "/letters",
     icon: <FileText size={20} />,
