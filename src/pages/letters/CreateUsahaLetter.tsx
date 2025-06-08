@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface UsahaFormData {
   nama: string;
@@ -21,6 +22,7 @@ interface UsahaFormData {
   kewarganegaraan: string;
   rt: string;
   keperluan?: string;
+  letterNumber?: string;
 }
 
 const initialForm: UsahaFormData = {
@@ -38,6 +40,7 @@ const initialForm: UsahaFormData = {
   kewarganegaraan: "",
   rt: "",
   keperluan: "",
+  letterNumber: "",
 };
 
 const CreateUsahaLetter: React.FC<{
@@ -48,6 +51,7 @@ const CreateUsahaLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,6 +67,10 @@ const CreateUsahaLetter: React.FC<{
       });
     }
   }, [editData]);
+
+  useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -115,9 +123,12 @@ const CreateUsahaLetter: React.FC<{
     y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(`Nomor:`, pageWidth / 2, y, {
-      align: "center",
-    });
+    doc.text(
+      `Nomor: ${form.letterNumber || "_________/SKU/[BULAN]/[TAHUN]"}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 8;
 
     // Pembuka
@@ -190,8 +201,14 @@ const CreateUsahaLetter: React.FC<{
     y += 6;
     doc.text("KASI PEMERINTAH", pageWidth - 15, y, { align: "right" });
     y += 24;
-    doc.text("[Nama Kepala Desa]", pageWidth - 15, y, { align: "right" });
-
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      pageWidth - 15,
+      y,
+      { align: "right" }
+    );
     doc.save("surat-usaha.pdf");
   };
 
@@ -331,6 +348,13 @@ const CreateUsahaLetter: React.FC<{
           placeholder="No. Surat RT"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -359,12 +383,13 @@ const CreateUsahaLetter: React.FC<{
           </div>
         </div>
         <hr className="border-t-2 border-black my-2" />
-        <p>Kode Desa: 02122013</p>
         <div className="text-center mt-4 mb-2">
           <div className="font-bold underline text-lg">
             SURAT KETERANGAN USAHA
           </div>
-          <div className="text-sm">Nomor: 123/SKU/[BULAN]/[TAHUN]</div>
+          <div className="text-sm">
+            Nomor: {form.letterNumber || "_________/SKU/[BULAN]/[TAHUN]"}
+          </div>
         </div>
         <div className="mb-2">
           Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -447,7 +472,6 @@ const CreateUsahaLetter: React.FC<{
                   year: "numeric",
                 })}
               </p>
-              <p>An. KEPALA DESA KEDUNGWRINGIN</p>
               <p>KASI PEMERINTAH</p>
             </div>
             <div style={{ marginTop: "auto" }}>
@@ -456,7 +480,11 @@ const CreateUsahaLetter: React.FC<{
                 style={{ minHeight: 70, borderBottom: "1px solid transparent" }}
               ></div>
               <p>
-                <strong>[Nama Kepala Desa]</strong>
+                <strong>
+                  {villageInfo?.kasipemerintah?.trim()
+                    ? villageInfo.kasipemerintah
+                    : "(................................)"}
+                </strong>
               </p>
             </div>
           </div>

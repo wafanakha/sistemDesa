@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface KeteranganFormData {
   nama: string;
@@ -20,6 +21,7 @@ interface KeteranganFormData {
   berlakuDari: string; // tanggal mulai berlaku
   berlakuSampai: string; // tanggal akhir berlaku
   keteranganLain: string;
+  letterNumber?: string;
 }
 
 const initialForm: KeteranganFormData = {
@@ -36,6 +38,7 @@ const initialForm: KeteranganFormData = {
   berlakuDari: "",
   berlakuSampai: "",
   keteranganLain: "",
+  letterNumber: "",
 };
 
 const CreateKeteranganLetter: React.FC = () => {
@@ -43,7 +46,12 @@ const CreateKeteranganLetter: React.FC = () => {
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -94,9 +102,12 @@ const CreateKeteranganLetter: React.FC = () => {
     y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("Nomor:", pageWidth / 2, y, {
-      align: "center",
-    });
+    doc.text(
+      `Nomor: ${form.letterNumber || "_________/SKET/[BULAN]/[TAHUN]"}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 8;
     // Pembuka
     doc.text(
@@ -178,8 +189,14 @@ const CreateKeteranganLetter: React.FC = () => {
     y += 6;
     doc.text("KASI PEMERINTAH", pageWidth - 15, y, { align: "right" });
     y += 24;
-    doc.text(form.nama, 30, y, { align: "center" });
-    doc.text("[Nama Kepala Desa]", pageWidth - 15, y, { align: "right" });
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      pageWidth - 15,
+      y,
+      { align: "right" }
+    );
     doc.save("surat-keterangan.pdf");
   };
 
@@ -314,6 +331,13 @@ const CreateKeteranganLetter: React.FC = () => {
           placeholder="Keperluan"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
         <div className="flex gap-2">
           <div className="flex flex-col flex-1">
             <label className="text-xs text-gray-600 mb-1">Berlaku dari</label>
@@ -371,10 +395,11 @@ const CreateKeteranganLetter: React.FC = () => {
           </div>
         </div>
         <hr className="border-t-2 border-black my-2" />
-        <p>Kode Desa: 02122013</p>
         <div className="text-center mt-4 mb-2">
           <div className="font-bold underline text-lg">SURAT KETERANGAN</div>
-          <div className="text-sm">Nomor: 123/SKTM/[BULAN]/[TAHUN]</div>
+          <div className="text-sm">
+            Nomor: {form.letterNumber || "_________/SKET/[BULAN]/[TAHUN]"}
+          </div>
         </div>
         <div className="content mt-4">
           <p style={{ textIndent: "2em" }}>
@@ -458,29 +483,15 @@ const CreateKeteranganLetter: React.FC = () => {
         </div>
         <div
           className="signature-block"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 20,
-          }}
+          style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}
         >
           <div
             className="signature"
-            style={{
-              width: "30%",
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              minHeight: 180,
-            }}
+            style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}
           >
             <p>Pemohon</p>
             <div style={{ marginTop: "auto" }}>
-              <div
-                className="ttd-space"
-                style={{ minHeight: 70, borderBottom: "1px solid transparent" }}
-              ></div>
+              <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
               <p>
                 <strong>{form.nama}</strong>
               </p>
@@ -488,34 +499,16 @@ const CreateKeteranganLetter: React.FC = () => {
           </div>
           <div
             className="signature"
-            style={{
-              width: "30%",
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              minHeight: 180,
-            }}
+            style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}
           >
-            <div className="compact">
-              <p>
-                Kedungwringin,{" "}
-                {new Date().toLocaleDateString("id-ID", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-              <p>An. KEPALA DESA KEDUNGWRINGIN</p>
+            <div className="compact" style={{ textAlign: "center" }}>
+              <p>Kedungwringin, {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}</p>
               <p>KASI PEMERINTAH</p>
             </div>
             <div style={{ marginTop: "auto" }}>
-              <div
-                className="ttd-space"
-                style={{ minHeight: 70, borderBottom: "1px solid transparent" }}
-              ></div>
+              <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
               <p>
-                <strong>[Nama Kepala Desa]</strong>
+                <strong>{villageInfo?.kasipemerintah?.trim() ? villageInfo.kasipemerintah : "(................................)"}</strong>
               </p>
             </div>
           </div>

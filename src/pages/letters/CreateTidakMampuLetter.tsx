@@ -6,6 +6,7 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface TidakMampuFormData {
   nama: string;
@@ -17,6 +18,7 @@ interface TidakMampuFormData {
   pekerjaan: string;
   alamat: string;
   keperluan: string;
+  letterNumber?: string;
 }
 
 const initialForm: TidakMampuFormData = {
@@ -29,6 +31,7 @@ const initialForm: TidakMampuFormData = {
   pekerjaan: "",
   alamat: "",
   keperluan: "",
+  letterNumber: "",
 };
 
 const CreateTidakMampuLetter: React.FC<{
@@ -39,6 +42,7 @@ const CreateTidakMampuLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -50,6 +54,10 @@ const CreateTidakMampuLetter: React.FC<{
       setForm({ ...initialForm, ...parsed });
     }
   }, [editData]);
+
+  React.useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -130,7 +138,12 @@ const CreateTidakMampuLetter: React.FC<{
     y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("Nomor:", pageWidth / 2, y, { align: "center" });
+    doc.text(
+      `Nomor: ${form.letterNumber || "_________/SKTM/[BULAN]/[TAHUN]"}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 8;
     // Pembuka
     doc.text(
@@ -203,7 +216,14 @@ const CreateTidakMampuLetter: React.FC<{
     y += 6;
     doc.text("KASI PEMERINTAH", pageWidth - 15, y, { align: "right" });
     y += 24;
-    doc.text("[Nama Kepala Desa]", pageWidth - 15, y, { align: "right" });
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      pageWidth - 15,
+      y,
+      { align: "right" }
+    );
     doc.save("surat-tidak-mampu.pdf");
   };
 
@@ -293,6 +313,13 @@ const CreateTidakMampuLetter: React.FC<{
           placeholder="Alamat"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
         <textarea
           name="keperluan"
           value={form.keperluan}
@@ -335,7 +362,9 @@ const CreateTidakMampuLetter: React.FC<{
           <div className="font-bold underline text-lg">
             SURAT KETERANGAN TIDAK MAMPU
           </div>
-          <div className="text-sm">Nomor: ........................................</div>
+          <div className="text-sm">
+            Nomor: {form.letterNumber || "_________/SKTM/[BULAN]/[TAHUN]"}
+          </div>
         </div>
         <div className="mb-2">
           Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -414,7 +443,11 @@ const CreateTidakMampuLetter: React.FC<{
             <div className="font-bold">An. KEPALA DESA KEDUNGWRINGIN</div>
             <div className="font-bold">KASI PEMERINTAH</div>
             <div style={{ height: "60px" }}></div>
-            <div className="font-bold underline">[Nama Kepala Desa]</div>
+            <div className="font-bold underline">
+              {villageInfo?.kasipemerintah?.trim()
+                ? villageInfo.kasipemerintah
+                : "(................................)"}
+            </div>
           </div>
         </div>
       </div>

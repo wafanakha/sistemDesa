@@ -46,6 +46,7 @@ const CreateAhliWarisLetter: React.FC = () => {
   const [selectedKk, setSelectedKk] = useState<any>(null);
   const [pewaris, setPewaris] = useState<PewarisData>(initialPewaris);
   const [ahliWaris, setAhliWaris] = useState<AhliWarisData[]>(initialAhliWaris);
+  const [letterNumber, setLetterNumber] = useState("");
   const navigate = useNavigate();
 
   // Cari KK dan tampilkan anggota, pilih yang meninggal
@@ -114,7 +115,12 @@ const CreateAhliWarisLetter: React.FC = () => {
     doc.text('SURAT KETERANGAN AHLI WARIS', 105, 48, { align: 'center' });
     doc.setFont('Times', 'Normal');
     doc.setFontSize(11);
-    doc.text('Nomor : 145/           /III/2025', 105, 55, { align: 'center' });
+    doc.text(
+      `Nomor : ${letterNumber || '145/           /III/2025'}`,
+      105,
+      55,
+      { align: 'center' }
+    );
     let y = 65;
     doc.setFontSize(11);
     doc.text('Yang bertanda tangan di bawah ini :', 20, y);
@@ -181,6 +187,13 @@ const CreateAhliWarisLetter: React.FC = () => {
           value={kkSearch}
           onChange={handleKkSearch}
         />
+        <input
+          type="text"
+          className="input w-full mt-2"
+          placeholder="Nomor Surat"
+          value={letterNumber}
+          onChange={e => setLetterNumber(e.target.value)}
+        />
         {searching && <div className="text-sm text-gray-500">Mencari...</div>}
         {kkResults.length > 0 && (
           <div className="bg-white border rounded shadow mt-1 max-h-48 overflow-auto z-10 relative">
@@ -226,7 +239,9 @@ const CreateAhliWarisLetter: React.FC = () => {
         <hr className="border-t-2 border-black my-2" />
         <div className="text-center mt-4 mb-2">
           <div className="font-bold underline text-lg">SURAT KETERANGAN AHLI WARIS</div>
-          <div className="text-sm">Nomor: 145/ /III/{new Date().getFullYear()}</div>
+          <div className="text-sm">
+            Nomor: {letterNumber || `145/ /III/${new Date().getFullYear()}`}
+          </div>
         </div>
         <div className="mb-2" style={{ textAlign: 'left' }}>
           Yang bertanda tangan di bawah ini:<br />

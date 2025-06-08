@@ -6,6 +6,7 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface PengantarFormData {
   nama: string;
@@ -17,6 +18,7 @@ interface PengantarFormData {
   pekerjaan: string;
   alamat: string;
   keperluan: string;
+  letterNumber?: string;
 }
 
 const initialForm: PengantarFormData = {
@@ -29,6 +31,7 @@ const initialForm: PengantarFormData = {
   pekerjaan: "",
   alamat: "",
   keperluan: "",
+  letterNumber: "",
 };
 
 const CreatePengantarLetter: React.FC<{
@@ -39,6 +42,7 @@ const CreatePengantarLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -50,6 +54,10 @@ const CreatePengantarLetter: React.FC<{
       setForm({ ...initialForm, ...parsed });
     }
   }, [editData]);
+
+  React.useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -128,9 +136,12 @@ const CreatePengantarLetter: React.FC<{
     y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("Nomor:", pageWidth / 2, y, {
-      align: "center",
-    });
+    doc.text(
+      `Nomor: ${form.letterNumber || "........................................"}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 8;
     // Pembuka
     doc.text(
@@ -198,7 +209,14 @@ const CreatePengantarLetter: React.FC<{
     y += 6;
     doc.text("KASI PEMERINTAH", pageWidth - 15, y, { align: "right" });
     y += 24;
-    doc.text("[Nama Kepala Desa]", pageWidth - 15, y, { align: "right" });
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      pageWidth - 15,
+      y,
+      { align: "right" }
+    );
     doc.save("surat-pengantar.pdf");
   };
 
@@ -235,7 +253,7 @@ const CreatePengantarLetter: React.FC<{
           name="nama"
           value={form.nama}
           onChange={handleChange}
-          placeholder="Nama"
+          placeholder="Nama Lengkap"
           className="input"
         />
         <input
@@ -295,6 +313,13 @@ const CreatePengantarLetter: React.FC<{
           placeholder="Keperluan"
           className="input col-span-2"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -328,7 +353,9 @@ const CreatePengantarLetter: React.FC<{
         <hr className="border-t-2 border-black my-2" />
         <div className="text-center mt-4 mb-2">
           <div className="font-bold underline text-lg">SURAT PENGANTAR</div>
-          <div className="text-sm">Nomor: ........................................</div>
+          <div className="text-sm">
+            Nomor: {form.letterNumber || "........................................"}
+          </div>
         </div>
         <div className="mb-2">
           Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -399,10 +426,13 @@ const CreatePengantarLetter: React.FC<{
                 year: "numeric",
               })}
             </div>
-            <div className="font-bold">An. KEPALA DESA KEDUNGWRINGIN</div>
             <div className="font-bold">KASI PEMERINTAH</div>
             <div style={{ height: "60px" }}></div>
-            <div className="font-bold underline">[Nama Kepala Desa]</div>
+            <div className="font-bold underline">
+              {villageInfo?.kasipemerintah?.trim()
+                ? villageInfo.kasipemerintah
+                : "(................................)"}
+            </div>
           </div>
         </div>
       </div>

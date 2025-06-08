@@ -6,6 +6,7 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface SkckFormData {
   nama: string;
@@ -20,6 +21,8 @@ interface SkckFormData {
   alamat: string;
   rt: string;
   keperluan?: string;
+  letterNumber?: string;
+  namaCamat?: string;
 }
 
 const initialForm: SkckFormData = {
@@ -35,6 +38,8 @@ const initialForm: SkckFormData = {
   alamat: "",
   rt: "",
   keperluan: "",
+  letterNumber: "",
+  namaCamat: "",
 };
 
 const CreateSkckLetter: React.FC<{
@@ -45,6 +50,7 @@ const CreateSkckLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,6 +65,10 @@ const CreateSkckLetter: React.FC<{
       });
     }
   }, [editData]);
+
+  useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -111,9 +121,12 @@ const CreateSkckLetter: React.FC<{
     y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("Nomor: ", pageWidth / 2, y, {
-      align: "center",
-    });
+    doc.text(
+      `Nomor: ${form.letterNumber || "_________/SKCK/[BULAN]/[TAHUN]"}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 8;
     // Pembuka
     doc.text(
@@ -172,7 +185,7 @@ const CreateSkckLetter: React.FC<{
     // Footer info
     doc.text("No. Reg", 18, y);
     doc.text(":", 40, y);
-    doc.text("_________", 45, y);
+    doc.text(form.letterNumber || "_________", 45, y);
     y += 7;
     doc.text("Tanggal", 18, y);
     doc.text(":", 40, y);
@@ -204,8 +217,15 @@ const CreateSkckLetter: React.FC<{
     doc.text(form.nama || "(................................)", 30, ttdY, {
       align: "center",
     });
-    doc.text("[Nama Camat]", pageWidth / 2, ttdY, { align: "center" });
-    doc.text("[Nama Kepala Desa]", pageWidth - 15, ttdY, { align: "right" });
+    doc.text(form.namaCamat || "(................................)", pageWidth / 2, ttdY, { align: "center" });
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      pageWidth - 15,
+      ttdY,
+      { align: "right" }
+    );
     doc.save("surat-skck.pdf");
   };
 
@@ -353,6 +373,20 @@ const CreateSkckLetter: React.FC<{
           placeholder="Keperluan Surat"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
+        <input
+          name="namaCamat"
+          value={form.namaCamat}
+          onChange={handleChange}
+          placeholder="Nama Camat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -416,7 +450,9 @@ const CreateSkckLetter: React.FC<{
           >
             SURAT PENGANTAR CATATAN KEPOLISIAN
           </h2>
-          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+          <p style={{ textAlign: "center" }}>
+            Nomor: {form.letterNumber || "_________/SKCK/[BULAN]/[TAHUN]"}
+          </p>
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -485,21 +521,13 @@ const CreateSkckLetter: React.FC<{
               bersangkutan dan dapat dipergunakan sebagaimana mestinya.
             </p>
           </div>
-          <div
-            className="footer-info"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: 20,
-              marginBottom: 10,
-            }}
-          >
+          <div className="footer-info" style={{ display: "flex", justifyContent: "center", marginTop: 20, marginBottom: 10 }}>
             <table>
               <tbody>
                 <tr>
                   <td>No. Reg</td>
                   <td>:</td>
-                  <td>_________</td>
+                  <td>{form.letterNumber || "_________"}</td>
                 </tr>
                 <tr>
                   <td>Tanggal</td>
@@ -509,102 +537,40 @@ const CreateSkckLetter: React.FC<{
               </tbody>
             </table>
           </div>
-          <div
-            className="signature-block"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: 20,
-            }}
-          >
-            <div
-              className="signature"
-              style={{
-                width: "30%",
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                minHeight: 180,
-              }}
-            >
+          <div className="signature-block" style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
+            <div className="signature" style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}>
               <p>Pemohon</p>
               <div style={{ marginTop: "auto" }}>
-                <div
-                  className="ttd-space"
-                  style={{
-                    minHeight: 70,
-                    borderBottom: "1px solid transparent",
-                  }}
-                ></div>
+                <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
                 <p>
-                  <strong>
-                    {form.nama || "(................................)"}
-                  </strong>
+                  <strong>{form.nama || "(................................)"}</strong>
                 </p>
               </div>
             </div>
-            <div
-              className="signature"
-              style={{
-                width: "30%",
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                minHeight: 180,
-              }}
-            >
+            <div className="signature" style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}>
               <div>
                 <p>Mengetahui,</p>
                 <p>Camat Patikreja</p>
               </div>
               <div style={{ marginTop: "auto" }}>
-                <div
-                  className="ttd-space"
-                  style={{
-                    minHeight: 70,
-                    borderBottom: "1px solid transparent",
-                  }}
-                ></div>
+                <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
                 <p>
-                  <strong>[Nama Camat]</strong>
+                  <strong>{form.namaCamat || "(................................)"}</strong>
                 </p>
               </div>
             </div>
-            <div
-              className="signature"
-              style={{
-                width: "30%",
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                minHeight: 180,
-              }}
-            >
+            <div className="signature" style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}>
               <div className="compact" style={{ textAlign: "center" }}>
                 <p>
-                  Kedungwringin,{" "}
-                  {new Date().toLocaleDateString("id-ID", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  Kedungwringin, {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}
                 </p>
                 <p>An. KEPALA DESA KEDUNGWRINGIN</p>
                 <p>KASI PEMERINTAH</p>
               </div>
               <div style={{ marginTop: "auto" }}>
-                <div
-                  className="ttd-space"
-                  style={{
-                    minHeight: 70,
-                    borderBottom: "1px solid transparent",
-                  }}
-                ></div>
+                <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
                 <p>
-                  <strong>[Nama Kepala Desa]</strong>
+                  <strong>{villageInfo?.kasipemerintah?.trim() ? villageInfo.kasipemerintah : "(................................)"}</strong>
                 </p>
               </div>
             </div>

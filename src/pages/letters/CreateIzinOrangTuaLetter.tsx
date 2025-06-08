@@ -507,6 +507,226 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
           </Button>
         </div>
       </form>
+      {/* Preview Surat Izin Orang Tua (N5) */}
+      <div className="bg-white p-6 border shadow max-w-[800px] mx-auto mb-8">
+        <div className="text-center font-bold text-lg mb-2">
+          SURAT IZIN ORANG TUA
+        </div>
+        <div className="text-center text-sm mb-2">Model N5</div>
+        <div className="mb-4">Yang bertanda tangan di bawah ini:</div>
+        <div className="mb-2 font-semibold">A. Data Ayah</div>
+        <table className="mb-2">
+          <tbody>
+            <tr>
+              <td>1. Nama lengkap dan alias</td>
+              <td>:</td>
+              <td>{form.ayahNama}</td>
+            </tr>
+            <tr>
+              <td>2. Bin</td>
+              <td>:</td>
+              <td>{form.ayahBin}</td>
+            </tr>
+            <tr>
+              <td>3. NIK</td>
+              <td>:</td>
+              <td>{form.ayahNik}</td>
+            </tr>
+            <tr>
+              <td>4. Tempat & Tanggal Lahir</td>
+              <td>:</td>
+              <td>{form.ayahTtl}</td>
+            </tr>
+            <tr>
+              <td>5. Kewarganegaraan</td>
+              <td>:</td>
+              <td>{form.ayahKewarganegaraan}</td>
+            </tr>
+            <tr>
+              <td>6. Agama</td>
+              <td>:</td>
+              <td>{form.ayahAgama}</td>
+            </tr>
+            <tr>
+              <td>7. Pekerjaan</td>
+              <td>:</td>
+              <td>{form.ayahPekerjaan}</td>
+            </tr>
+            <tr>
+              <td>8. Alamat</td>
+              <td>:</td>
+              <td>{form.ayahAlamat}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="mb-2 font-semibold">B. Data Ibu</div>
+        <table className="mb-2">
+          <tbody>
+            <tr>
+              <td>1. Nama lengkap dan alias</td>
+              <td>:</td>
+              <td>{form.ibuNama}</td>
+            </tr>
+            <tr>
+              <td>2. Binti</td>
+              <td>:</td>
+              <td>{form.ibuBinti}</td>
+            </tr>
+            <tr>
+              <td>3. NIK</td>
+              <td>:</td>
+              <td>{form.ibuNik}</td>
+            </tr>
+            <tr>
+              <td>4. Tempat & Tanggal Lahir</td>
+              <td>:</td>
+              <td>{form.ibuTtl}</td>
+            </tr>
+            <tr>
+              <td>5. Kewarganegaraan</td>
+              <td>:</td>
+              <td>{form.ibuKewarganegaraan}</td>
+            </tr>
+            <tr>
+              <td>6. Agama</td>
+              <td>:</td>
+              <td>{form.ibuAgama}</td>
+            </tr>
+            <tr>
+              <td>7. Pekerjaan</td>
+              <td>:</td>
+              <td>{form.ibuPekerjaan}</td>
+            </tr>
+            <tr>
+              <td>8. Alamat</td>
+              <td>:</td>
+              <td>{form.ibuAlamat}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="mb-2">Adalah benar ayah dan ibu kandung dari:</div>
+        <table className="mb-2">
+          <tbody>
+            <tr>
+              <td>1. Nama lengkap dan alias</td>
+              <td>:</td>
+              <td>{form.anakNama}</td>
+            </tr>
+            <tr>
+              <td>2. Binti</td>
+              <td>:</td>
+              <td>{form.anakBinti}</td>
+            </tr>
+            <tr>
+              <td>3. NIK</td>
+              <td>:</td>
+              <td>{form.anakNik}</td>
+            </tr>
+            <tr>
+              <td>4. Tempat & Tanggal Lahir</td>
+              <td>:</td>
+              <td>{form.anakTtl}</td>
+            </tr>
+            <tr>
+              <td>5. Kewarganegaraan</td>
+              <td>:</td>
+              <td>{form.anakKewarganegaraan}</td>
+            </tr>
+            <tr>
+              <td>6. Agama</td>
+              <td>:</td>
+              <td>{form.anakAgama}</td>
+            </tr>
+            <tr>
+              <td>7. Pekerjaan</td>
+              <td>:</td>
+              <td>{form.anakPekerjaan}</td>
+            </tr>
+            <tr>
+              <td>8. Alamat</td>
+              <td>:</td>
+              <td>{form.anakAlamat}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="mb-2 font-semibold">
+          Memberikan izin kepada anak kami untuk melakukan pernikahan dengan:
+        </div>
+        <table className="mb-2">
+          <tbody>
+            <tr>
+              <td>1. Nama lengkap dan alias</td>
+              <td>:</td>
+              <td>{form.pasanganNama}</td>
+            </tr>
+            <tr>
+              <td>2. Bin/Binti</td>
+              <td>:</td>
+              <td>{form.pasanganBin}</td>
+            </tr>
+            <tr>
+              <td>3. NIK</td>
+              <td>:</td>
+              <td>{form.pasanganNik}</td>
+            </tr>
+            <tr>
+              <td>4. Tempat & Tanggal Lahir</td>
+              <td>:</td>
+              <td>{form.pasanganTtl}</td>
+            </tr>
+            <tr>
+              <td>5. Kewarganegaraan</td>
+              <td>:</td>
+              <td>{form.pasanganKewarganegaraan}</td>
+            </tr>
+            <tr>
+              <td>6. Agama</td>
+              <td>:</td>
+              <td>{form.pasanganAgama}</td>
+            </tr>
+            <tr>
+              <td>7. Pekerjaan</td>
+              <td>:</td>
+              <td>{form.pasanganPekerjaan}</td>
+            </tr>
+            <tr>
+              <td>8. Alamat</td>
+              <td>:</td>
+              <td>{form.pasanganAlamat}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="mb-4">
+          Demikian surat izin ini dibuat dengan kesadaran tanpa ada paksaan dari
+          siapapun dan untuk digunakan seperlunya.
+        </div>
+        <div className="flex justify-between mt-8">
+          <div className="text-center">
+            <div>
+              Kedungwiringin,{" "}
+              {form.tanggalSurat &&
+                new Date(form.tanggalSurat).toLocaleDateString("id-ID")}
+            </div>
+            <div className="font-bold">Ayah/Wali/Pengampu</div>
+            <div style={{ height: "50px" }}></div>
+            <div className="font-bold underline">
+              {form.ayahTtd || form.ayahNama || "(................................)"}
+            </div>
+          </div>
+          <div className="text-center">
+            <div>&nbsp;</div>
+            <div className="font-bold">Ibu/Wali/Pengampu</div>
+            <div style={{ height: "50px" }}></div>
+            <div className="font-bold underline">
+              {form.ibuTtd || form.ibuNama || "(................................)"}
+            </div>
+          </div>
+        </div>
+        <div className="text-xs mt-8">
+          Lampiran IX Keputusan Direktur Jendral Bimbingan Masyarakat Islam Nomor
+          473 Tahun 2020
+        </div>
+      </div>
       <Modal
         isOpen={previewOpen}
         onClose={() => setPreviewOpen(false)}

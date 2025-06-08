@@ -175,6 +175,79 @@ const CreatePermohonanKehendakNikahLetter: React.FC = () => {
           </Button>
         </div>
       </form>
+      {/* Preview Permohonan Kehendak Nikah (N2) */}
+      <div className="bg-white p-6 border shadow max-w-[800px] mx-auto mb-8">
+        <div className="text-right font-bold text-sm mb-2">Model N2</div>
+        <div className="mb-2">
+          Perihal:{" "}
+          <span className="font-bold">Permohonan kehendak nikah</span>
+        </div>
+        <div className="mb-2 text-right">
+          Kedungwiringin,{" "}
+          {form.tanggalSurat &&
+            new Date(form.tanggalSurat).toLocaleDateString("id-ID")}
+        </div>
+        <div className="mb-2">Kepada Yth.</div>
+        <div className="mb-2">Kepala KUA Kecamatan / PPN LN</div>
+        <div className="mb-2">di Tempat</div>
+        <div className="mb-4">
+          Dengan hormat, kami mengajukan permohonan kehendak perkawinan untuk
+          atas nama:
+        </div>
+        <table className="mb-2">
+          <tbody>
+            <tr>
+              <td>Calon Suami</td>
+              <td>:</td>
+              <td>{form.calonSuami}</td>
+            </tr>
+            <tr>
+              <td>Calon Istri</td>
+              <td>:</td>
+              <td>{form.calonIstri}</td>
+            </tr>
+            <tr>
+              <td>Hari / Tanggal / Jam</td>
+              <td>:</td>
+              <td>{form.hariTanggalJam}</td>
+            </tr>
+            <tr>
+              <td>Tempat Akad Nikah</td>
+              <td>:</td>
+              <td>{form.tempatAkad}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="mb-2">
+          Bersama ini kami sampaikan surat-surat yang diperlukan untuk diperiksa
+          sebagai berikut:
+        </div>
+        <ol className="mb-4 list-decimal list-inside">
+          {form.daftarPersyaratan.map((item: string, idx: number) => (
+            <li key={idx}>{item}</li>
+          ))}
+        </ol>
+        <div className="mb-4">
+          Demikian permohonan ini kami sampaikan, kiranya dapat diperiksa,
+          dihadiri dan dicatat sesuai dengan ketentuan peraturan
+          perundang-undangan.
+        </div>
+        <div className="flex justify-between mt-8">
+          <div>
+            <div>Diterima tanggal ………………</div>
+            <div className="mt-8">Yang menerima,</div>
+            <div>Kepala KUA/PPN LN</div>
+          </div>
+          <div className="text-center">
+            <div>Wassalam,</div>
+            <div className="mt-2">Pemohon</div>
+            <div style={{ height: "50px" }}></div>
+            <div className="font-bold underline">
+              {form.namaPemohon || "(................................)"}
+            </div>
+          </div>
+        </div>
+      </div>
       <Modal
         isOpen={previewOpen}
         onClose={() => setPreviewOpen(false)}
