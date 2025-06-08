@@ -306,74 +306,84 @@ const CreatePengantarLetter: React.FC<{
       </div>
       <div
         id="pengantar-preview"
-        className="bg-white p-8 border shadow max-w-[800px] mx-auto hidden"
+        className="bg-white p-8 border shadow max-w-[800px] mx-auto"
       >
         <div className="flex items-center mb-2">
           <img src={logo} alt="Logo Desa" className="h-16 mr-4" />
           <div className="text-center w-full">
             <div className="font-bold text-lg">
-              PEMERINTAH KABUPATEN BUMI MAKMUR SEJAHTERA
+              PEMERINTAHAN DESA KEDUNGWRINGIN
             </div>
-            <div className="font-bold text-lg">KECAMATAN MAKMUR JAYA</div>
-            <div className="font-bold text-xl">DESA BUMI MAKMUR</div>
+            <div className="font-bold text-lg">
+              KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+            </div>
+            <div className="font-bold">SEKERTARIAT DESA</div>
             <div className="text-sm">
-              Jl. Raya Desa Bumi Makmur No. 1, Kode Pos 12345
+              Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171
             </div>
+            <div className="text-sm">Telp. (0281) 638395</div>
+            <div className="text-sm">Kode Desa: 02122013</div>
           </div>
         </div>
         <hr className="border-t-2 border-black my-2" />
         <div className="text-center mt-4 mb-2">
           <div className="font-bold underline text-lg">SURAT PENGANTAR</div>
-          <div className="text-sm">Nomor: 470/_____/BM/____/2024</div>
+          <div className="text-sm">Nomor: ........................................</div>
         </div>
         <div className="mb-2">
-          Yang bertanda tangan di bawah ini Kepala Desa Bumi Makmur, Kecamatan
-          Makmur Jaya, Kabupaten Bumi Makmur Sejahtera, menerangkan bahwa:
+          Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
+          Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah,
+          menerangkan bahwa:
         </div>
         <table className="mb-2">
           <tbody>
             <tr>
-              <td>Nama</td>
+              <td>1. Nama Lengkap</td>
               <td className="px-2">:</td>
               <td>{form.nama}</td>
             </tr>
             <tr>
-              <td>NIK</td>
-              <td className="px-2">:</td>
-              <td>{form.nik}</td>
-            </tr>
-            <tr>
-              <td>Tempat/Tgl Lahir</td>
-              <td className="px-2">:</td>
-              <td>
-                {form.tempatLahir}, {form.tanggalLahir}
-              </td>
-            </tr>
-            <tr>
-              <td>Jenis Kelamin</td>
+              <td>2. Jenis Kelamin</td>
               <td className="px-2">:</td>
               <td>{form.jenisKelamin}</td>
             </tr>
             <tr>
-              <td>Agama</td>
+              <td>3. Tempat/Tgl Lahir</td>
+              <td className="px-2">:</td>
+              <td>
+                {form.tempatLahir},{" "}
+                {form.tanggalLahir &&
+                  new Date(form.tanggalLahir).toLocaleDateString("id-ID")}
+              </td>
+            </tr>
+            <tr>
+              <td>4. Agama</td>
               <td className="px-2">:</td>
               <td>{form.agama}</td>
             </tr>
             <tr>
-              <td>Pekerjaan</td>
+              <td>5. No. KTP/NIK</td>
+              <td className="px-2">:</td>
+              <td>{form.nik}</td>
+            </tr>
+            <tr>
+              <td>6. Pekerjaan</td>
               <td className="px-2">:</td>
               <td>{form.pekerjaan}</td>
             </tr>
             <tr>
-              <td>Alamat</td>
+              <td>7. Alamat</td>
               <td className="px-2">:</td>
               <td>{form.alamat}</td>
             </tr>
           </tbody>
         </table>
         <div className="mb-2">
-          Adalah benar warga Desa Bumi Makmur dan surat ini dibuat untuk
-          keperluan: <span className="font-semibold">{form.keperluan}</span>
+          Adalah benar warga Desa Kedungwringin dan surat ini dibuat untuk
+          keperluan:{" "}
+          <span className="font-semibold">
+            {form.keperluan || "..."}
+          </span>
         </div>
         <div className="mb-2">
           Demikian surat pengantar ini dibuat untuk dapat dipergunakan
@@ -381,10 +391,18 @@ const CreatePengantarLetter: React.FC<{
         </div>
         <div className="flex justify-end mt-8">
           <div className="text-center">
-            <div>Bumi Makmur, .................... 2024</div>
-            <div className="font-bold">Kepala Desa Bumi Makmur</div>
+            <div>
+              Kedungwringin,{" "}
+              {new Date().toLocaleDateString("id-ID", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </div>
+            <div className="font-bold">An. KEPALA DESA KEDUNGWRINGIN</div>
+            <div className="font-bold">KASI PEMERINTAH</div>
             <div style={{ height: "60px" }}></div>
-            <div className="font-bold underline">(Nama Kepala Desa)</div>
+            <div className="font-bold underline">[Nama Kepala Desa]</div>
           </div>
         </div>
       </div>
