@@ -6,6 +6,7 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface DomisiliUsahaFormData {
   nama: string;
@@ -25,6 +26,8 @@ interface DomisiliUsahaFormData {
   jumlahKaryawan?: string;
   luasTempatUsaha?: string;
   waktuUsaha?: string;
+  letterNumber?: string;
+  namaCamat?: string;
 }
 
 const initialForm: DomisiliUsahaFormData = {
@@ -45,6 +48,8 @@ const initialForm: DomisiliUsahaFormData = {
   jumlahKaryawan: "",
   luasTempatUsaha: "",
   waktuUsaha: "",
+  letterNumber: "",
+  namaCamat: "",
 };
 
 const CreateDomisiliUsahaLetter: React.FC<{
@@ -55,6 +60,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,6 +75,10 @@ const CreateDomisiliUsahaLetter: React.FC<{
       });
     }
   }, [editData]);
+
+  useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -118,7 +128,12 @@ const CreateDomisiliUsahaLetter: React.FC<{
       y += 6;
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.text("Nomor:", 105, y, { align: "center" });
+      pdf.text(
+        `Nomor: ${form.letterNumber || "_________/SKDU/[BULAN]/[TAHUN]"}`,
+        105,
+        y,
+        { align: "center" }
+      );
       y += 10;
 
       // Introduction
@@ -195,6 +210,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
       // Signatures
       pdf.text("Mengetahui,", margin, y);
       pdf.text("Camat Patikreja", margin, y + 5);
+      pdf.text(form.namaCamat || "[Nama Camat]", margin, y + 35);
       pdf.text(
         "Kedungwringin, " +
           new Date().toLocaleDateString("id-ID", {
@@ -207,10 +223,13 @@ const CreateDomisiliUsahaLetter: React.FC<{
       );
       pdf.text("An. KEPALA DESA KEDUNGWRINGIN", 130, y + 5);
       pdf.text("KASI PEMERINTAH", 130, y + 10);
-
-      y += 35;
-      pdf.text("[Nama Camat]", margin, y);
-      pdf.text("[Nama Kepala Desa]", 130, y);
+      pdf.text(
+        villageInfo?.kasipemerintah?.trim()
+          ? villageInfo.kasipemerintah
+          : "(................................)",
+        130,
+        y + 35
+      );
 
       // Save
       pdf.save("surat-domisili-usaha.pdf");
@@ -387,6 +406,20 @@ const CreateDomisiliUsahaLetter: React.FC<{
           placeholder="Waktu Usaha"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber || ""}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
+        <input
+          name="namaCamat"
+          value={form.namaCamat || ""}
+          onChange={handleChange}
+          placeholder="Nama Camat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -450,7 +483,9 @@ const CreateDomisiliUsahaLetter: React.FC<{
           >
             SURAT KETERANGAN DOMISILI USAHA
           </h2>
-          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+          <p style={{ textAlign: "center" }}>
+            Nomor: {form.letterNumber || "_________/SKDU/[BULAN]/[TAHUN]"}
+          </p>
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -607,7 +642,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
                   }}
                 ></div>
                 <p>
-                  <strong>[Nama Camat]</strong>
+                  <strong>{form.namaCamat || "[Nama Camat]"}</strong>
                 </p>
               </div>
             </div>
@@ -643,7 +678,11 @@ const CreateDomisiliUsahaLetter: React.FC<{
                   }}
                 ></div>
                 <p>
-                  <strong>[Nama Kepala Desa]</strong>
+                  <strong>
+                    {villageInfo?.kasipemerintah?.trim()
+                      ? villageInfo.kasipemerintah
+                      : "(................................)"}
+                  </strong>
                 </p>
               </div>
             </div>

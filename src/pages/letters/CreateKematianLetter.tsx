@@ -3,6 +3,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
+import { villageService } from "../../database/villageService";
 
 const initialForm = {
   deceasedName: "",
@@ -115,6 +116,11 @@ function generateSuratKematianN6Pdf(form: any) {
 const CreateKematianLetter: React.FC = () => {
   const [form, setForm] = useState(initialForm);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
+
+  React.useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -154,7 +160,7 @@ const CreateKematianLetter: React.FC = () => {
         <Input label="Alamat" name="spouseAddress" value={form.spouseAddress} onChange={handleChange} />
         <div className="md:col-span-2 font-semibold mt-4 mb-2">C. Data Surat</div>
         <Input label="Tanggal Surat" name="suratDate" type="date" value={form.suratDate} onChange={handleChange} />
-        <Input label="Nama Kepala Desa" name="kepalaDesa" value={form.kepalaDesa} onChange={handleChange} />
+        <Input label="Nama Kepala Desa" name="kepalaDesa" value={form.kepalaDesa === "" && villageInfo?.leaderName ? villageInfo.leaderName : form.kepalaDesa} onChange={handleChange} />
         <Input label="Nomor Surat" name="nomorSurat" value={form.nomorSurat} onChange={handleChange} />
         <div className="md:col-span-2 flex space-x-2 mt-2">
           <Button type="button" variant="secondary" onClick={handleExportPdf}>
@@ -162,6 +168,53 @@ const CreateKematianLetter: React.FC = () => {
           </Button>
         </div>
       </form>
+      <div className="bg-white p-6 border shadow max-w-[800px] mx-auto mb-8">
+        <div className="text-center font-bold text-lg mb-2">SURAT KETERANGAN KEMATIAN</div>
+        <div className="text-center text-sm mb-2">Model N6</div>
+        <div className="text-center mb-2">Nomor: {form.nomorSurat || "........"}</div>
+        <div className="mb-2">KANTOR DESA: Kedungwiringin</div>
+        <div className="mb-2">KECAMATAN: Patikraja</div>
+        <div className="mb-2">KABUPATEN: Banyumas</div>
+        <div className="mb-4">Yang bertanda tangan di bawah ini menerangkan dengan sesungguhnya bahwa:</div>
+        <div className="mb-2 font-semibold">A. Data Almarhum/Almarhumah</div>
+        <table className="mb-2">
+          <tbody>
+            <tr><td>1. Nama lengkap dan alias</td><td>:</td><td>{form.deceasedName}{form.deceasedAlias ? ` / ${form.deceasedAlias}` : ""}</td></tr>
+            <tr><td>2. Bin/Binti</td><td>:</td><td>{form.deceasedBinBinti}</td></tr>
+            <tr><td>3. NIK</td><td>:</td><td>{form.deceasedNik}</td></tr>
+            <tr><td>4. Tempat & Tanggal Lahir</td><td>:</td><td>{form.deceasedBirthPlace}, {form.deceasedBirthDate}</td></tr>
+            <tr><td>5. Kewarganegaraan</td><td>:</td><td>{form.deceasedNationality}</td></tr>
+            <tr><td>6. Agama</td><td>:</td><td>{form.deceasedReligion}</td></tr>
+            <tr><td>7. Pekerjaan</td><td>:</td><td>{form.deceasedOccupation}</td></tr>
+            <tr><td>8. Alamat</td><td>:</td><td>{form.deceasedAddress}</td></tr>
+          </tbody>
+        </table>
+        <div className="mb-2">Telah meninggal dunia pada tanggal: <b>{form.deathDate}</b></div>
+        <div className="mb-2">Di: <b>{form.deathPlace}</b></div>
+        <div className="mb-2 font-semibold">B. Data Pasangan</div>
+        <table className="mb-2">
+          <tbody>
+            <tr><td>1. Nama lengkap dan alias</td><td>:</td><td>{form.spouseName}{form.spouseAlias ? ` / ${form.spouseAlias}` : ""}</td></tr>
+            <tr><td>2. Bin/Binti</td><td>:</td><td>{form.spouseBinBinti}</td></tr>
+            <tr><td>3. NIK</td><td>:</td><td>{form.spouseNik}</td></tr>
+            <tr><td>4. Tempat & Tanggal Lahir</td><td>:</td><td>{form.spouseBirthPlace}, {form.spouseBirthDate}</td></tr>
+            <tr><td>5. Kewarganegaraan</td><td>:</td><td>{form.spouseNationality}</td></tr>
+            <tr><td>6. Agama</td><td>:</td><td>{form.spouseReligion}</td></tr>
+            <tr><td>7. Pekerjaan</td><td>:</td><td>{form.spouseOccupation}</td></tr>
+            <tr><td>8. Alamat</td><td>:</td><td>{form.spouseAddress}</td></tr>
+          </tbody>
+        </table>
+        <div className="mb-4">Demikianlah, surat keterangan ini dibuat dengan mengingat sumpah jabatan dan untuk digunakan seperlunya.</div>
+        <div className="flex justify-end mt-8">
+          <div className="text-center">
+            <div>Kedungwiringin, {form.suratDate && new Date(form.suratDate).toLocaleDateString("id-ID")}</div>
+            <div className="font-bold">Kepala Desa Kedungwiringin</div>
+            <div style={{ height: '60px' }}></div>
+            <div className="font-bold underline">{form.kepalaDesa || villageInfo?.leaderName || "(................................)"}</div>
+          </div>
+        </div>
+        <div className="text-xs mt-8">Lampiran X Keputusan Direktur Jendral Bimbingan Masyarakat Islam Nomor 473 Tahun 2020</div>
+      </div>
       <Modal isOpen={previewOpen} onClose={() => setPreviewOpen(false)} title="Preview Surat">
         <div className="p-4 bg-white">
           <p>Preview belum tersedia. Silakan gunakan Export PDF untuk melihat hasil akhir.</p>

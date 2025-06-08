@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface DomisiliFormData {
   nama: string;
@@ -16,6 +17,7 @@ interface DomisiliFormData {
   pekerjaan: string;
   alamat: string;
   lamaTinggal: string;
+  letterNumber?: string;
 }
 
 const initialForm: DomisiliFormData = {
@@ -28,6 +30,7 @@ const initialForm: DomisiliFormData = {
   pekerjaan: "",
   alamat: "",
   lamaTinggal: "",
+  letterNumber: "",
 };
 
 const CreateDomisiliLetter: React.FC<{
@@ -38,6 +41,7 @@ const CreateDomisiliLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +53,10 @@ const CreateDomisiliLetter: React.FC<{
       setForm({ ...initialForm, ...parsed });
     }
   }, [editData]);
+
+  useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -110,7 +118,12 @@ const CreateDomisiliLetter: React.FC<{
       align: "center",
     });
     doc.setFontSize(10);
-    doc.text("Nomor:", 105, 60, { align: "center" });
+    doc.text(
+      `Nomor: ${form.letterNumber || "_________/SKD/[BULAN]/[TAHUN]"}`,
+      105,
+      60,
+      { align: "center" }
+    );
     doc.setFont("helvetica", "normal");
     doc.text(
       "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
@@ -165,7 +178,13 @@ const CreateDomisiliLetter: React.FC<{
     y += 5;
     doc.text("KASI PEMERINTAH", 140, y);
     y += 30;
-    doc.text("[Nama Kepala Desa]", 140, y);
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      140,
+      y
+    );
     doc.save("surat-domisili.pdf");
   };
 
@@ -262,6 +281,13 @@ const CreateDomisiliLetter: React.FC<{
           placeholder="Lama Tinggal (tahun)"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -325,7 +351,9 @@ const CreateDomisiliLetter: React.FC<{
           >
             SURAT KETERANGAN DOMISILI TEMPAT TINGGAL
           </h2>
-          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+          <p style={{ textAlign: "center" }}>
+            Nomor: 123/SKTM/[BULAN]/[TAHUN]
+          </p>
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -416,7 +444,6 @@ const CreateDomisiliLetter: React.FC<{
             >
               <div className="compact" style={{ textAlign: "center" }}>
                 <p>Kedungwringin, .................... 2025</p>
-                <p>An. KEPALA DESA KEDUNGWRINGIN</p>
                 <p>KASI PEMERINTAH</p>
               </div>
               <div style={{ marginTop: "auto" }}>
@@ -428,7 +455,11 @@ const CreateDomisiliLetter: React.FC<{
                   }}
                 ></div>
                 <p>
-                  <strong>[Nama Kepala Desa]</strong>
+                  <strong>
+                    {villageInfo?.kasipemerintah?.trim()
+                      ? villageInfo.kasipemerintah
+                      : "(................................)"}
+                  </strong>
                 </p>
               </div>
             </div>

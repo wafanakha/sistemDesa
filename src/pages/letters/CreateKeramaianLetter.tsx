@@ -6,6 +6,7 @@ import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { letterService } from "../../database/letterService";
+import { villageService } from "../../database/villageService";
 
 interface KeramaianFormData {
   nama: string;
@@ -20,8 +21,10 @@ interface KeramaianFormData {
   tanggalAcara: string;
   waktuAcara: string;
   tempatAcara: string;
-  jenisHiburan: string; // dipindah ke form
-  jumlahUndangan: string; // dipindah ke form
+  jenisHiburan: string;
+  jumlahUndangan: string;
+  residentId?: number; // Tambahkan residentId ke form
+  letterNumber: string;
 }
 
 const initialForm: KeramaianFormData = {
@@ -39,6 +42,8 @@ const initialForm: KeramaianFormData = {
   tempatAcara: "",
   jenisHiburan: "",
   jumlahUndangan: "",
+  residentId: undefined,
+  letterNumber: "",
 };
 
 const CreateKeramaianLetter: React.FC<{
@@ -49,6 +54,7 @@ const CreateKeramaianLetter: React.FC<{
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
+  const [villageInfo, setVillageInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -61,10 +67,14 @@ const CreateKeramaianLetter: React.FC<{
     }
   }, [editData]);
 
+  React.useEffect(() => {
+    villageService.getVillageInfo().then(setVillageInfo);
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value, ...(e.target.name === 'nama' || e.target.name === 'nik' ? { residentId: undefined } : {}) });
   };
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +100,7 @@ const CreateKeramaianLetter: React.FC<{
       agama: resident.religion,
       pekerjaan: resident.occupation,
       alamat: resident.address,
+      residentId: resident.id, // Simpan id warga
     });
     setSearch(resident.nik + " - " + resident.name);
     setSearchResults([]);
@@ -134,9 +145,12 @@ const CreateKeramaianLetter: React.FC<{
     y += 7;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Nomor:", pageWidth / 2, y, {
-      align: "center",
-    });
+    doc.text(
+      `Nomor: ${form.letterNumber || "_________/SK-KRMN/[BULAN]/[TAHUN]"}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
     y += 10;
     // Paragraf pembuka
     doc.setFontSize(10);
@@ -233,12 +247,22 @@ const CreateKeramaianLetter: React.FC<{
     doc.text("(................................)", pageWidth / 2, ttdY + 35, {
       align: "center",
     });
-    doc.text("(................................)", pageWidth - 70, ttdY + 35);
+    doc.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? `(${villageInfo.kasipemerintah})`
+        : "(................................)",
+      pageWidth - 70,
+      ttdY + 35
+    );
     doc.save("surat-keramaian.pdf");
   };
 
   // Simpan surat ke database
   const handleSaveLetter = async () => {
+    if (!form.residentId || isNaN(Number(form.residentId))) {
+      alert("Pilih warga dari daftar pencarian dan jangan edit manual nama/NIK!");
+      return;
+    }
     const letterData = {
       letterType: "keramaian",
       title: "Surat Pengantar Ijin Keramaian",
@@ -246,7 +270,8 @@ const CreateKeramaianLetter: React.FC<{
       issuedDate: new Date(),
       status: "draft" as const,
       residentName: form.nama,
-      residentId: 0,
+      residentNik: form.nik,
+      residentId: form.residentId,
       letterNumber: "",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -390,6 +415,13 @@ const CreateKeramaianLetter: React.FC<{
           placeholder="Jumlah Undangan"
           className="input"
         />
+        <input
+          name="letterNumber"
+          value={form.letterNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -456,7 +488,9 @@ const CreateKeramaianLetter: React.FC<{
           >
             SURAT PENGANTAR IJIN KERAMAIAN
           </h2>
-          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+          <p style={{ textAlign: "center" }}>
+            Nomor: {form.letterNumber || "_________/SK-KRMN/[BULAN]/[TAHUN]"}
+          </p>
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -670,7 +704,11 @@ const CreateKeramaianLetter: React.FC<{
                   }}
                 ></div>
                 <p>
-                  <strong>[Nama Kepala Desa]</strong>
+                  <strong>
+                    {villageInfo?.kasipemerintah?.trim()
+                      ? villageInfo.kasipemerintah
+                      : "(................................)"}
+                  </strong>
                 </p>
               </div>
             </div>

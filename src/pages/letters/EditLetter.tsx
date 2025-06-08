@@ -11,7 +11,7 @@ import CreateKelahiranLetter from './CreateKelahiranLetter';
 import Button from '../../components/ui/Button';
 
 const EditLetter: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, letterType } = useParams<{ id: string; letterType: string }>();
   const navigate = useNavigate();
   const [letter, setLetter] = useState<Letter | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +46,9 @@ const EditLetter: React.FC = () => {
   }
 
   // Routing ke form edit spesifik sesuai jenis surat
-  switch (letter.letterType) {
+  switch (letterType || letter.letterType) {
+    case 'keramaian':
+      return <CreateKeramaianLetter editData={letter} isEditMode />;
     case 'business':
       return <CreateUsahaLetter editData={letter} isEditMode />;
     case 'domicile':

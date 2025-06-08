@@ -374,6 +374,83 @@ const CreateBelumMenikahLetter: React.FC = () => {
           </Button>
         </div>
       </form>
+      {/* Preview Surat Pernyataan Belum Menikah */}
+      {resident && village && (
+        <div className="bg-white p-6 border shadow max-w-[800px] mx-auto mb-8">
+          <div className="text-center font-bold text-lg mb-2">
+            SURAT PERNYATAAN BELUM MENIKAH
+          </div>
+          <div className="mb-4">Yang bertanda tangan di bawah ini:</div>
+          <table className="mb-2">
+            <tbody>
+              <tr>
+                <td>Nama Lengkap</td>
+                <td>:</td>
+                <td>{resident.name}</td>
+              </tr>
+              <tr>
+                <td>Tempat/Tanggal Lahir</td>
+                <td>:</td>
+                <td>
+                  {resident.birthPlace},{" "}
+                  {resident.birthDate &&
+                    new Date(resident.birthDate).toLocaleDateString("id-ID")}
+                </td>
+              </tr>
+              <tr>
+                <td>Pekerjaan</td>
+                <td>:</td>
+                <td>{resident.occupation}</td>
+              </tr>
+              <tr>
+                <td>NIK</td>
+                <td>:</td>
+                <td>{resident.nik}</td>
+              </tr>
+              <tr>
+                <td>Agama</td>
+                <td>:</td>
+                <td>{resident.religion}</td>
+              </tr>
+              <tr>
+                <td>Alamat</td>
+                <td>:</td>
+                <td>{resident.address}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div className="mb-2">
+            Dengan ini menyatakan yang sesungguhnya dan sebenarnya, bahwa saya
+            sampai saat ini belum pernah menikah dengan seorang Perempuan, baik
+            secara resmi maupun di bawah tangan (masih Lajang). Surat pernyataan
+            ini saya buat untuk melengkapi persyaratan menikah.
+          </div>
+          <div className="mb-4">
+            Demikian surat pernyataan ini saya buat, dan ditanda tangani dalam
+            keadaan sehat jasmani dan rohani, tanpa ada paksaan dan bujukan dari
+            siapapun, dan apabila surat pernyataan ini tidak benar, maka saya
+            sedia bertanggung jawab di hadapan hukum yang berlaku.
+          </div>
+          <div className="flex justify-end mt-8">
+            <div className="text-center">
+              <div>
+                {village.name},{" "}
+                {form.issuedDate &&
+                  new Date(form.issuedDate).toLocaleDateString("id-ID")}
+              </div>
+              <div>Yang menyatakan</div>
+              <div style={{ height: "50px" }}></div>
+              <div className="font-bold underline">{resident.name}</div>
+            </div>
+          </div>
+          <div className="mt-8">
+            <div>Mengetahui,</div>
+            <div>Kepala Desa {village.name}</div>
+            <div style={{ minHeight: 50 }}></div>
+            <div className="font-bold underline">{village.leaderName}</div>
+          </div>
+        </div>
+      )}
       <Modal
         isOpen={previewOpen}
         onClose={() => setPreviewOpen(false)}

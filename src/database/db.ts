@@ -18,6 +18,7 @@ class VillageAdministrationDB extends Dexie {
   letterTemplates!: Table<LetterTemplate, number>;
   villageInfo!: Table<VillageInfo, number>;
   letterHistory!: Table<LetterHistory, number>;
+  officials!: Table<import("../types").Official, number>;
 
   constructor() {
     super("VillageAdministrationDB");
@@ -32,6 +33,7 @@ class VillageAdministrationDB extends Dexie {
       letterTemplates: "++id, name, type, isDefault, createdAt, updatedAt",
       villageInfo: "++id, name",
       letterHistory: "++id, name, letter, date, nik",
+      officials: "++id, name, title",
     });
 
     // Initialize default templates

@@ -18,12 +18,13 @@ const LetterHistoryList: React.FC = () => {
   const [history, setHistory] = useState<LetterHistory[]>([]);
   const [filteredHistory, setFilteredHistory] = useState<LetterHistory[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+
   const [isLoading, setIsLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<LetterHistory | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
+  
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     loadHistory();
   }, []);
@@ -34,6 +35,7 @@ const LetterHistoryList: React.FC = () => {
       const data = await getLetterHistory();
       setHistory(data);
       setFilteredHistory(data);
+
     } catch (error) {
       console.error("Error loading letter history:", error);
       toast.error("Gagal memuat riwayat surat");
@@ -41,7 +43,7 @@ const LetterHistoryList: React.FC = () => {
       setIsLoading(false);
     }
   };
-
+  
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredHistory(history);
@@ -59,11 +61,13 @@ const LetterHistoryList: React.FC = () => {
 
   const handleDeleteClick = (item: LetterHistory) => {
     setSelectedItem(item);
+
     setIsDeleteModalOpen(true);
   };
-
+  
   const confirmDelete = async () => {
     if (!selectedItem || !selectedItem.id) return;
+
 
     try {
       await deleteLetterHistory(selectedItem.id);
@@ -94,6 +98,7 @@ const LetterHistoryList: React.FC = () => {
         return "Keterangan tidak mampu";
       case "ahli-waris":
         return "Keterangan ahli waris";
+
       default:
         return type;
     }
@@ -106,8 +111,9 @@ const LetterHistoryList: React.FC = () => {
       month: "long",
       year: "numeric",
     });
-  };
 
+  };
+  
   const columns = [
     {
       header: "Nama",
@@ -124,11 +130,13 @@ const LetterHistoryList: React.FC = () => {
     {
       header: "Aksi",
       accessor: (item: LetterHistory) => (
+
         <div className="flex space-x-2">
           <button
             onClick={(e) => {
               e.stopPropagation();
               // Implement preview functionality if needed
+
             }}
             className="p-1 text-blue-600 hover:text-blue-800"
             title="Lihat"
@@ -139,6 +147,7 @@ const LetterHistoryList: React.FC = () => {
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteClick(item);
+
             }}
             className="p-1 text-red-600 hover:text-red-800"
             title="Hapus"
@@ -149,13 +158,14 @@ const LetterHistoryList: React.FC = () => {
       ),
     },
   ];
-
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h2 className="text-2xl font-bold text-gray-800">Riwayat Surat</h2>
-      </div>
 
+      </div>
+      
       <Card>
         <div className="mb-6">
           <Input
@@ -166,7 +176,7 @@ const LetterHistoryList: React.FC = () => {
             fullWidth
           />
         </div>
-
+        
         <Table
           columns={columns}
           data={filteredHistory}
@@ -174,11 +184,12 @@ const LetterHistoryList: React.FC = () => {
           onRowClick={(item) => {
             // You can implement a detail view if needed
           }}
+
           isLoading={isLoading}
           emptyMessage="Belum ada riwayat surat."
         />
       </Card>
-
+      
       {/* Delete confirmation modal */}
       <Modal
         isOpen={isDeleteModalOpen}
