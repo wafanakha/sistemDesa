@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import Button from '../../components/ui/Button';
-import jsPDF from 'jspdf';
-import logo from '../../../logo-bms.png';
-import { Letter } from '../../types';
-import { letterService } from '../../database/letterService';
-import { residentService } from '../../database/residentService';
-import { villageService } from '../../database/villageService';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Button from "../../components/ui/Button";
+import jsPDF from "jspdf";
+import logo from "../../../logo-bms.png";
+import { Letter } from "../../types";
+import { letterService } from "../../database/letterService";
+import { residentService } from "../../database/residentService";
+import { villageService } from "../../database/villageService";
 
 interface PengantarNumpangNikahFormData {
   nama: string;
@@ -25,30 +25,35 @@ interface PengantarNumpangNikahFormData {
 }
 
 const initialForm: PengantarNumpangNikahFormData = {
-  nama: '',
-  tempatTanggalLahir: '',
-  jenisKelamin: '',
-  agama: '',
-  pekerjaan: '',
-  statusPerkawinan: '',
-  alamat: '',
-  nik: '',
-  kk: '',
-  keperluan: '',
-  berlaku: '',
-  keteranganLain: '',
+  nama: "",
+  tempatTanggalLahir: "",
+  jenisKelamin: "",
+  agama: "",
+  pekerjaan: "",
+  statusPerkawinan: "",
+  alamat: "",
+  nik: "",
+  kk: "",
+  keperluan: "",
+  berlaku: "",
+  keteranganLain: "",
   residentId: undefined,
 };
 
-const CreatePengantarNumpangNikahLetter: React.FC<{ editData?: Letter; isEditMode?: boolean }> = (props) => {
+const CreatePengantarNumpangNikahLetter: React.FC<{
+  editData?: Letter;
+  isEditMode?: boolean;
+}> = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   // Ambil editData dari props atau location.state
-  const editData = props.editData || (location.state && location.state.editData);
-  const isEditMode = props.isEditMode || (location.state && location.state.isEditMode);
+  const editData =
+    props.editData || (location.state && location.state.editData);
+  const isEditMode =
+    props.isEditMode || (location.state && location.state.isEditMode);
 
   const [form, setForm] = useState<PengantarNumpangNikahFormData>(initialForm);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
   const [villageInfo, setVillageInfo] = useState<any>(null);
@@ -57,7 +62,7 @@ const CreatePengantarNumpangNikahLetter: React.FC<{ editData?: Letter; isEditMod
     if (editData) {
       let parsed: Partial<PengantarNumpangNikahFormData> = {};
       try {
-        parsed = JSON.parse(editData.content || '{}');
+        parsed = JSON.parse(editData.content || "{}");
       } catch {}
       setForm({ ...initialForm, ...parsed });
     }
@@ -71,7 +76,9 @@ const CreatePengantarNumpangNikahLetter: React.FC<{ editData?: Letter; isEditMod
     loadVillage();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -91,98 +98,182 @@ const CreatePengantarNumpangNikahLetter: React.FC<{ editData?: Letter; isEditMod
     setForm({
       ...form,
       nama: resident.name,
-      tempatTanggalLahir: resident.birthPlace + ', ' + resident.birthDate,
+      tempatTanggalLahir: resident.birthPlace + ", " + resident.birthDate,
       jenisKelamin: resident.gender,
       agama: resident.religion,
       pekerjaan: resident.occupation,
-      statusPerkawinan: resident.maritalStatus || '',
+      statusPerkawinan: resident.maritalStatus || "",
       alamat: resident.address,
       nik: resident.nik,
-      kk: resident.kk || '',
+      kk: resident.kk || "",
       residentId: resident.id, // Set residentId
     });
-    setSearch(resident.nik + ' - ' + resident.name);
+    setSearch(resident.nik + " - " + resident.name);
     setSearchResults([]);
   };
 
   const handleExportPDF = () => {
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
     let y = 18;
     // Kop surat
-    doc.addImage(logo, 'PNG', 25, y, 25, 25);
-    doc.setFont('helvetica', 'bold');
+    doc.addImage(logo, "PNG", 25, y, 25, 25);
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(13);
-    doc.text(`PEMERINTAHAN ${villageInfo?.regencyName || 'KABUPATEN'}`, 105, y + 6, { align: 'center' });
-    doc.text(`KECAMATAN ${villageInfo?.districtName || 'KECAMATAN'}`, 105, y + 12, { align: 'center' });
-    doc.text(`DESA ${villageInfo?.name || 'DESA'}`, 105, y + 18, { align: 'center' });
+    doc.text(
+      `PEMERINTAHAN ${villageInfo?.regencyName || "KABUPATEN"}`,
+      105,
+      y + 6,
+      { align: "center" }
+    );
+    doc.text(
+      `KECAMATAN ${villageInfo?.districtName || "KECAMATAN"}`,
+      105,
+      y + 12,
+      { align: "center" }
+    );
+    doc.text(`DESA ${villageInfo?.name || "DESA"}`, 105, y + 18, {
+      align: "center",
+    });
     doc.setFontSize(10);
-    doc.text(villageInfo?.address || 'Alamat Desa', 105, y + 24, { align: 'center' });
-    doc.text(`Telp. ${villageInfo?.phoneNumber || '-'}`, 105, y + 29, { align: 'center' });
+    doc.text(villageInfo?.address || "Alamat Desa", 105, y + 24, {
+      align: "center",
+    });
+    doc.text(`Telp. ${villageInfo?.phoneNumber || "-"}`, 105, y + 29, {
+      align: "center",
+    });
     y += 32;
     doc.setLineWidth(0.7);
     doc.line(20, y, 190, y);
     y += 4;
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Kode Desa: ${villageInfo?.postalCode || 'Kode Pos'}`, 25, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Kode Desa: ${villageInfo?.postalCode || "Kode Pos"}`, 25, y);
     y += 7;
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('PENGANTAR NUMPANG NIKAH', 105, y, { align: 'center' });
+    doc.setFont("helvetica", "bold");
+    doc.text("PENGANTAR NUMPANG NIKAH", 105, y, { align: "center" });
     y += 7;
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Nomor: 123/SKTM/[BULAN]/[TAHUN]', 105, y, { align: 'center' });
+    doc.setFont("helvetica", "normal");
+    doc.text("Nomor: ", 105, y, { align: "center" });
     y += 10;
-    doc.text(`Yang bertanda tangan di bawah ini, kami Kepala Desa ${villageInfo?.name || 'Desa'} Kecamatan ${villageInfo?.districtName || '-'} Kabupaten ${villageInfo?.regencyName || '-'} Provinsi ${villageInfo?.provinceName || '-'}, menerangkan bahwa:`, 25, y, { maxWidth: 170 });
+    doc.text(
+      `Yang bertanda tangan di bawah ini, kami Kepala Desa ${
+        villageInfo?.name || "Desa"
+      } Kecamatan ${villageInfo?.districtName || "-"} Kabupaten ${
+        villageInfo?.regencyName || "-"
+      } Provinsi ${villageInfo?.provinceName || "-"}, menerangkan bahwa:`,
+      25,
+      y,
+      { maxWidth: 170 }
+    );
     y += 10;
-    doc.text('Nama', 30, y); doc.text(':', 70, y); doc.text(form.nama || '-', 75, y); y += 7;
-    doc.text('Tempat/Tgl Lahir', 30, y); doc.text(':', 70, y); doc.text(form.tempatTanggalLahir || '-', 75, y); y += 7;
-    doc.text('Warganegara', 30, y); doc.text(':', 70, y); doc.text(form.jenisKelamin || '-', 75, y); y += 7;
-    doc.text('Agama', 30, y); doc.text(':', 70, y); doc.text(form.agama || '-', 75, y); y += 7;
-    doc.text('Pekerjaan', 30, y); doc.text(':', 70, y); doc.text(form.pekerjaan || '-', 75, y); y += 7;
-    doc.text('Status Perkawinan', 30, y); doc.text(':', 70, y); doc.text(form.statusPerkawinan || '-', 75, y); y += 7;
-    doc.text('Tempat Tinggal', 30, y); doc.text(':', 70, y); doc.text(form.alamat || '-', 75, y); y += 7;
-    doc.text('Surat Bukti Diri', 30, y); doc.text(':', 70, y); doc.text(`NIK: ${form.nik || '-'}  No. KK: ${form.kk || '-'}`, 75, y); y += 7;
-    doc.text('Keperluan', 30, y); doc.text(':', 70, y); doc.text(form.keperluan || '-', 75, y); y += 7;
-    doc.text('Berlaku', 30, y); doc.text(':', 70, y); doc.text(form.berlaku || 's/d', 75, y); y += 7;
-    doc.text('Keterangan lain', 30, y); doc.text(':', 70, y); doc.text(form.keteranganLain || '-', 75, y); y += 10;
-    doc.text('Demikian Surat Keterangan ini diberikan untuk dipergunakan seperlunya.', 25, y, { maxWidth: 170 });
+    doc.text("Nama", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.nama || "-", 75, y);
+    y += 7;
+    doc.text("Tempat/Tgl Lahir", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.tempatTanggalLahir || "-", 75, y);
+    y += 7;
+    doc.text("Warganegara", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.jenisKelamin || "-", 75, y);
+    y += 7;
+    doc.text("Agama", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.agama || "-", 75, y);
+    y += 7;
+    doc.text("Pekerjaan", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.pekerjaan || "-", 75, y);
+    y += 7;
+    doc.text("Status Perkawinan", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.statusPerkawinan || "-", 75, y);
+    y += 7;
+    doc.text("Tempat Tinggal", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.alamat || "-", 75, y);
+    y += 7;
+    doc.text("Surat Bukti Diri", 30, y);
+    doc.text(":", 70, y);
+    doc.text(`NIK: ${form.nik || "-"}  No. KK: ${form.kk || "-"}`, 75, y);
+    y += 7;
+    doc.text("Keperluan", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.keperluan || "-", 75, y);
+    y += 7;
+    doc.text("Berlaku", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.berlaku || "s/d", 75, y);
+    y += 7;
+    doc.text("Keterangan lain", 30, y);
+    doc.text(":", 70, y);
+    doc.text(form.keteranganLain || "-", 75, y);
+    y += 10;
+    doc.text(
+      "Demikian Surat Keterangan ini diberikan untuk dipergunakan seperlunya.",
+      25,
+      y,
+      { maxWidth: 170 }
+    );
     y += 14;
     // Tanda tangan
-    doc.text('Pemohon', 35, y);
-    doc.text(`${villageInfo?.name || 'Desa'}, ${new Date().toLocaleDateString('id-ID')}`, 140, y);
+    doc.text("Pemohon", 35, y);
+    doc.text(
+      `${villageInfo?.name || "Desa"}, ${new Date().toLocaleDateString(
+        "id-ID"
+      )}`,
+      140,
+      y
+    );
     y += 7;
-    doc.text(`An. ${villageInfo?.leaderTitle || 'KEPALA DESA'} ${villageInfo?.name || ''}`, 140, y);
-    doc.text('KASI PEMERINTAH', 140, y + 6);
-    doc.text(`(${villageInfo?.leaderName || '................................'})`, 140, y + 26);
-    doc.save('pengantar-numpang-nikah.pdf');
+    doc.text(`${form.nama}`, 35, y + 26);
+    doc.text(
+      `An. ${villageInfo?.leaderTitle || "KEPALA DESA"} ${
+        villageInfo?.name || ""
+      }`,
+      140,
+      y
+    );
+    doc.text("KASI PEMERINTAH", 140, y + 6);
+    doc.text(
+      `(${villageInfo?.leaderName || "................................"})`,
+      140,
+      y + 26
+    );
+    doc.save("pengantar-numpang-nikah.pdf");
   };
 
   const handleSaveLetter = async () => {
     const letterData = {
-      letterType: 'pengantar-numpang-nikah',
-      title: 'Pengantar Numpang Nikah',
+      letterType: "pengantar-numpang-nikah",
+      title: "Pengantar Numpang Nikah",
       content: JSON.stringify(form),
       issuedDate: new Date(),
-      status: 'draft' as const,
+      status: "draft" as const,
       residentName: form.nama,
       residentId: form.residentId || 0, // Gunakan residentId dari form
-      letterNumber: '',
+      letterNumber: "",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     try {
       await letterService.addLetter(letterData as any);
-      alert('Surat berhasil disimpan!');
+      alert("Surat berhasil disimpan!");
     } catch (err) {
-      alert('Gagal menyimpan surat: ' + (err instanceof Error ? err.message : err));
+      alert(
+        "Gagal menyimpan surat: " + (err instanceof Error ? err.message : err)
+      );
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4 text-center text-teal-800">Pengantar Numpang Nikah</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center text-teal-800">
+        Pengantar Numpang Nikah
+      </h1>
       <div className="mb-4">
         <input
           type="text"
@@ -207,86 +298,310 @@ const CreatePengantarNumpangNikahLetter: React.FC<{ editData?: Letter; isEditMod
         )}
       </div>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <input name="nama" value={form.nama} onChange={handleChange} placeholder="Nama" className="input" />
-        <input name="tempatTanggalLahir" value={form.tempatTanggalLahir} onChange={handleChange} placeholder="Tempat/Tgl Lahir" className="input" />
-        <input name="jenisKelamin" value={form.jenisKelamin} onChange={handleChange} placeholder="Warganegara" className="input" />
-        <input name="agama" value={form.agama} onChange={handleChange} placeholder="Agama" className="input" />
-        <input name="pekerjaan" value={form.pekerjaan} onChange={handleChange} placeholder="Pekerjaan" className="input" />
-        <input name="statusPerkawinan" value={form.statusPerkawinan} onChange={handleChange} placeholder="Status Perkawinan" className="input" />
-        <input name="alamat" value={form.alamat} onChange={handleChange} placeholder="Tempat Tinggal" className="input" />
-        <input name="nik" value={form.nik} onChange={handleChange} placeholder="NIK" className="input" />
-        <input name="kk" value={form.kk} onChange={handleChange} placeholder="No. KK" className="input" />
-        <input name="keperluan" value={form.keperluan} onChange={handleChange} placeholder="Keperluan" className="input" />
-        <input name="berlaku" value={form.berlaku} onChange={handleChange} placeholder="Berlaku s/d" className="input" />
-        <input name="keteranganLain" value={form.keteranganLain} onChange={handleChange} placeholder="Keterangan Lain" className="input" />
+        <input
+          name="nama"
+          value={form.nama}
+          onChange={handleChange}
+          placeholder="Nama"
+          className="input"
+        />
+        <input
+          name="tempatTanggalLahir"
+          value={form.tempatTanggalLahir}
+          onChange={handleChange}
+          placeholder="Tempat/Tgl Lahir"
+          className="input"
+        />
+        <input
+          name="jenisKelamin"
+          value={form.jenisKelamin}
+          onChange={handleChange}
+          placeholder="Warganegara"
+          className="input"
+        />
+        <input
+          name="agama"
+          value={form.agama}
+          onChange={handleChange}
+          placeholder="Agama"
+          className="input"
+        />
+        <input
+          name="pekerjaan"
+          value={form.pekerjaan}
+          onChange={handleChange}
+          placeholder="Pekerjaan"
+          className="input"
+        />
+        <input
+          name="statusPerkawinan"
+          value={form.statusPerkawinan}
+          onChange={handleChange}
+          placeholder="Status Perkawinan"
+          className="input"
+        />
+        <input
+          name="alamat"
+          value={form.alamat}
+          onChange={handleChange}
+          placeholder="Tempat Tinggal"
+          className="input"
+        />
+        <input
+          name="nik"
+          value={form.nik}
+          onChange={handleChange}
+          placeholder="NIK"
+          className="input"
+        />
+        <input
+          name="kk"
+          value={form.kk}
+          onChange={handleChange}
+          placeholder="No. KK"
+          className="input"
+        />
+        <input
+          name="keperluan"
+          value={form.keperluan}
+          onChange={handleChange}
+          placeholder="Keperluan"
+          className="input"
+        />
+        <input
+          name="berlaku"
+          value={form.berlaku}
+          onChange={handleChange}
+          placeholder="Berlaku s/d"
+          className="input"
+        />
+        <input
+          name="keteranganLain"
+          value={form.keteranganLain}
+          onChange={handleChange}
+          placeholder="Keterangan Lain"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
-        <Button variant="primary" onClick={handleExportPDF}>Export PDF</Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>Kembali</Button>
-        <Button variant="outline" onClick={handleSaveLetter}>Simpan Surat</Button>
+        <Button variant="primary" onClick={handleExportPDF}>
+          Export PDF
+        </Button>
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          Kembali
+        </Button>
+        <Button variant="outline" onClick={handleSaveLetter}>
+          Simpan Surat
+        </Button>
       </div>
       <div className="bg-white p-8 border shadow max-w-[800px] mx-auto">
-        <div className="container" style={{ width: '210mm', minHeight: '297mm', padding: '1cm', margin: 'auto', background: 'white', boxSizing: 'border-box' }}>
-          <div className="header" style={{ display: 'flex', alignItems: 'center', marginBottom: 1 }}>
-            <img src={logo} alt="Logo Instansi" className="logo" style={{ width: 100, height: 100, marginRight: 20 }} />
-            <div className="instansi" style={{ textAlign: 'center', flex: 1 }}>
-              <div className="bold" style={{ fontWeight: 'bold' }}>PEMERINTAHAN {villageInfo?.regencyName || 'KABUPATEN'}</div>
-              <div className="bold" style={{ fontWeight: 'bold' }}>KECAMATAN {villageInfo?.districtName || 'KECAMATAN'}</div>
-              <div className="bold" style={{ fontWeight: 'bold' }}>DESA {villageInfo?.name || 'DESA'}</div>
-              <div className="bold" style={{ fontWeight: 'bold' }}>{villageInfo?.address || 'Alamat Desa'}</div>
-              <div className="bold" style={{ fontWeight: 'bold' }}>Telp. {villageInfo?.phoneNumber || '-'}</div>
+        <div
+          className="container"
+          style={{
+            width: "210mm",
+            minHeight: "297mm",
+            padding: "1cm",
+            margin: "auto",
+            background: "white",
+            boxSizing: "border-box",
+          }}
+        >
+          <div
+            className="header"
+            style={{ display: "flex", alignItems: "center", marginBottom: 1 }}
+          >
+            <img
+              src={logo}
+              alt="Logo Instansi"
+              className="logo"
+              style={{ width: 100, height: 100, marginRight: 20 }}
+            />
+            <div className="instansi" style={{ textAlign: "center", flex: 1 }}>
+              <div className="bold" style={{ fontWeight: "bold" }}>
+                PEMERINTAHAN {villageInfo?.regencyName || "KABUPATEN"}
+              </div>
+              <div className="bold" style={{ fontWeight: "bold" }}>
+                KECAMATAN {villageInfo?.districtName || "KECAMATAN"}
+              </div>
+              <div className="bold" style={{ fontWeight: "bold" }}>
+                DESA {villageInfo?.name || "DESA"}
+              </div>
+              <div className="bold" style={{ fontWeight: "bold" }}>
+                {villageInfo?.address || "Alamat Desa"}
+              </div>
+              <div className="bold" style={{ fontWeight: "bold" }}>
+                Telp. {villageInfo?.phoneNumber || "-"}
+              </div>
             </div>
           </div>
-          <hr style={{ border: '1px solid black', marginTop: 10 }} />
-          <p>Kode Desa: {villageInfo?.postalCode || 'Kode Pos'}</p>
-          <h2 style={{ textAlign: 'center', textDecoration: 'underline', fontSize: '11pt' }}>PENGANTAR NUMPANG NIKAH</h2>
-          <p style={{ textAlign: 'center' }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+          <hr style={{ border: "1px solid black", marginTop: 10 }} />
+          <p>Kode Desa: {villageInfo?.postalCode || "Kode Pos"}</p>
+          <h2
+            style={{
+              textAlign: "center",
+              textDecoration: "underline",
+              fontSize: "11pt",
+            }}
+          >
+            PENGANTAR NUMPANG NIKAH
+          </h2>
+          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
           <div className="content" style={{ marginTop: 30 }}>
-            <p>Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:</p>
+            <p>
+              Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
+              Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah,
+              menerangkan bahwa:
+            </p>
             <table style={{ marginLeft: 20 }}>
               <tbody>
-                <tr><td>Nama</td><td>:</td><td>{form.nama}</td></tr>
-                <tr><td>Tempat/Tgl Lahir</td><td>:</td><td>{form.tempatTanggalLahir}</td></tr>
-                <tr><td>Warganegara</td><td>:</td><td>{form.jenisKelamin}</td></tr>
-                <tr><td>Agama</td><td>:</td><td>{form.agama}</td></tr>
-                <tr><td>Pekerjaan</td><td>:</td><td>{form.pekerjaan}</td></tr>
-                <tr><td>Status Perkawinan</td><td>:</td><td>{form.statusPerkawinan}</td></tr>
-                <tr><td>Tempat Tinggal</td><td>:</td><td>{form.alamat}</td></tr>
+                <tr>
+                  <td>Nama</td>
+                  <td>:</td>
+                  <td>{form.nama}</td>
+                </tr>
+                <tr>
+                  <td>Tempat/Tgl Lahir</td>
+                  <td>:</td>
+                  <td>{form.tempatTanggalLahir}</td>
+                </tr>
+                <tr>
+                  <td>Warganegara</td>
+                  <td>:</td>
+                  <td>{form.jenisKelamin}</td>
+                </tr>
+                <tr>
+                  <td>Agama</td>
+                  <td>:</td>
+                  <td>{form.agama}</td>
+                </tr>
+                <tr>
+                  <td>Pekerjaan</td>
+                  <td>:</td>
+                  <td>{form.pekerjaan}</td>
+                </tr>
+                <tr>
+                  <td>Status Perkawinan</td>
+                  <td>:</td>
+                  <td>{form.statusPerkawinan}</td>
+                </tr>
+                <tr>
+                  <td>Tempat Tinggal</td>
+                  <td>:</td>
+                  <td>{form.alamat}</td>
+                </tr>
                 <tr>
                   <td>Surat Bukti Diri</td>
                   <td>:</td>
                   <td>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                       <span>NIK: {form.nik}</span>
                       <span>No. KK: {form.kk}</span>
                     </div>
                   </td>
                 </tr>
-                <tr><td>Keperluan</td><td>:</td><td>{form.keperluan}</td></tr>
-                <tr><td>Berlaku</td><td>:</td><td>{form.berlaku}</td></tr>
-                <tr><td>Keterangan lain</td><td>:</td><td>{form.keteranganLain}</td></tr>
+                <tr>
+                  <td>Keperluan</td>
+                  <td>:</td>
+                  <td>{form.keperluan}</td>
+                </tr>
+                <tr>
+                  <td>Berlaku</td>
+                  <td>:</td>
+                  <td>{form.berlaku}</td>
+                </tr>
+                <tr>
+                  <td>Keterangan lain</td>
+                  <td>:</td>
+                  <td>{form.keteranganLain}</td>
+                </tr>
               </tbody>
             </table>
-            <p>Demikian Surat Keterangan ini diberikan untuk dipergunakan seperlunya.</p>
+            <p>
+              Demikian Surat Keterangan ini diberikan untuk dipergunakan
+              seperlunya.
+            </p>
           </div>
-          <div className="signature-block" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-            <div className="signature" style={{ width: '30%', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 180 }}>
+          <div
+            className="signature-block"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: 20,
+            }}
+          >
+            <div
+              className="signature"
+              style={{
+                width: "30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: 180,
+              }}
+            >
               <p>Pemohon</p>
-              <div style={{ marginTop: 'auto' }}>
-                <div className="ttd-space" style={{ minHeight: 70, borderBottom: '1px solid transparent' }}></div>
-                <p><strong>{form.nama || '(................................)'}</strong></p>
+              <div style={{ marginTop: "auto" }}>
+                <div
+                  className="ttd-space"
+                  style={{
+                    minHeight: 70,
+                    borderBottom: "1px solid transparent",
+                  }}
+                ></div>
+                <p>
+                  <strong>
+                    {form.nama || "(................................)"}
+                  </strong>
+                </p>
               </div>
             </div>
-            <div className="signature" style={{ width: '30%', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 180 }}></div>
-            <div className="signature" style={{ width: '30%', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 180 }}>
-              <div className="compact" style={{ textAlign: 'center' }}>
-                <p>{villageInfo?.name || 'Desa'}, {new Date().toLocaleDateString('id-ID')}</p>
-                <p>An. {villageInfo?.leaderTitle || 'KEPALA DESA'} {villageInfo?.name || ''}</p>
+            <div
+              className="signature"
+              style={{
+                width: "30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: 180,
+              }}
+            ></div>
+            <div
+              className="signature"
+              style={{
+                width: "30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: 180,
+              }}
+            >
+              <div className="compact" style={{ textAlign: "center" }}>
+                <p>
+                  {villageInfo?.name || "Desa"},{" "}
+                  {new Date().toLocaleDateString("id-ID")}
+                </p>
+                <p>
+                  An. {villageInfo?.leaderTitle || "KEPALA DESA"}{" "}
+                  {villageInfo?.name || ""}
+                </p>
                 <p>KASI PEMERINTAH</p>
               </div>
-              <div style={{ marginTop: 'auto' }}>
-                <div className="ttd-space" style={{ minHeight: 70, borderBottom: '1px solid transparent' }}></div>
-                <p><strong>{villageInfo?.leaderName || '[Nama Kepala Desa]'}</strong></p>
+              <div style={{ marginTop: "auto" }}>
+                <div
+                  className="ttd-space"
+                  style={{
+                    minHeight: 70,
+                    borderBottom: "1px solid transparent",
+                  }}
+                ></div>
+                <p>
+                  <strong>
+                    {villageInfo?.leaderName || "[Nama Kepala Desa]"}
+                  </strong>
+                </p>
               </div>
             </div>
           </div>
