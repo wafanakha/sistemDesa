@@ -6,10 +6,9 @@ const randomFromArray = <T>(arr: readonly T[]) =>
 const randomDate = (start: Date, end: Date) =>
   new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 
+let idCounter = 1;
 
 export const seedResidents = async () => {
-  let idCounter = 1;
-
   const existing = await db.residents.count();
   if (existing > 0) return;
 
@@ -44,7 +43,6 @@ export const seedResidents = async () => {
   const pekerjaan = ["Petani", "Guru", "Pastor", "Swasta", "Pedagang"] as const;
 
   const bloodTypes = [
-
     "A",
     "B",
     "O",
@@ -115,6 +113,7 @@ export const seedResidents = async () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       });
+      idCounter++;
     }
   }
 

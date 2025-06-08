@@ -50,12 +50,6 @@ function App() {
   useEffect(() => {
     getAllResidents().then(setResidents);
     seedResidents();
-    seedResidents();
-    seedResidents();
-    seedResidents();
-    seedResidents();
-    seedResidents();
-    seedResidents();
   }, []);
 
   return (
@@ -65,6 +59,7 @@ function App() {
           {/* Dashboard */}
           <Route index element={<Dashboard />} />
           {/* Residents */}
+          <Route path="residents/" element={<ResidentsList />} />
           <Route path="residents/list" element={<ResidentsList />} />
           <Route path="residents/add" element={<AddResident />} />
           <Route path="residents/edit/:id" element={<EditResident />} />
@@ -106,23 +101,68 @@ function App() {
           {/* Letters */}
           <Route path="letters" element={<LettersList />} />
           <Route path="letters/create" element={<CreateLetter />} />
-          <Route path="letters/create/keramaian" element={<CreateKeramaianLetter />} />
+          <Route
+            path="letters/create/keramaian"
+            element={<CreateKeramaianLetter />}
+          />
           <Route path="letters/create/usaha" element={<CreateUsahaLetter />} />
-          <Route path="letters/create/domisili" element={<CreateDomisiliLetter />} />
-          <Route path="letters/create/tidak-mampu" element={<CreateTidakMampuLetter />} />
-          <Route path="letters/create/pengantar" element={<CreatePengantarLetter />} />
-          <Route path="letters/create/keterangan" element={<CreateKeteranganLetter />} />
-          <Route path="letters/create/domisili-usaha" element={<CreateDomisiliUsahaLetter />} />
+          <Route
+            path="letters/create/domisili"
+            element={<CreateDomisiliLetter />}
+          />
+          <Route
+            path="letters/create/tidak-mampu"
+            element={<CreateTidakMampuLetter />}
+          />
+          <Route
+            path="letters/create/pengantar"
+            element={<CreatePengantarLetter />}
+          />
+          <Route
+            path="letters/create/keterangan"
+            element={<CreateKeteranganLetter />}
+          />
+          <Route
+            path="letters/create/domisili-usaha"
+            element={<CreateDomisiliUsahaLetter />}
+          />
           <Route path="letters/create/skck" element={<CreateSkckLetter />} />
-          <Route path="letters/create/ahli-waris" element={<CreateAhliWarisLetter />} />
-          <Route path="letters/create/wali-nikah" element={<CreateWaliNikahLetter />} />
-          <Route path="letters/create/pengantar-numpang-nikah" element={<CreatePengantarNumpangNikahLetter />} />
-          <Route path="letters/create/pengantar-nikah" element={<CreatePengantarNikahLetter />} />
-          <Route path="letters/create/belum-menikah" element={<CreateBelumMenikahLetter />} />
-          <Route path="letters/create/kematian" element={<CreateKematianLetter />} />
-          <Route path="letters/create/permohonan-kehendak-nikah" element={<CreatePermohonanKehendakNikahLetter />} />
-          <Route path="letters/create/persetujuan-calon-pengantin" element={<CreatePersetujuanCalonPengantinLetter />} />
-          <Route path="letters/create/izin-orang-tua" element={<CreateIzinOrangTuaLetter />} />
+          <Route
+            path="letters/create/ahli-waris"
+            element={<CreateAhliWarisLetter />}
+          />
+          <Route
+            path="letters/create/wali-nikah"
+            element={<CreateWaliNikahLetter />}
+          />
+          <Route
+            path="letters/create/pengantar-numpang-nikah"
+            element={<CreatePengantarNumpangNikahLetter />}
+          />
+          <Route
+            path="letters/create/pengantar-nikah"
+            element={<CreatePengantarNikahLetter />}
+          />
+          <Route
+            path="letters/create/belum-menikah"
+            element={<CreateBelumMenikahLetter />}
+          />
+          <Route
+            path="letters/create/kematian"
+            element={<CreateKematianLetter />}
+          />
+          <Route
+            path="letters/create/permohonan-kehendak-nikah"
+            element={<CreatePermohonanKehendakNikahLetter />}
+          />
+          <Route
+            path="letters/create/persetujuan-calon-pengantin"
+            element={<CreatePersetujuanCalonPengantinLetter />}
+          />
+          <Route
+            path="letters/create/izin-orang-tua"
+            element={<CreateIzinOrangTuaLetter />}
+          />
           <Route path="letters/view/:id" element={<ViewLetter />} />
           {/* <Route path="letters/edit/:id" element={<EditLetter />} /> */}
           {/* Settings & Help */}
