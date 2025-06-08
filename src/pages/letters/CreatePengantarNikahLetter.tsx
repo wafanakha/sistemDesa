@@ -17,14 +17,24 @@ const initialForm = {
   issuedDate: new Date().toISOString().slice(0, 10),
 };
 
-function generateFormulirPengantarNikahN1(form: any, resident: Resident, ayah: Resident | undefined, ibu: Resident | undefined, village: VillageInfo) {
+function generateFormulirPengantarNikahN1(
+  form: any,
+  resident: Resident,
+  ayah: Resident | undefined,
+  ibu: Resident | undefined,
+  village: VillageInfo
+) {
   const doc = new jsPDF();
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.text("FORMULIR PENGANTAR NIKAH", 65, 12);
   doc.setFontSize(9);
   doc.text(`KANTOR DESA/KEL    : ${village.name}`, 10, 20);
-  doc.text(`KECAMATAN          : ${village.districtName || "Patikraja"}`, 10, 26);
+  doc.text(
+    `KECAMATAN          : ${village.districtName || "Patikraja"}`,
+    10,
+    26
+  );
   doc.text(`KABUPATEN          : ${village.regencyName || "Banyumas"}`, 10, 32);
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
@@ -34,66 +44,108 @@ function generateFormulirPengantarNikahN1(form: any, resident: Resident, ayah: R
   doc.setFont("helvetica", "normal");
   doc.text(`Nomor : ............`, 80, 49);
   doc.setFontSize(10);
-  doc.text("Yang bertanda tangan di bawah ini menerangkan dengan sesungguhnya bahwa :", 10, 58);
+  doc.text(
+    "Yang bertanda tangan di bawah ini menerangkan dengan sesungguhnya bahwa :",
+    10,
+    58
+  );
   let y = 66;
   doc.text("1. Nama", 14, y);
-  doc.text(`: ${resident.name}`, 60, y);
+  doc.text(`: ${resident.name}`, 90, y);
   doc.text("2. Nomor Induk Kependudukan (NIK)", 14, y + 6);
-  doc.text(`: ${resident.nik}`, 60, y + 6);
+  doc.text(`: ${resident.nik}`, 90, y + 6);
   doc.text("3. Jenis Kelamin", 14, y + 12);
-  doc.text(`: ${resident.gender}`, 60, y + 12);
+  doc.text(`: ${resident.gender}`, 90, y + 12);
   doc.text("4. Tempat dan tanggal lahir", 14, y + 18);
-  doc.text(`: ${resident.birthPlace}, ${resident.birthDate}`, 60, y + 18);
+  doc.text(`: ${resident.birthPlace}, ${resident.birthDate}`, 90, y + 18);
   doc.text("5. Kewarganegaraan", 14, y + 24);
-  doc.text(`: Indonesia`, 60, y + 24);
+  doc.text(``, 90, y + 24);
   doc.text("6. Agama", 14, y + 30);
-  doc.text(`: ${resident.religion}`, 60, y + 30);
+  doc.text(`: ${resident.religion}`, 90, y + 30);
   doc.text("7. Pekerjaan", 14, y + 36);
-  doc.text(`: ${resident.occupation}`, 60, y + 36);
+  doc.text(`: ${resident.occupation}`, 90, y + 36);
   doc.text("8. Alamat", 14, y + 42);
-  doc.text(`: ${resident.address}`, 60, y + 42);
+  doc.text(`: ${resident.address}`, 90, y + 42);
   doc.text("9. Status Perkawinan", 14, y + 50);
-  doc.text(`   a. Laki-laki : Jejaka / Duda / beristri ke     : ${resident.gender === "Laki-laki" ? (resident.maritalStatus === "Belum Kawin" ? "Jejaka" : "Duda") : "-"}`, 16, y + 56);
-  doc.text(`   b. Perempuan : Perawan / Janda                : ${resident.gender === "Perempuan" ? (resident.maritalStatus === "Belum Kawin" ? "Perawan" : "Janda") : "-"}`, 16, y + 62);
+  doc.text(
+    `   a. Laki-laki : Jejaka / Duda / beristri ke     : ${
+      resident.gender === "Laki-laki"
+        ? resident.maritalStatus === "Belum Kawin"
+          ? "Jejaka"
+          : "Duda"
+        : "-"
+    }`,
+    16,
+    y + 56
+  );
+  doc.text(
+    `   b. Perempuan : Perawan / Janda                : ${
+      resident.gender === "Perempuan"
+        ? resident.maritalStatus === "Belum Kawin"
+          ? "Perawan"
+          : "Janda"
+        : "-"
+    }`,
+    16,
+    y + 62
+  );
   doc.text("   Adalah benar anak dari pernikahan seorang pria", 16, y + 68);
   // Data ayah
   doc.text("   Nama lengkap dan alias", 18, y + 74);
-  doc.text(`: ${ayah?.name || "-"}`, 70, y + 74);
+  doc.text(`: ${ayah?.name || "-"}`, 90, y + 74);
   doc.text("   Nomor Induk Kependudukan (NIK)", 18, y + 80);
-  doc.text(`: ${ayah?.nik || "-"}`, 70, y + 80);
+  doc.text(`: ${ayah?.nik || "-"}`, 90, y + 80);
   doc.text("   Tempat dan tanggal lahir", 18, y + 86);
-  doc.text(`: ${ayah ? ayah.birthPlace + ", " + ayah.birthDate : "-"}`, 70, y + 86);
+  doc.text(
+    `: ${ayah ? ayah.birthPlace + ", " + ayah.birthDate : "-"}`,
+    90,
+    y + 86
+  );
   doc.text("   Kewarganegaraan", 18, y + 92);
-  doc.text(`: Indonesia`, 70, y + 92);
+  doc.text("", 90, y + 92);
   doc.text("   Agama", 18, y + 98);
-  doc.text(`: ${ayah?.religion || "-"}`, 70, y + 98);
+  doc.text(`: ${ayah?.religion || "-"}`, 90, y + 98);
   doc.text("   Pekerjaan", 18, y + 104);
-  doc.text(`: ${ayah?.occupation || "-"}`, 70, y + 104);
+  doc.text(`: ${ayah?.occupation || "-"}`, 90, y + 104);
   doc.text("   Alamat", 18, y + 110);
-  doc.text(`: ${ayah?.address || "-"}`, 70, y + 110);
+  doc.text(`: ${ayah?.address || "-"}`, 90, y + 110);
   // Data ibu
   doc.setFont("helvetica", "bold");
   doc.text("   Dengan seorang wanita", 16, y + 120);
   doc.setFont("helvetica", "normal");
   doc.text("   Nama lengkap dan alias", 18, y + 126);
-  doc.text(`: ${ibu?.name || "-"}`, 70, y + 126);
+  doc.text(`: ${ibu?.name || "-"}`, 90, y + 126);
   doc.text("   Nomor Induk Kependudukan (NIK)", 18, y + 132);
-  doc.text(`: ${ibu?.nik || "-"}`, 70, y + 132);
+  doc.text(`: ${ibu?.nik || "-"}`, 90, y + 132);
   doc.text("   Tempat dan tanggal lahir", 18, y + 138);
-  doc.text(`: ${ibu ? ibu.birthPlace + ", " + ibu.birthDate : "-"}`, 70, y + 138);
+  doc.text(
+    `: ${ibu ? ibu.birthPlace + ", " + ibu.birthDate : "-"}`,
+    90,
+    y + 138
+  );
   doc.text("   Kewarganegaraan", 18, y + 144);
-  doc.text(`: Indonesia`, 70, y + 144);
+  doc.text(``, 90, y + 144);
   doc.text("   Agama", 18, y + 150);
-  doc.text(`: ${ibu?.religion || "-"}`, 70, y + 150);
+  doc.text(`: ${ibu?.religion || "-"}`, 90, y + 150);
   doc.text("   Pekerjaan", 18, y + 156);
-  doc.text(`: ${ibu?.occupation || "-"}`, 70, y + 156);
+  doc.text(`: ${ibu?.occupation || "-"}`, 90, y + 156);
   doc.text("   Alamat", 18, y + 162);
-  doc.text(`: ${ibu?.address || "-"}`, 70, y + 162);
+  doc.text(`: ${ibu?.address || "-"}`, 90, y + 162);
   // Penutup
-  doc.text("Demikianlah, surat pengantar ini dibuat dengan mengingat sumpah Jabatan dan untuk dipergunakan sebagaimana mestinya", 10, 175);
-  doc.text(`Kedungwiringin, ${form.issuedDate && new Date(form.issuedDate).toLocaleDateString("id-ID")}`, 120, 185);
-  doc.text("Kepala Desa Kedungwiringin", 130, 190);
-  doc.text(village.leaderName || "", 140, 205);
+  doc.text(
+    "Demikianlah, surat pengantar ini dibuat dengan mengingat sumpah Jabatan dan untuk dipergunakan sebagaimana mestinya",
+    10,
+    y + 175
+  );
+  doc.text(
+    `Kedungwiringin, ${
+      form.issuedDate && new Date(form.issuedDate).toLocaleDateString("id-ID")
+    }`,
+    130,
+    y + 185
+  );
+  doc.text("Kepala Desa Kedungwiringin", 130, y + 190);
+  doc.text(village.leaderName || "", 140, y + 210);
   doc.save("formulir_pengantar_nikah_n1.pdf");
 }
 
@@ -134,22 +186,32 @@ const CreatePengantarNikahLetter: React.FC = () => {
     setForm({ ...form, ibuId });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleExportPdf = async () => {
     if (!selectedKk) return toast.error("Pilih KK terlebih dahulu");
-    const resident = selectedKk.members.find((m: Resident) => String(m.id) === String(form.residentId));
+    const resident = selectedKk.members.find(
+      (m: Resident) => String(m.id) === String(form.residentId)
+    );
     if (!resident) return toast.error("Pilih warga yang akan dibuatkan surat");
-    const ayah = selectedKk.members.find((m: Resident) => m.shdk === "Kepala Keluarga");
-    const ibu = selectedKk.members.find((m: Resident) => String(m.id) === String(form.ibuId));
+    const ayah = selectedKk.members.find(
+      (m: Resident) => m.shdk === "Kepala Keluarga"
+    );
+    const ibu = selectedKk.members.find(
+      (m: Resident) => String(m.id) === String(form.ibuId)
+    );
     if (!village) return toast.error("Data desa belum lengkap");
     generateFormulirPengantarNikahN1(form, resident, ayah, ibu, village);
   };
 
   // Ambil daftar ibu (istri) dari anggota KK
-  const ibuOptions = selectedKk ? selectedKk.members.filter((m: Resident) => m.shdk === "Istri") : [];
+  const ibuOptions = selectedKk
+    ? selectedKk.members.filter((m: Resident) => m.shdk === "Istri")
+    : [];
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -178,20 +240,37 @@ const CreatePengantarNikahLetter: React.FC = () => {
       </div>
       {selectedKk && (
         <div className="mb-4">
-          <label className="block font-semibold mb-1">Pilih Anggota Keluarga</label>
+          <label className="block font-semibold mb-1">
+            Pilih Anggota Keluarga
+          </label>
           <Select
             value={form.residentId}
-            options={selectedKk.members.map((m: Resident) => ({ value: m.id, label: `${m.nik} - ${m.name}` }))}
-            onChange={(value: string) => handleSelectResident(selectedKk.members.find((m: Resident) => String(m.id) === value))}
+            options={selectedKk.members.map((m: Resident) => ({
+              value: m.id,
+              label: `${m.nik} - ${m.name}`,
+            }))}
+            onChange={(value: string) =>
+              handleSelectResident(
+                selectedKk.members.find((m: Resident) => String(m.id) === value)
+              )
+            }
           />
         </div>
       )}
       {selectedKk && ibuOptions.length > 0 && (
         <div className="mb-4">
-          <label className="block font-semibold mb-1">Pilih Ibu (jika lebih dari 1 istri)</label>
+          <label className="block font-semibold mb-1">
+            Pilih Ibu (jika lebih dari 1 istri)
+          </label>
           <Select
             value={form.ibuId}
-            options={[{ value: '', label: '-- Pilih Ibu --' }, ...ibuOptions.map((ibu: Resident) => ({ value: ibu.id, label: `${ibu.nik} - ${ibu.name}` }))]}
+            options={[
+              { value: "", label: "-- Pilih Ibu --" },
+              ...ibuOptions.map((ibu: Resident) => ({
+                value: ibu.id,
+                label: `${ibu.nik} - ${ibu.name}`,
+              })),
+            ]}
             onChange={(value: string) => handleSelectIbu(value)}
           />
         </div>
@@ -200,21 +279,39 @@ const CreatePengantarNikahLetter: React.FC = () => {
         <Button type="button" variant="secondary" onClick={handleExportPdf}>
           Export PDF
         </Button>
-        <Button type="button" variant="outline" onClick={() => setPreviewOpen(true)}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setPreviewOpen(true)}
+        >
           Preview
         </Button>
       </div>
-      <Modal isOpen={previewOpen} onClose={() => setPreviewOpen(false)} title="Preview Surat">
+      <Modal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        title="Preview Surat"
+      >
         <div className="p-4 bg-white">
           {selectedKk && form.residentId && village ? (
             <pre className="whitespace-pre-wrap font-sans text-base">
-              {JSON.stringify({
-                ...form,
-                anggota: selectedKk.members.find((m: Resident) => String(m.id) === String(form.residentId)),
-                ayah: selectedKk.members.find((m: Resident) => m.shdk === "Kepala Keluarga"),
-                ibu: selectedKk.members.find((m: Resident) => String(m.id) === String(form.ibuId)),
-                desa: village,
-              }, null, 2)}
+              {JSON.stringify(
+                {
+                  ...form,
+                  anggota: selectedKk.members.find(
+                    (m: Resident) => String(m.id) === String(form.residentId)
+                  ),
+                  ayah: selectedKk.members.find(
+                    (m: Resident) => m.shdk === "Kepala Keluarga"
+                  ),
+                  ibu: selectedKk.members.find(
+                    (m: Resident) => String(m.id) === String(form.ibuId)
+                  ),
+                  desa: village,
+                },
+                null,
+                2
+              )}
             </pre>
           ) : (
             <p>Lengkapi data KK, anggota, dan desa untuk preview.</p>
