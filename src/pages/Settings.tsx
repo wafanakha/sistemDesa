@@ -65,8 +65,8 @@ const Settings: React.FC = () => {
         setValue("provinceName", info.provinceName);
         setValue("phoneNumber", info.phoneNumber);
         setValue("leaderName", info.leaderName);
-        setValue("leaderTitle", info.leaderTitle);
         setValue("VillageCode", info.VillageCode);
+        setValue("kasipemerintah", info.kasipemerintah);
       }
     } catch (error) {
       console.error("Error loading village info:", error);
@@ -236,7 +236,9 @@ const Settings: React.FC = () => {
 
             <Input
               label="Kode Desa"
-              {...register("VillageCode", { required: "Kode pos wajib diisi" })}
+              {...register("VillageCode", {
+                required: "Kode Desa wajib diisi",
+              })}
               error={errors.VillageCode?.message}
               fullWidth
             />
@@ -253,7 +255,7 @@ const Settings: React.FC = () => {
         </Card>
 
         {/* Leader Information */}
-        <Card title="Informasi Kepala Desa">
+        <Card title="Informasi Pemerintah Desa">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Nama Kepala Desa"
@@ -265,11 +267,11 @@ const Settings: React.FC = () => {
             />
 
             <Input
-              label="Jabatan"
-              {...register("leaderTitle", {
-                required: "Jabatan kepala desa wajib diisi",
+              label="Nama Kasi Pemerintah"
+              {...register("kasipemerintah", {
+                required: "Nama Kasi pemerintah wajib diisi",
               })}
-              error={errors.leaderTitle?.message}
+              error={errors.kasipemerintah?.message}
               fullWidth
             />
           </div>

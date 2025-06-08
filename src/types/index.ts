@@ -146,5 +146,5 @@ export interface VillageInfo {
   VillageCode: string;
   phoneNumber: string;
   leaderName: string;
-  leaderTitle: string;
+  kasipemerintah: string;
 }
