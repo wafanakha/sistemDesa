@@ -18,6 +18,7 @@ import Table from "../../components/ui/Table";
 import Modal from "../../components/ui/Modal";
 import Card from "../../components/ui/Card";
 import { toast } from "react-toastify";
+import { FixedSizeList as List } from "react-window";
 
 const ResidentsList: React.FC = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -240,14 +241,27 @@ const ResidentsList: React.FC = () => {
   ];
 
   const renderKKGroups = () => {
-    return Object.entries(groupedResidents).map(([kk, familyMembers]) => {
+    const groupedEntries = Object.entries(groupedResidents);
+
+    const Row = ({
+      index,
+      style,
+    }: {
+      index: number;
+      style: React.CSSProperties;
+    }) => {
+      const [kk, familyMembers] = groupedEntries[index];
       const familyHead = familyMembers.find(
-        (member) => member.shdk === "Kepala Keluarga"
+        (m) => m.shdk === "Kepala Keluarga"
       );
       const isExpanded = expandedKKs[kk];
 
       return (
-        <div key={kk} className="mb-4 border rounded-lg overflow-hidden">
+        <div
+          key={kk}
+          style={style}
+          className="mb-4 border rounded-lg overflow-hidden"
+        >
           <div
             className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer"
             onClick={() => toggleKKGroup(kk)}
@@ -275,7 +289,7 @@ const ResidentsList: React.FC = () => {
           </div>
 
           {isExpanded && (
-            <div className="border-t">
+            <div className="border-t text-gray-900 text-sm font-medium">
               <Table
                 columns={columns}
                 data={familyMembers}
@@ -291,7 +305,18 @@ const ResidentsList: React.FC = () => {
           )}
         </div>
       );
-    });
+    };
+
+    return (
+      <List
+        height={800} // Adjust to fit your layout
+        itemCount={groupedEntries.length}
+        itemSize={300} // Rough estimate per group height
+        width="100%"
+      >
+        {Row}
+      </List>
+    );
   };
 
   return (

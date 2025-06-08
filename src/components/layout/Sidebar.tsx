@@ -36,12 +36,12 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Data Warga",
-    path: "/residents",
+    path: "/",
     icon: <Users size={20} />,
     submenu: [
       {
         title: "Daftar Warga",
-        path: "/residents",
+        path: "/residents/list",
       },
       {
         title: "Tambah Warga",
@@ -54,6 +54,45 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    title: "Monografi",
+    path: "/",
+    icon: <FileText size={20} />,
+    submenu: [
+      {
+        title: "Agama",
+        path: "/monografi/agama",
+      },
+      {
+        title: "Jenis Kelamin",
+        path: "/monografi/gender",
+      },
+      {
+        title: "Golongan Darah",
+        path: "/monografi/goldarah",
+      },
+      {
+        title: "Kepala Keluarga",
+        path: "/monografi/kk",
+      },
+      {
+        title: "Pekerjaan",
+        path: "/monografi/pekerjaan",
+      },
+      {
+        title: "Pendidikan",
+        path: "/monografi/pendidikan",
+      },
+      {
+        title: "Status Pernikahan",
+        path: "/monografi/perkawinan",
+      },
+      {
+        title: "Umur",
+        path: "/monografi/umur",
+      },
+    ],
+  },
+ {
     title: "Surat",
     path: "/letters",
     icon: <FileText size={20} />,
@@ -92,12 +131,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
     }));
   };
 
-  const sidebarClasses = `bg-white h-full shadow-lg z-30 transition-all duration-300 ease-in-out ${
+  const sidebarClasses = `bg-white shadow-lg z-30 transition-all duration-300 ease-in-out ${
     isMobile
       ? isOpen
         ? "fixed inset-y-0 left-0 w-64"
         : "fixed inset-y-0 -left-64 w-64"
-      : "sticky top-0 w-64"
+      : "fixed top-0 left-0 h-screen w-64"
   }`;
 
   const MenuItem = ({ item }: { item: MenuItem }) => {
@@ -105,11 +144,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
     const isExpanded = expandedMenus[item.title];
 
     return (
-      <div>
+      <div className="text-xl">
         {hasSubmenu ? (
           <div className="mb-1">
             <button
-              className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-md transition-colors"
+              className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 hover:bg-teal-50 hover:text-teal-900 rounded-md transition-colors"
               onClick={() => toggleSubmenu(item.title)}
             >
               <div className="flex items-center">
@@ -126,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
             </button>
 
             {isExpanded && (
-              <div className="pl-10 mt-1 space-y-1 text-sm">
+              <div className="pl-10 mt-1 space-y-1 text-lg">
                 {item.submenu!.map((subitem) => (
                   <NavLink
                     key={subitem.path}
@@ -134,7 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
                     className={({ isActive }) =>
                       `block px-4 py-2 rounded-md ${
                         isActive
-                          ? "bg-teal-50 text-teal-700 font-medium"
+                          ? "bg-teal-600 text-gray-100 font-medium"
                           : "text-gray-600 hover:bg-gray-50"
                       }`
                     }
@@ -187,7 +226,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, isOpen, onToggle }) => {
 
       <aside className={sidebarClasses}>
         <div className="p-4 border-b flex items-center justify-between">
-          <h1 className="text-xl font-bold text-teal-700">SistemDesa</h1>
+          <h1 className="text-2xl font-bold text-teal-700">Datuk Pengging</h1>
           {isMobile && (
             <button onClick={onToggle} className="p-1">
               <X size={24} className="text-gray-500" />

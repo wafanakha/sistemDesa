@@ -76,6 +76,7 @@ export interface ResidentCustomField {
   value: string;
 }
 
+
 export type LetterType =
   | "domicile"
   | "poverty"
@@ -135,6 +136,7 @@ export interface LetterTemplate {
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 export interface VillageInfo {
   id?: number;

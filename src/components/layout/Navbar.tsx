@@ -1,6 +1,6 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import React from "react";
+import { useLocation } from "react-router-dom";
+import { Menu } from "lucide-react";
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -9,32 +9,12 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isMobile }) => {
   const location = useLocation();
-  
+
   // Get the page title based on the current route
   const getPageTitle = () => {
-    const path = location.pathname;
-    
-    if (path === '/') return 'Dashboard';
-    if (path.startsWith('/residents')) {
-      if (path === '/residents') return 'Daftar Warga';
-      if (path === '/residents/add') return 'Tambah Warga';
-      if (path === '/residents/custom-fields') return 'Field Kustom';
-      if (path.includes('/edit')) return 'Edit Warga';
-      if (path.includes('/view')) return 'Detail Warga';
-      return 'Data Warga';
-    }
-    if (path.startsWith('/letters')) {
-      if (path === '/letters') return 'Daftar Surat';
-      if (path === '/letters/create') return 'Buat Surat';
-      if (path.includes('/view')) return 'Detail Surat';
-      return 'Manajemen Surat';
-    }
-    if (path === '/settings') return 'Pengaturan';
-    if (path === '/help') return 'Bantuan';
-    
-    return 'Sistem Administrasi Desa';
+    return "Sistem Data Untuk Penduduk Kedungwringin";
   };
-  
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
       <div className="px-4 py-3 flex items-center justify-between">
@@ -46,16 +26,18 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isMobile }) => {
             <Menu size={24} />
           </button>
         )}
-        
-        <h1 className="text-xl font-semibold text-gray-800">{getPageTitle()}</h1>
-        
+
+        <h1 className="text-xl font-semibold text-gray-800">
+          {getPageTitle()}
+        </h1>
+
         <div className="flex items-center space-x-3">
           <p className="text-sm text-gray-600">
-            {new Date().toLocaleDateString('id-ID', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
+            {new Date().toLocaleDateString("id-ID", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
           </p>
         </div>

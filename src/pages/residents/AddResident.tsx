@@ -21,6 +21,17 @@ const AddResident: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const getAge = (birthDate: string): number => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const {
     register,
     handleSubmit,
@@ -36,6 +47,10 @@ const AddResident: React.FC = () => {
       religion: "Islam",
       occupation: "",
       maritalStatus: "Belum Kawin",
+      bloodType: "TIDAK TAHU",
+      education: "Tidak/belum sekolah",
+      shdk: "Kepala Keluarga",
+      physicalDisability: "Tidak ada",
     },
   });
 
@@ -57,6 +72,8 @@ const AddResident: React.FC = () => {
 
     try {
       // Add resident
+      data.age = getAge(data.birthDate);
+
       const residentId = await residentService.addResident(data);
 
       // Save custom field values
@@ -142,13 +159,6 @@ const AddResident: React.FC = () => {
                     required: "Tanggal lahir wajib diisi",
                   })}
                   error={errors.birthDate?.message}
-                  fullWidth
-                />
-                <Input
-                  label="Umur"
-                  type="number"
-                  {...register("age", { required: "Umur wajib diisi" })}
-                  error={errors.age?.message}
                   fullWidth
                 />
               </div>
@@ -359,10 +369,31 @@ const AddResident: React.FC = () => {
                         value: "Belum Tamat SD/Sederajat",
                         label: "Belum Tamat SD/Sederajat",
                       },
+                      {
+                        value: "Tamat SD/Sederajat",
+                        label: "Tamat SD/Sederajat",
+                      },
                       { value: "SLTP/Sederajat", label: "SLTP/Sederajat" },
+                      { value: "SLTA/Sederajat", label: "SLTA/Sederajat" },
                       {
                         value: "Diploma IV/Strata1",
                         label: "Diploma IV/Strata1",
+                      },
+                      {
+                        value: "Diploma I/II",
+                        label: "Diploma I/II",
+                      },
+                      {
+                        value: "Akademi/Diploma III/S. Muda",
+                        label: "Akademi/Diploma III/S. Muda",
+                      },
+                      {
+                        value: "Strata II",
+                        label: "Strata II",
+                      },
+                      {
+                        value: "Strata III",
+                        label: "Strata III",
                       },
                     ]}
                     {...field}
@@ -416,7 +447,16 @@ const AddResident: React.FC = () => {
                       { value: "A", label: "A" },
                       { value: "B", label: "B" },
                       { value: "AB", label: "AB" },
+                      { value: "A+", label: "A+" },
+                      { value: "A-", label: "A-" },
+                      { value: "B+", label: "B+" },
+                      { value: "B-", label: "B-" },
+                      { value: "AB+", label: "AB+" },
+                      { value: "AB-", label: "AB-" },
+                      { value: "O-", label: "O-" },
+                      { value: "O+", label: "O+" },
                       { value: "O", label: "O" },
+                      { value: "TIDAK TAHU", label: "TIDAK TAHU" },
                     ]}
                     {...field}
                     fullWidth

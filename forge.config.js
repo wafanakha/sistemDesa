@@ -1,15 +1,23 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+const { Icon } = require("lucide-react");
 
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: "./asset/logo-bms.ico",
   },
   rebuildConfig: {},
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
-      config: {},
+      config: {
+        name: "datuk_pengging",
+        setupIcon: "./asset/logo-bms.ico",
+        iconUrl:
+          "https://github.com/wafanakha/sistemDesa/blob/master/asset/logo-bms.ico",
+      },
+      shortcutName: "Datuk Pengging",
     },
     {
       name: "@electron-forge/maker-zip",
