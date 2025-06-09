@@ -185,7 +185,9 @@ const CreateTidakMampuLetter: React.FC<{
       `Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${
         form.rtNumber || "__________"
       } Tanggal ${
-        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"
+        form.rtDate
+          ? new Date(form.rtDate).toLocaleDateString("id-ID")
+          : "__________"
       }, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya TIDAK MAMPU.`,
       15,
       y,
@@ -324,14 +326,7 @@ const CreateTidakMampuLetter: React.FC<{
           placeholder="Tempat Lahir"
           className="input"
         />
-        <input
-          name="tanggalLahir"
-          value={form.tanggalLahir}
-          onChange={handleChange}
-          placeholder="Tanggal Lahir"
-          type="date"
-          className="input"
-        />
+
         <input
           name="jenisKelamin"
           value={form.jenisKelamin}
@@ -374,14 +369,32 @@ const CreateTidakMampuLetter: React.FC<{
           placeholder="Nomor Surat RT"
           className="input"
         />
-        <input
-          name="rtDate"
-          value={form.rtDate}
-          onChange={handleChange}
-          placeholder="Tanggal Surat RT"
-          type="date"
-          className="input"
-        />
+        <div className="flex gap-2">
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">
+              Tanggal surat RT
+            </label>
+            <input
+              name="rtDate"
+              value={form.rtDate}
+              onChange={handleChange}
+              placeholder="Tanggal Surat RT"
+              type="date"
+              className="input"
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal Lahir</label>
+            <input
+              name="tanggalLahir"
+              value={form.tanggalLahir}
+              onChange={handleChange}
+              placeholder="Tanggal Lahir"
+              type="date"
+              className="input"
+            />
+          </div>
+        </div>
         <textarea
           name="keperluan"
           value={form.keperluan}
@@ -482,8 +495,11 @@ const CreateTidakMampuLetter: React.FC<{
         <div className="mb-2">
           Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor{" "}
           {form.rtNumber || "__________"} Tanggal{" "}
-          {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"}, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya{" "}
-          <b>TIDAK MAMPU</b>.
+          {form.rtDate
+            ? new Date(form.rtDate).toLocaleDateString("id-ID")
+            : "__________"}
+          , bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut
+          pengakuan yang bersangkutan keadaan ekonominya <b>TIDAK MAMPU</b>.
         </div>
         <div className="mb-2">
           Surat keterangan ini diperlukan untuk{" "}

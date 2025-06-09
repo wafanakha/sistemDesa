@@ -313,14 +313,7 @@ const CreateKeteranganLetter: React.FC = () => {
           placeholder="Tempat Lahir"
           className="input"
         />
-        <input
-          name="tanggalLahir"
-          value={form.tanggalLahir}
-          onChange={handleChange}
-          placeholder="Tanggal Lahir"
-          type="date"
-          className="input"
-        />
+
         <input
           name="warganegara"
           value={form.warganegara}
@@ -377,6 +370,14 @@ const CreateKeteranganLetter: React.FC = () => {
           placeholder="Nomor Surat"
           className="input"
         />
+
+        <input
+          name="keteranganLain"
+          value={form.keteranganLain}
+          onChange={handleChange}
+          placeholder="Keterangan Lain"
+          className="input"
+        />
         <div className="flex gap-2">
           <div className="flex flex-col flex-1">
             <label className="text-xs text-gray-600 mb-1">Berlaku dari</label>
@@ -398,14 +399,18 @@ const CreateKeteranganLetter: React.FC = () => {
               className="input"
             />
           </div>
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal Lahir</label>
+            <input
+              name="tanggalLahir"
+              value={form.tanggalLahir}
+              onChange={handleChange}
+              placeholder="Tanggal Lahir"
+              type="date"
+              className="input"
+            />
+          </div>
         </div>
-        <input
-          name="keteranganLain"
-          value={form.keteranganLain}
-          onChange={handleChange}
-          placeholder="Keterangan Lain"
-          className="input"
-        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>

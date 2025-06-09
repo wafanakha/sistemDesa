@@ -384,14 +384,7 @@ const CreateKeramaianLetter: React.FC<{
           placeholder="Tempat Lahir"
           className="input"
         />
-        <input
-          name="tanggalLahir"
-          value={form.tanggalLahir}
-          onChange={handleChange}
-          placeholder="Tanggal Lahir"
-          type="date"
-          className="input"
-        />
+
         <input
           name="jenisKelamin"
           value={form.jenisKelamin}
@@ -427,14 +420,7 @@ const CreateKeramaianLetter: React.FC<{
           placeholder="Nama Acara"
           className="input"
         />
-        <input
-          name="tanggalAcara"
-          value={form.tanggalAcara}
-          onChange={handleChange}
-          placeholder="Tanggal Acara"
-          type="date"
-          className="input"
-        />
+
         <input
           name="waktuAcara"
           value={form.waktuAcara}
@@ -477,14 +463,7 @@ const CreateKeramaianLetter: React.FC<{
           placeholder="Nomor RT"
           className="input"
         />
-        <input
-          name="rtDate"
-          value={form.rtDate}
-          onChange={handleChange}
-          placeholder="Tanggal RT"
-          type="date"
-          className="input"
-        />
+
         {/* Tambah input No. Reg dan Tanggal Reg */}
         <input
           name="regNumber"
@@ -493,14 +472,56 @@ const CreateKeramaianLetter: React.FC<{
           placeholder="No. Reg"
           className="input"
         />
-        <input
-          name="regDate"
-          value={form.regDate}
-          onChange={handleChange}
-          placeholder="Tanggal Reg"
-          type="date"
-          className="input"
-        />
+        <div className="flex gap-2">
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal lahir</label>
+            <input
+              name="tanggalLahir"
+              value={form.tanggalLahir}
+              onChange={handleChange}
+              placeholder="Tanggal Lahir"
+              type="date"
+              className="input"
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal acara</label>
+            <input
+              name="tanggalAcara"
+              value={form.tanggalAcara}
+              onChange={handleChange}
+              placeholder="Tanggal Acara"
+              type="date"
+              className="input"
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">
+              Tanggal surat rt
+            </label>
+
+            <input
+              name="rtDate"
+              value={form.rtDate}
+              onChange={handleChange}
+              placeholder="Tanggal RT"
+              type="date"
+              className="input"
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal reg</label>
+
+            <input
+              name="regDate"
+              value={form.regDate}
+              onChange={handleChange}
+              placeholder="Tanggal Reg"
+              type="date"
+              className="input"
+            />
+          </div>
+        </div>
         {/* Input nama camat manual */}
         <input
           name="camatName"

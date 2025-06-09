@@ -311,14 +311,20 @@ const CreatePengantarLetter: React.FC<{
           placeholder="Tempat Lahir"
           className="input"
         />
-        <input
-          name="tanggalLahir"
-          value={form.tanggalLahir}
-          onChange={handleChange}
-          placeholder="Tanggal Lahir"
-          type="date"
-          className="input"
-        />
+
+        <div className="flex gap-2">
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal Lahir</label>
+            <input
+              name="tanggalLahir"
+              value={form.tanggalLahir}
+              onChange={handleChange}
+              placeholder="Tanggal Lahir"
+              type="date"
+              className="input"
+            />
+          </div>
+        </div>
         <input
           name="jenisKelamin"
           value={form.jenisKelamin}

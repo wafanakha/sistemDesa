@@ -144,7 +144,13 @@ const CreateDomisiliLetter: React.FC<{
       ["1. Nama Lengkap", form.nama],
       ["2. Jenis Kelamin", form.jenisKelamin],
       ["3. Bin/Binti", form.binBinti || "-"],
-      ["4. Tempat/Tgl Lahir", form.tempatLahir + (form.tanggalLahir ? ", " + new Date(form.tanggalLahir).toLocaleDateString("id-ID") : "")],
+      [
+        "4. Tempat/Tgl Lahir",
+        form.tempatLahir +
+          (form.tanggalLahir
+            ? ", " + new Date(form.tanggalLahir).toLocaleDateString("id-ID")
+            : ""),
+      ],
       ["5. Agama", form.agama],
       ["6. Warganegara", "Indonesia"],
       ["7. No. KTP", form.nik],
@@ -158,7 +164,13 @@ const CreateDomisiliLetter: React.FC<{
       y += 9;
     });
     doc.text(
-      `Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${form.rtNumber || "Nomor"} Tanggal ${form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"}, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
+      `Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${
+        form.rtNumber || "Nomor"
+      } Tanggal ${
+        form.rtDate
+          ? new Date(form.rtDate).toLocaleDateString("id-ID")
+          : "Tanggal"
+      }, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
       15,
       y,
       { maxWidth: 180 }
@@ -283,14 +295,7 @@ const CreateDomisiliLetter: React.FC<{
           placeholder="Tempat Lahir"
           className="input"
         />
-        <input
-          name="tanggalLahir"
-          value={form.tanggalLahir}
-          onChange={handleChange}
-          placeholder="Tanggal Lahir"
-          type="date"
-          className="input"
-        />
+
         <input
           name="jenisKelamin"
           value={form.jenisKelamin}
@@ -340,14 +345,32 @@ const CreateDomisiliLetter: React.FC<{
           placeholder="Nomor RT"
           className="input"
         />
-        <input
-          name="rtDate"
-          value={form.rtDate}
-          onChange={handleChange}
-          placeholder="Tanggal RT"
-          type="date"
-          className="input"
-        />
+        <div className="flex gap-2">
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">
+              Tanggal surat RT
+            </label>
+            <input
+              name="rtDate"
+              value={form.rtDate}
+              onChange={handleChange}
+              placeholder="Tanggal Surat RT"
+              type="date"
+              className="input"
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <label className="text-xs text-gray-600 mb-1">Tanggal Lahir</label>
+            <input
+              name="tanggalLahir"
+              value={form.tanggalLahir}
+              onChange={handleChange}
+              placeholder="Tanggal Lahir"
+              type="date"
+              className="input"
+            />
+          </div>
+        </div>
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -477,7 +500,12 @@ const CreateDomisiliLetter: React.FC<{
               </tbody>
             </table>
             <p>
-              Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor {form.rtNumber || "Nomor"} Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"}, bahwa yang bersangkutan benar penduduk Desa Kedungwringin
+              Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor{" "}
+              {form.rtNumber || "Nomor"} Tanggal{" "}
+              {form.rtDate
+                ? new Date(form.rtDate).toLocaleDateString("id-ID")
+                : "Tanggal"}
+              , bahwa yang bersangkutan benar penduduk Desa Kedungwringin
               Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat
               tersebut diatas, surat ini dibuat untuk keperluan administrasi.
             </p>
