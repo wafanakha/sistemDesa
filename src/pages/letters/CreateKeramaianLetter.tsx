@@ -29,7 +29,7 @@ interface KeramaianFormData {
   rtNumber?: string;
   rtDate?: string;
   regNumber?: string; // Tambah field No. Reg
-  regDate?: string;   // Tambah field Tanggal Reg
+  regDate?: string; // Tambah field Tanggal Reg
   camatName?: string; // Nama Camat manual
 }
 
@@ -53,7 +53,7 @@ const initialForm: KeramaianFormData = {
   rtNumber: "",
   rtDate: "",
   regNumber: "", // Tambah default
-  regDate: "",    // Tambah default
+  regDate: "", // Tambah default
   camatName: "",
 };
 
@@ -217,7 +217,9 @@ const CreateKeramaianLetter: React.FC<{
       `Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga Nomor ${
         form.rtNumber || "Nomor"
       } Tanggal ${
-        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"
+        form.rtDate
+          ? new Date(form.rtDate).toLocaleDateString("id-ID")
+          : "Tanggal"
       }, maka dengan ini menerangkan bahwa atas permohonan yang bersangkutan, kegiatan tersebut dapat dilaksanakan dengan ketentuan sebagai berikut:`,
       25,
       y,
@@ -270,10 +272,7 @@ const CreateKeramaianLetter: React.FC<{
     doc.text("An. KEPALA DESA KEDUNGWRINGIN", pageWidth - 80, ttdY + 6);
     doc.text("KASI PEMERINTAH", pageWidth - 70, ttdY + 12);
     // Spacer tanda tangan
-    doc.text("()", 25, ttdY + 35);
-    doc.text("()", pageWidth / 2, ttdY + 35, {
-      align: "center",
-    });
+
     doc.text(
       form.nama && form.nama.trim() ? `(${form.nama})` : "()",
       25,
@@ -287,7 +286,9 @@ const CreateKeramaianLetter: React.FC<{
       ttdY + 35
     );
     doc.text(
-      form.camatName && form.camatName.trim() ? `(${form.camatName})` : "[Nama Camat]",
+      form.camatName && form.camatName.trim()
+        ? `(${form.camatName})`
+        : "[Nama Camat]",
       pageWidth / 2,
       ttdY + 35,
       { align: "center" }
@@ -668,13 +669,21 @@ const CreateKeramaianLetter: React.FC<{
             </table>
             {/* Pindahkan blok No. Reg & Tanggal ke bawah, setelah penutup */}
             <p>
-              Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga Nomor {form.rtNumber || "Nomor"} Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"}, maka dengan ini menerangkan bahwa atas permohonan yang bersangkutan, kegiatan tersebut dapat dilaksanakan dengan ketentuan sebagai berikut:
+              Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga Nomor{" "}
+              {form.rtNumber || "Nomor"} Tanggal{" "}
+              {form.rtDate
+                ? new Date(form.rtDate).toLocaleDateString("id-ID")
+                : "Tanggal"}
+              , maka dengan ini menerangkan bahwa atas permohonan yang
+              bersangkutan, kegiatan tersebut dapat dilaksanakan dengan
+              ketentuan sebagai berikut:
             </p>
             <p>1. Menjaga keamanan dan ketertiban masyarakat.</p>
             <p>2. Mengikuti aturan yang berlaku dari pemerintah daerah.</p>
             <p>3. Menyudahi kegiatan sesuai waktu yang telah ditentukan.</p>
             <p>
-              Demikian Surat Keterangan Keramaian ini diberikan untuk dipergunakan sebagaimana mestinya.
+              Demikian Surat Keterangan Keramaian ini diberikan untuk
+              dipergunakan sebagaimana mestinya.
             </p>
             {/* Blok No. Reg & Tanggal di bawah penutup */}
             <div
@@ -696,7 +705,11 @@ const CreateKeramaianLetter: React.FC<{
                   <tr>
                     <td>Tanggal</td>
                     <td>:</td>
-                    <td>{form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : new Date().toLocaleDateString("id-ID")}</td>
+                    <td>
+                      {form.regDate
+                        ? new Date(form.regDate).toLocaleDateString("id-ID")
+                        : new Date().toLocaleDateString("id-ID")}
+                    </td>
                   </tr>
                 </tbody>
               </table>
