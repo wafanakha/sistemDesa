@@ -60,7 +60,7 @@ function generateFormulirPengantarNikahN1(
   doc.text("4. Tempat dan tanggal lahir", 14, y + 18);
   doc.text(`: ${resident.birthPlace}, ${resident.birthDate}`, 90, y + 18);
   doc.text("5. Kewarganegaraan", 14, y + 24);
-  doc.text(``, 90, y + 24);
+  doc.text(`: Indonesia`, 90, y + 24);
   doc.text("6. Agama", 14, y + 30);
   doc.text(`: ${resident.religion}`, 90, y + 30);
   doc.text("7. Pekerjaan", 14, y + 36);
@@ -103,7 +103,7 @@ function generateFormulirPengantarNikahN1(
     y + 86
   );
   doc.text("   Kewarganegaraan", 18, y + 92);
-  doc.text("", 90, y + 92);
+  doc.text(`: Indonesia`, 90, y + 92);
   doc.text("   Agama", 18, y + 98);
   doc.text(`: ${ayah?.religion || "-"}`, 90, y + 98);
   doc.text("   Pekerjaan", 18, y + 104);
@@ -125,7 +125,7 @@ function generateFormulirPengantarNikahN1(
     y + 138
   );
   doc.text("   Kewarganegaraan", 18, y + 144);
-  doc.text(``, 90, y + 144);
+  doc.text(`: Indonesia`, 90, y + 144);
   doc.text("   Agama", 18, y + 150);
   doc.text(`: ${ibu?.religion || "-"}`, 90, y + 150);
   doc.text("   Pekerjaan", 18, y + 156);

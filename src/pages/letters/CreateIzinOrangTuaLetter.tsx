@@ -164,41 +164,6 @@ const generatePDF = (form: any): jsPDF => {
   return doc;
 };
 
-const handleExportPDF = (form: any) => {
-  const doc = generatePDF(form);
-  doc.save("surat_izin_orang_tua_n5.pdf");
-  const historyEntry: LetterHistory = {
-    name: form.nama,
-    letter: "izin-orang-tua", // Since this is the usaha letter component
-    date: new Date().toISOString(),
-  };
-
-  saveLetterHistory(historyEntry)
-    .then(() => {
-      console.log("Letter history saved");
-    })
-    .catch((error) => {
-      console.error("Failed to save letter history:", error);
-    });
-};
-const handlePrintPDF = (form: any) => {
-  const doc = generatePDF(form);
-  window.open(doc.output("bloburl"), "_blank");
-  const historyEntry: LetterHistory = {
-    name: form.nama,
-    letter: "izin-orang-tua", // Since this is the usaha letter component
-    date: new Date().toISOString(),
-  };
-
-  saveLetterHistory(historyEntry)
-    .then(() => {
-      console.log("Letter history saved");
-    })
-    .catch((error) => {
-      console.error("Failed to save letter history:", error);
-    });
-};
-
 const CreateIzinOrangTuaLetter: React.FC = () => {
   const [form, setForm] = useState<any>(initialForm);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -279,6 +244,40 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
       anakPekerjaan: anak.occupation,
       anakAlamat: anak.address,
     }));
+  };
+
+  // Perbaiki: handleExportPDF dan handlePrintPDF tanpa parameter, akses langsung state form
+  const handleExportPDF = () => {
+    const doc = generatePDF(form);
+    doc.save("surat_izin_orang_tua_n5.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.anakNama || form.ayahNama || form.ibuNama || "-",
+      letter: "izin-orang-tua",
+      date: new Date().toISOString(),
+    };
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+  const handlePrintPDF = () => {
+    const doc = generatePDF(form);
+    window.open(doc.output("bloburl"), "_blank");
+    const historyEntry: LetterHistory = {
+      name: form.anakNama || form.ayahNama || form.ibuNama || "-",
+      letter: "izin-orang-tua",
+      date: new Date().toISOString(),
+    };
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   return (
