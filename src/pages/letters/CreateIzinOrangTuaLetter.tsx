@@ -5,9 +5,7 @@ import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
 import { residentService } from "../../database/residentService";
 import { LetterHistory } from "../../types";
-import { useNavigate } from "react-router-dom";
 import { saveLetterHistory } from "../../services/residentService";
-const navigate = useNavigate();
 const initialForm = {
   ayahNama: "",
   ayahBin: "",
@@ -534,9 +532,6 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
           </Button>
           <Button variant="primary" onClick={handlePrintPDF}>
             Print Surat
-          </Button>
-          <Button variant="secondary" onClick={() => navigate(-1)}>
-            Kembali
           </Button>
         </div>
       </form>
