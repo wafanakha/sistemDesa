@@ -146,15 +146,27 @@ const CreateAhliWarisLetter: React.FC = () => {
     doc.text("Alamat", 30, y);
     doc.text(`: ${pewaris.alamat}`, 60, y);
     y += 8;
-    const kalimatKematian = `Telah meninggal dunia pada hari ${pewaris.hariWafat || "..."} tanggal ${
+    const kalimatKematian = `Telah meninggal dunia pada hari ${
+      pewaris.hariWafat || "..."
+    } tanggal ${
       pewaris.tanggalWafat
-        ? new Date(pewaris.tanggalWafat).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+        ? new Date(pewaris.tanggalWafat).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })
         : "..."
-    } di ${pewaris.tempatWafat || "..."}, sebagaimana tercatat pada Akta Kematian No. ${
+    } di ${
+      pewaris.tempatWafat || "..."
+    }, sebagaimana tercatat pada Akta Kematian No. ${
       pewaris.aktaKematian || "..."
     } tanggal ${
       pewaris.tanggalAkta
-        ? new Date(pewaris.tanggalAkta).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+        ? new Date(pewaris.tanggalAkta).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })
         : "..."
     }.`;
     const kematianLines = doc.splitTextToSize(kalimatKematian, 170);
@@ -302,35 +314,53 @@ const CreateAhliWarisLetter: React.FC = () => {
           className="input w-full mt-2"
           placeholder="Nomor Akta Kematian"
           value={pewaris.aktaKematian}
-          onChange={e => setPewaris({ ...pewaris, aktaKematian: e.target.value })}
+          onChange={(e) =>
+            setPewaris({ ...pewaris, aktaKematian: e.target.value })
+          }
         />
-        <input
-          type="date"
-          className="input w-full mt-2"
-          placeholder="Tanggal Akta Kematian"
-          value={pewaris.tanggalAkta}
-          onChange={e => setPewaris({ ...pewaris, tanggalAkta: e.target.value })}
-        />
+
+        <div className="flex gap-2">
+          <label className="text-xs text-gray-600 mb-1">Tanggal Wafat</label>
+
+          <input
+            type="date"
+            className="input w-full mt-2"
+            placeholder="Tanggal Wafat"
+            value={pewaris.tanggalWafat}
+            onChange={(e) =>
+              setPewaris({ ...pewaris, tanggalWafat: e.target.value })
+            }
+          />
+          <label className="text-xs text-gray-600 mb-1">
+            Tanggal Akta Kematian
+          </label>
+          <input
+            type="date"
+            className="input w-full mt-2"
+            placeholder="Tanggal Akta Kematian"
+            value={pewaris.tanggalAkta}
+            onChange={(e) =>
+              setPewaris({ ...pewaris, tanggalAkta: e.target.value })
+            }
+          />
+        </div>
         <input
           type="text"
           className="input w-full mt-2"
           placeholder="Hari Wafat"
           value={pewaris.hariWafat}
-          onChange={e => setPewaris({ ...pewaris, hariWafat: e.target.value })}
-        />
-        <input
-          type="date"
-          className="input w-full mt-2"
-          placeholder="Tanggal Wafat"
-          value={pewaris.tanggalWafat}
-          onChange={e => setPewaris({ ...pewaris, tanggalWafat: e.target.value })}
+          onChange={(e) =>
+            setPewaris({ ...pewaris, hariWafat: e.target.value })
+          }
         />
         <input
           type="text"
           className="input w-full mt-2"
           placeholder="Tempat Wafat"
           value={pewaris.tempatWafat}
-          onChange={e => setPewaris({ ...pewaris, tempatWafat: e.target.value })}
+          onChange={(e) =>
+            setPewaris({ ...pewaris, tempatWafat: e.target.value })
+          }
         />
         {searching && <div className="text-sm text-gray-500">Mencari...</div>}
         {kkResults.length > 0 && (

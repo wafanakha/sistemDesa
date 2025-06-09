@@ -87,18 +87,22 @@ const generatePDF = (
     `${village.name}, ${
       issuedDate && new Date(issuedDate).toLocaleDateString("id-ID")
     }`,
-    pageWidth - 20,
+    pageWidth - 90,
     y,
-    { align: "right" }
+    { align: "left" }
   );
   y += 7;
   doc.text("Yang menyatakan", 20, y);
-  doc.text("Mengetahui", pageWidth - 60, y);
+  doc.text("Mengetahui", pageWidth - 90, y, { align: "left" });
   y += 7;
-  doc.text(`Kepala Desa ${village.name}`, pageWidth - 60, y);
-  y += 20;
+  doc.text(`Kepala Desa ${village.name}`, pageWidth - 90, y, {
+    align: "left",
+  });
+  y += 30;
   doc.text(resident.name, 30, y, { align: "right" });
-  doc.text(village.leaderName, pageWidth - 60, y);
+  doc.text(village.leaderName, pageWidth - 90, y, {
+    align: "left",
+  });
 
   return doc;
 };
@@ -183,7 +187,6 @@ const CreateBelumMenikahLetter: React.FC = () => {
         await letterService.addLetter(letter as Letter);
         toast.success("Surat berhasil dibuat");
       }
-      navigate("/letters");
     } catch (error: any) {
       toast.error(error.message || "Gagal menyimpan surat");
     } finally {

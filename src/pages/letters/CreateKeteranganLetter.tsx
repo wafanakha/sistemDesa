@@ -198,6 +198,7 @@ const CreateKeteranganLetter: React.FC = () => {
       y,
       { align: "right" }
     );
+    doc.text(form.nama, 30, y);
     return doc;
   };
 

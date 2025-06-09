@@ -209,7 +209,15 @@ const CreateDomisiliUsahaLetter: React.FC<{
     y += 10;
     pdf.text(`No. Reg: ${form.regNumber || "_________"}`, margin, y);
     y += 5;
-    pdf.text(`Tanggal: ${form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________"}`, margin, y);
+    pdf.text(
+      `Tanggal: ${
+        form.regDate
+          ? new Date(form.regDate).toLocaleDateString("id-ID")
+          : "__________"
+      }`,
+      margin,
+      y
+    );
     y += 15;
 
     // Signatures
@@ -466,27 +474,31 @@ const CreateDomisiliUsahaLetter: React.FC<{
           placeholder="Nomor Surat RT"
           className="input"
         />
-        <input
-          name="rtDate"
-          value={form.rtDate}
-          onChange={handleChange}
-          placeholder="Tanggal Surat RT"
-          type="date"
-          className="input"
-        />
+        <div className="flex gap-2">
+          <label className="text-xs text-gray-600 mb-1">Tanggal surat rt</label>
+          <input
+            name="rtDate"
+            value={form.rtDate}
+            onChange={handleChange}
+            placeholder="Tanggal Surat RT"
+            type="date"
+            className="input"
+          />
+          <label className="text-xs text-gray-600 mb-1">Tanggal reg</label>
+          <input
+            name="regDate"
+            value={form.regDate}
+            onChange={handleChange}
+            placeholder="Tanggal Reg"
+            type="date"
+            className="input"
+          />
+        </div>
         <input
           name="regNumber"
           value={form.regNumber}
           onChange={handleChange}
           placeholder="No. Reg"
-          className="input"
-        />
-        <input
-          name="regDate"
-          value={form.regDate}
-          onChange={handleChange}
-          placeholder="Tanggal Reg"
-          type="date"
           className="input"
         />
       </form>
@@ -609,7 +621,10 @@ const CreateDomisiliUsahaLetter: React.FC<{
               Berdasarkan Surat Pernyataan tidak keberatan/ijin tetangga yang
               diketahui Ketua Rukun Tetangga dan Ketua Rukun Warga Nomer
               {form.rtNumber || "__________"} Tanggal{" "}
-              {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"}, bahwa yang bersangkutan benar telah membuka Usaha sebagai
+              {form.rtDate
+                ? new Date(form.rtDate).toLocaleDateString("id-ID")
+                : "__________"}
+              , bahwa yang bersangkutan benar telah membuka Usaha sebagai
               berikut:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -678,7 +693,11 @@ const CreateDomisiliUsahaLetter: React.FC<{
                 <tr>
                   <td>Tanggal</td>
                   <td>:</td>
-                  <td>{form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________"}</td>
+                  <td>
+                    {form.regDate
+                      ? new Date(form.regDate).toLocaleDateString("id-ID")
+                      : "__________"}
+                  </td>
                 </tr>
               </tbody>
             </table>

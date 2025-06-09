@@ -169,8 +169,12 @@ const CreateSkckLetter: React.FC<{
     });
     y += 2;
     doc.text(
-      `Berdasakan Surat Keterangan dari Ketua Rukun Warga Nomor ${form.rt} Tanggal ${
-        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"
+      `Berdasakan Surat Keterangan dari Ketua Rukun Warga Nomor ${
+        form.rt
+      } Tanggal ${
+        form.rtDate
+          ? new Date(form.rtDate).toLocaleDateString("id-ID")
+          : "__________"
       } dan menurut pengakuan yang bersangkutan sampai saat ini belum pernah tersangkut yustisi/urusan kepolisian.`,
       15,
       y,
@@ -198,7 +202,13 @@ const CreateSkckLetter: React.FC<{
     y += 7;
     doc.text("Tanggal", 18, y);
     doc.text(":", 40, y);
-    doc.text(form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________", 45, y);
+    doc.text(
+      form.regDate
+        ? new Date(form.regDate).toLocaleDateString("id-ID")
+        : "__________",
+      45,
+      y
+    );
     // TTD
     let ttdY = y + 14;
     // Pemohon kiri
@@ -418,14 +428,7 @@ const CreateSkckLetter: React.FC<{
           placeholder="No. Surat RT/RW"
           className="input"
         />
-        <input
-          name="rtDate"
-          value={form.rtDate}
-          onChange={handleChange}
-          placeholder="Tanggal Surat RT/RW"
-          type="date"
-          className="input"
-        />
+
         <input
           name="keperluan"
           value={form.keperluan || ""}
@@ -447,6 +450,7 @@ const CreateSkckLetter: React.FC<{
           placeholder="Nama Camat"
           className="input"
         />
+
         <input
           name="regNumber"
           value={form.regNumber}
@@ -454,14 +458,26 @@ const CreateSkckLetter: React.FC<{
           placeholder="No. Reg"
           className="input"
         />
-        <input
-          name="regDate"
-          value={form.regDate}
-          onChange={handleChange}
-          placeholder="Tanggal Reg"
-          type="date"
-          className="input"
-        />
+        <div className="flex gap-2">
+          <label className="text-xs text-gray-600 mb-1">Tanggal Surat RT</label>
+          <input
+            name="rtDate"
+            value={form.rtDate}
+            onChange={handleChange}
+            placeholder="Tanggal Surat RT/RW"
+            type="date"
+            className="input"
+          />
+          <label className="text-xs text-gray-600 mb-1">Tanggal Reg</label>
+          <input
+            name="regDate"
+            value={form.regDate}
+            onChange={handleChange}
+            placeholder="Tanggal Reg"
+            type="date"
+            className="input"
+          />
+        </div>
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -590,8 +606,12 @@ const CreateSkckLetter: React.FC<{
             </table>
             <p>
               Berdasakan Surat Keterangan dari Ketua Rukun Warga Nomor {form.rt}{" "}
-              Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"} dan menurut pengakuan yang bersangkutan sampai saat ini
-              belum pernah tersangkut yustisi/urusan kepolisian.
+              Tanggal{" "}
+              {form.rtDate
+                ? new Date(form.rtDate).toLocaleDateString("id-ID")
+                : "__________"}{" "}
+              dan menurut pengakuan yang bersangkutan sampai saat ini belum
+              pernah tersangkut yustisi/urusan kepolisian.
             </p>
             <p>Surat keterangan ini diperlukan untuk {form.keperluan}</p>
             <p>
@@ -618,7 +638,11 @@ const CreateSkckLetter: React.FC<{
                 <tr>
                   <td>Tanggal</td>
                   <td>:</td>
-                  <td>{form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________"}</td>
+                  <td>
+                    {form.regDate
+                      ? new Date(form.regDate).toLocaleDateString("id-ID")
+                      : "__________"}
+                  </td>
                 </tr>
               </tbody>
             </table>
