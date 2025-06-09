@@ -86,9 +86,9 @@ const AddResident: React.FC = () => {
           );
         }
       }
-
       toast.success("Data warga berhasil ditambahkan");
       navigate("/residents");
+      window.location.reload();
     } catch (error) {
       console.error("Error adding resident:", error);
       if (error instanceof Error) {
@@ -164,7 +164,9 @@ const AddResident: React.FC = () => {
               </div>
               <Input
                 label="Tempat Lahir"
-                {...register("birthPlace")}
+                {...register("birthPlace", {
+                  required: "Tempat Lahir wajib diisi",
+                })}
                 fullWidth
               />
               <Controller
@@ -193,13 +195,41 @@ const AddResident: React.FC = () => {
               </h3>
               <Input
                 label="No KK"
-                {...register("kk", { required: "No KK wajib diisi" })}
+                {...register("kk", {
+                  required: "nomor KK wajib diisi",
+                  minLength: { value: 16, message: "KK harus 16 digit" },
+                  maxLength: { value: 16, message: "KK harus 16 digit" },
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "NIK hanya boleh berisi angka",
+                  },
+                })}
                 error={errors.kk?.message}
                 fullWidth
               />
               <div className="grid grid-cols-2 gap-3">
-                <Input label="RT" {...register("rt")} fullWidth />
-                <Input label="RW" {...register("rw")} fullWidth />
+                <Input
+                  label="RT"
+                  {...register("rt", {
+                    required: "nomor RT wajib diisi",
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "No RT hanya boleh berisi angka",
+                    },
+                  })}
+                  fullWidth
+                />
+                <Input
+                  label="RW"
+                  {...register("rw", {
+                    required: "nomor RW wajib diisi",
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "no RW hanya boleh berisi angka",
+                    },
+                  })}
+                  fullWidth
+                />
               </div>
               <Input
                 label="Alamat"
@@ -309,8 +339,8 @@ const AddResident: React.FC = () => {
                     <Select
                       label="Punya Akta Kawin?"
                       options={[
-                        { value: "true", label: "Ya" },
                         { value: "false", label: "Tidak" },
+                        { value: "true", label: "Ya" },
                       ]}
                       value={String(field.value)}
                       onChange={(val) => field.onChange(val === "true")}
@@ -332,8 +362,8 @@ const AddResident: React.FC = () => {
                     <Select
                       label="Punya Akta Cerai?"
                       options={[
-                        { value: "true", label: "Ya" },
                         { value: "false", label: "Tidak" },
+                        { value: "true", label: "Ya" },
                       ]}
                       value={String(field.value)}
                       onChange={(val) => field.onChange(val === "true")}
