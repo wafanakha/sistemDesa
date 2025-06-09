@@ -29,6 +29,10 @@ interface DomisiliUsahaFormData {
   waktuUsaha?: string;
   letterNumber?: string;
   namaCamat?: string;
+  rtNumber?: string;
+  rtDate?: string;
+  regNumber?: string;
+  regDate?: string;
 }
 
 const initialForm: DomisiliUsahaFormData = {
@@ -51,6 +55,10 @@ const initialForm: DomisiliUsahaFormData = {
   waktuUsaha: "",
   letterNumber: "",
   namaCamat: "",
+  rtNumber: "",
+  rtDate: "",
+  regNumber: "",
+  regDate: "",
 };
 
 const CreateDomisiliUsahaLetter: React.FC<{
@@ -93,145 +101,140 @@ const CreateDomisiliUsahaLetter: React.FC<{
     let y = margin;
 
     // Header - Logo and Institution Info
-    const logoImg = new Image();
-    logoImg.src = logo;
-    logoImg.onload = () => {
-      pdf.addImage(logoImg, "PNG", margin, y, 25, 25);
-      pdf.setFontSize(11);
-      pdf.setFont("helvetica", "bold");
-      pdf.text("PEMERINTAHAN DESA KEDUNGWRINGIN", 105, y + 5, {
-        align: "center",
-      });
-      pdf.text("KECAMATAN PATIKREJA KABUPATEN BANYUMAS", 105, y + 10, {
-        align: "center",
-      });
-      pdf.text("SEKRETARIAT DESA", 105, y + 15, { align: "center" });
-      pdf.setFont("helvetica", "normal");
-      pdf.text(
-        "Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171",
-        105,
-        y + 20,
-        { align: "center" }
-      );
-      pdf.text("Telp. (0281) 638395", 105, y + 25, { align: "center" });
+    pdf.addImage(logo, "PNG", margin, y, 25, 25);
+    pdf.setFontSize(11);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("PEMERINTAHAN DESA KEDUNGWRINGIN", 105, y + 5, {
+      align: "center",
+    });
+    pdf.text("KECAMATAN PATIKREJA KABUPATEN BANYUMAS", 105, y + 10, {
+      align: "center",
+    });
+    pdf.text("SEKRETARIAT DESA", 105, y + 15, { align: "center" });
+    pdf.setFont("helvetica", "normal");
+    pdf.text(
+      "Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171",
+      105,
+      y + 20,
+      { align: "center" }
+    );
+    pdf.text("Telp. (0281) 638395", 105, y + 25, { align: "center" });
 
-      y += 35;
-      pdf.setLineWidth(0.5);
-      pdf.line(margin, y, 210 - margin, y); // horizontal line
+    y += 35;
+    pdf.setLineWidth(0.5);
+    pdf.line(margin, y, 210 - margin, y); // horizontal line
+    y += 6;
+    pdf.text("Kode Desa: 02122013", 25, y);
+    y += 6;
+
+    // Title
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("SURAT KETERANGAN DOMISILI USAHA", 105, y, { align: "center" });
+    y += 6;
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(
+      `Nomor: ${form.letterNumber || "_________/SKDU/[BULAN]/[TAHUN]"}`,
+      105,
+      y,
+      { align: "center" }
+    );
+    y += 10;
+
+    // Introduction
+    pdf.setFontSize(10);
+    pdf.text(
+      `     Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas`,
+      margin,
+      y
+    );
+    y += 5;
+    pdf.text(`Provinsi Jawa Tengah, menerangkan bahwa:`, margin, y);
+    y += 8;
+
+    const addField = (label: string, value: string) => {
+      pdf.text(`${label}`, margin + 5, y);
+      pdf.text(":", margin + 55, y);
+      pdf.text(value, margin + 60, y);
       y += 6;
-      pdf.text("Kode Desa: 02122013", 25, y);
-      y += 6;
-
-      // Title
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
-      pdf.text("SURAT KETERANGAN DOMISILI USAHA", 105, y, { align: "center" });
-      y += 6;
-      pdf.setFontSize(10);
-      pdf.setFont("helvetica", "normal");
-      pdf.text(
-        `Nomor: ${form.letterNumber || "_________/SKDU/[BULAN]/[TAHUN]"}`,
-        105,
-        y,
-        { align: "center" }
-      );
-      y += 10;
-
-      // Introduction
-      pdf.setFontSize(10);
-      pdf.text(
-        `     Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas`,
-        margin,
-        y
-      );
-      y += 5;
-      pdf.text(`Provinsi Jawa Tengah, menerangkan bahwa:`, margin, y);
-      y += 8;
-
-      const addField = (label: string, value: string) => {
-        pdf.text(`${label}`, margin + 5, y);
-        pdf.text(":", margin + 55, y);
-        pdf.text(value, margin + 60, y);
-        y += 6;
-      };
-
-      // Personal Data
-      addField("1. Nama Lengkap", form.nama);
-      addField("2. Jenis Kelamin", form.jenisKelamin);
-      addField(
-        "3. Tempat/Tgl Lahir",
-        `${form.tempatLahir}, ${form.tanggalLahir}`
-      );
-      addField("4. Kewarganegaraan", form.kewarganegaraan);
-      addField("5. No. KTP/NIK", form.nik);
-      addField("6. Pekerjaan", form.pekerjaan);
-      addField("7. Alamat", form.alamat);
-
-      y += 5;
-      pdf.text(
-        "     Berdasarkan Surat Pernyataan tidak keberatan/ijin tetangga yang diketahui Ketua RT dan Ketua RW,",
-        margin,
-        y
-      );
-      y += 5;
-      pdf.text(
-        "bahwa yang bersangkutan benar telah membuka usaha sebagai berikut:",
-        margin,
-        y
-      );
-      y += 8;
-
-      // Usaha Info
-      addField("Nama Perusahaan", form.namaUsaha);
-      addField("Nama Pemilik", form.nama);
-      addField("Alamat Perusahaan", form.alamatUsaha);
-      addField("Jenis Usaha", form.jenisUsaha);
-      addField("Jumlah Karyawan", form.jumlahKaryawan || "-");
-      addField("Luas Tempat Usaha", form.luasTempatUsaha || "-");
-      addField("Waktu Usaha", form.waktuUsaha || "-");
-
-      y += 6;
-      const keperluanText =
-        form.keperluan ||
-        "mengajukan Permohonan Surat Ijin Tempat Usaha/Ijin Undang-undang Gangguan dari Pemerintah Kabupaten Banyumas. Surat ini berlaku 3 (tiga) bulan setelah dikeluarkan, bukan merupakan surat ijin, dan tidak diperkenankan untuk melakukan usaha sebelum mendapat ijin resmi dari instansi terkait.";
-      const splitText = pdf.splitTextToSize(
-        `     Demikian Surat Keterangan ini dibuat untuk keperluan ${keperluanText}`,
-        170
-      );
-      pdf.text(splitText, margin, y);
-      y += splitText.length * 5;
-
-      // Footer
-      y += 10;
-      pdf.text(`No. Reg: ___________`, margin, y);
-      y += 5;
-      pdf.text(`Tanggal: ${new Date().toLocaleDateString("id-ID")}`, margin, y);
-      y += 15;
-
-      // Signatures
-      pdf.text("Mengetahui,", margin, y);
-      pdf.text("Camat Patikreja", margin, y + 5);
-      pdf.text(form.namaCamat || "[Nama Camat]", margin, y + 35);
-      pdf.text(
-        "Kedungwringin, " +
-          new Date().toLocaleDateString("id-ID", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          }),
-        130,
-        y
-      );
-      pdf.text("An. KEPALA DESA KEDUNGWRINGIN", 130, y + 5);
-      pdf.text("KASI PEMERINTAH", 130, y + 10);
-      pdf.text(
-        villageInfo?.kasipemerintah?.trim()
-          ? villageInfo.kasipemerintah
-          : "(................................)",
-        130,
-        y + 35
-      );
     };
+
+    // Personal Data
+    addField("1. Nama Lengkap", form.nama);
+    addField("2. Jenis Kelamin", form.jenisKelamin);
+    addField(
+      "3. Tempat/Tgl Lahir",
+      `${form.tempatLahir}, ${form.tanggalLahir}`
+    );
+    addField("4. Kewarganegaraan", form.kewarganegaraan);
+    addField("5. No. KTP/NIK", form.nik);
+    addField("6. Pekerjaan", form.pekerjaan);
+    addField("7. Alamat", form.alamat);
+
+    y += 5;
+    const pernyataanText =
+      "     Berdasarkan Surat Pernyataan tidak keberatan/ijin tetangga yang diketahui Ketua Rukun Tetangga dan Ketua Rukun Warga Nomer " +
+      (form.rtNumber || "__________") +
+      " Tanggal " +
+      (form.rtDate
+        ? new Date(form.rtDate).toLocaleDateString("id-ID")
+        : "__________") +
+      ", bahwa yang bersangkutan benar telah membuka usaha sebagai berikut:";
+    const pernyataanLines = pdf.splitTextToSize(pernyataanText, 170);
+    pdf.text(pernyataanLines, margin, y);
+    y += pernyataanLines.length * 6;
+
+    // Usaha Info
+    addField("Nama Perusahaan", form.namaUsaha);
+    addField("Nama Pemilik", form.nama);
+    addField("Alamat Perusahaan", form.alamatUsaha);
+    addField("Jenis Usaha", form.jenisUsaha);
+    addField("Jumlah Karyawan", form.jumlahKaryawan || "-");
+    addField("Luas Tempat Usaha", form.luasTempatUsaha || "-");
+    addField("Waktu Usaha", form.waktuUsaha || "-");
+
+    y += 6;
+    const keperluanText =
+      form.keperluan ||
+      "mengajukan Permohonan Surat Ijin Tempat Usaha/Ijin Undang-undang Gangguan dari Pemerintah Kabupaten Banyumas. Surat ini berlaku 3 (tiga) bulan setelah dikeluarkan, bukan merupakan surat ijin, dan tidak diperkenankan untuk melakukan usaha sebelum mendapat ijin resmi dari instansi terkait.";
+    const splitText = pdf.splitTextToSize(
+      `     Demikian Surat Keterangan ini dibuat untuk keperluan ${keperluanText}`,
+      170
+    );
+    pdf.text(splitText, margin, y);
+    y += splitText.length * 5;
+
+    // Footer
+    y += 10;
+    pdf.text(`No. Reg: ${form.regNumber || "_________"}`, margin, y);
+    y += 5;
+    pdf.text(`Tanggal: ${form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________"}`, margin, y);
+    y += 15;
+
+    // Signatures
+    pdf.text("Mengetahui,", margin, y);
+    pdf.text("Camat Patikreja", margin, y + 5);
+    pdf.text(form.namaCamat || "[Nama Camat]", margin, y + 35);
+    pdf.text(
+      "Kedungwringin, " +
+        new Date().toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }),
+      130,
+      y
+    );
+    pdf.text("An. KEPALA DESA KEDUNGWRINGIN", 130, y + 5);
+    pdf.text("KASI PEMERINTAH", 130, y + 10);
+    pdf.text(
+      villageInfo?.kasipemerintah?.trim()
+        ? villageInfo.kasipemerintah
+        : "(................................)",
+      130,
+      y + 35
+    );
     return pdf;
   };
 
@@ -456,6 +459,36 @@ const CreateDomisiliUsahaLetter: React.FC<{
           placeholder="Nama Camat"
           className="input"
         />
+        <input
+          name="rtNumber"
+          value={form.rtNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat RT"
+          className="input"
+        />
+        <input
+          name="rtDate"
+          value={form.rtDate}
+          onChange={handleChange}
+          placeholder="Tanggal Surat RT"
+          type="date"
+          className="input"
+        />
+        <input
+          name="regNumber"
+          value={form.regNumber}
+          onChange={handleChange}
+          placeholder="No. Reg"
+          className="input"
+        />
+        <input
+          name="regDate"
+          value={form.regDate}
+          onChange={handleChange}
+          placeholder="Tanggal Reg"
+          type="date"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
@@ -575,7 +608,8 @@ const CreateDomisiliUsahaLetter: React.FC<{
             <p>
               Berdasarkan Surat Pernyataan tidak keberatan/ijin tetangga yang
               diketahui Ketua Rukun Tetangga dan Ketua Rukun Warga Nomer
-              Tanggal, bahwa yang bersangkutan benar telah membuka Usaha sebagai
+              {form.rtNumber || "__________"} Tanggal{" "}
+              {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"}, bahwa yang bersangkutan benar telah membuka Usaha sebagai
               berikut:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -639,12 +673,12 @@ const CreateDomisiliUsahaLetter: React.FC<{
                 <tr>
                   <td>No. Reg</td>
                   <td>:</td>
-                  <td>_________</td>
+                  <td>{form.regNumber || "_________"}</td>
                 </tr>
                 <tr>
                   <td>Tanggal</td>
                   <td>:</td>
-                  <td>{new Date().toLocaleDateString("id-ID")}</td>
+                  <td>{form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________"}</td>
                 </tr>
               </tbody>
             </table>

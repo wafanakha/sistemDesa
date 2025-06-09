@@ -20,6 +20,8 @@ interface TidakMampuFormData {
   alamat: string;
   keperluan: string;
   letterNumber?: string;
+  rtNumber?: string;
+  rtDate?: string;
 }
 
 const initialForm: TidakMampuFormData = {
@@ -33,6 +35,8 @@ const initialForm: TidakMampuFormData = {
   alamat: "",
   keperluan: "",
   letterNumber: "",
+  rtNumber: "",
+  rtDate: "",
 };
 
 const CreateTidakMampuLetter: React.FC<{
@@ -178,7 +182,11 @@ const CreateTidakMampuLetter: React.FC<{
     });
     y += 2;
     doc.text(
-      "Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya TIDAK MAMPU.",
+      `Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${
+        form.rtNumber || "__________"
+      } Tanggal ${
+        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"
+      }, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya TIDAK MAMPU.`,
       15,
       y,
       { maxWidth: pageWidth - 30 }
@@ -359,6 +367,21 @@ const CreateTidakMampuLetter: React.FC<{
           placeholder="Nomor Surat"
           className="input"
         />
+        <input
+          name="rtNumber"
+          value={form.rtNumber}
+          onChange={handleChange}
+          placeholder="Nomor Surat RT"
+          className="input"
+        />
+        <input
+          name="rtDate"
+          value={form.rtDate}
+          onChange={handleChange}
+          placeholder="Tanggal Surat RT"
+          type="date"
+          className="input"
+        />
         <textarea
           name="keperluan"
           value={form.keperluan}
@@ -457,9 +480,10 @@ const CreateTidakMampuLetter: React.FC<{
           </tbody>
         </table>
         <div className="mb-2">
-          Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal,
-          bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut
-          pengakuan yang bersangkutan keadaan ekonominya <b>TIDAK MAMPU</b>.
+          Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor{" "}
+          {form.rtNumber || "__________"} Tanggal{" "}
+          {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"}, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan keadaan ekonominya{" "}
+          <b>TIDAK MAMPU</b>.
         </div>
         <div className="mb-2">
           Surat keterangan ini diperlukan untuk{" "}

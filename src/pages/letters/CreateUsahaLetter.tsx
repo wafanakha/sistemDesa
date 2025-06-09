@@ -24,6 +24,7 @@ interface UsahaFormData {
   rt: string;
   keperluan?: string;
   letterNumber?: string;
+  rtDate?: string;
 }
 
 const initialForm: UsahaFormData = {
@@ -42,6 +43,7 @@ const initialForm: UsahaFormData = {
   rt: "",
   keperluan: "",
   letterNumber: "",
+  rtDate: "",
 };
 
 const CreateUsahaLetter: React.FC<{
@@ -162,7 +164,9 @@ const CreateUsahaLetter: React.FC<{
     // Isi utama
     y += 2;
     doc.text(
-      `Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${form.rt} Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan mempunyai usaha ${form.namaUsaha}`,
+      `Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${form.rt} Tanggal ${
+        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"
+      }, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan mempunyai usaha ${form.namaUsaha}`,
       15,
       y,
       { maxWidth: pageWidth - 30 }
@@ -387,6 +391,14 @@ const CreateUsahaLetter: React.FC<{
           className="input"
         />
         <input
+          name="rtDate"
+          value={form.rtDate}
+          onChange={handleChange}
+          placeholder="Tanggal Surat RT"
+          type="date"
+          className="input"
+        />
+        <input
           name="letterNumber"
           value={form.letterNumber}
           onChange={handleChange}
@@ -479,9 +491,7 @@ const CreateUsahaLetter: React.FC<{
           </tbody>
         </table>
         <p style={{ textIndent: "2em" }}>
-          Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor {form.rt}{" "}
-          Tanggal, bahwa yang bersangkutan betul warga Desa Kedungwringin dan
-          menurut pengakuan yang bersangkutan mempunyai usaha {form.namaUsaha}
+          Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor {form.rt} Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"}, bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut pengakuan yang bersangkutan mempunyai usaha {form.namaUsaha}
         </p>
         <p style={{ textIndent: "2em" }}>
           Surat Keterangan ini diperlukan untuk {form.keperluan}

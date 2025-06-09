@@ -24,6 +24,9 @@ interface SkckFormData {
   keperluan?: string;
   letterNumber?: string;
   namaCamat?: string;
+  rtDate?: string;
+  regNumber?: string;
+  regDate?: string;
 }
 
 const initialForm: SkckFormData = {
@@ -41,6 +44,9 @@ const initialForm: SkckFormData = {
   keperluan: "",
   letterNumber: "",
   namaCamat: "",
+  rtDate: "",
+  regNumber: "",
+  regDate: "",
 };
 
 const CreateSkckLetter: React.FC<{
@@ -163,7 +169,9 @@ const CreateSkckLetter: React.FC<{
     });
     y += 2;
     doc.text(
-      `Berdasakan Surat Keterangan dari Ketua Rukun Warga Nomor ${form.rt} Tanggal dan menurut pengakuan yang bersangkutan sampai saat ini belum pernah tersangkut yustisi/urusan kepolisian.`,
+      `Berdasakan Surat Keterangan dari Ketua Rukun Warga Nomor ${form.rt} Tanggal ${
+        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"
+      } dan menurut pengakuan yang bersangkutan sampai saat ini belum pernah tersangkut yustisi/urusan kepolisian.`,
       15,
       y,
       { maxWidth: pageWidth - 30 }
@@ -186,11 +194,11 @@ const CreateSkckLetter: React.FC<{
     // Footer info
     doc.text("No. Reg", 18, y);
     doc.text(":", 40, y);
-    doc.text(form.letterNumber || "_________", 45, y);
+    doc.text(form.regNumber || "_________", 45, y);
     y += 7;
     doc.text("Tanggal", 18, y);
     doc.text(":", 40, y);
-    doc.text(new Date().toLocaleDateString("id-ID"), 45, y);
+    doc.text(form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________", 45, y);
     // TTD
     let ttdY = y + 14;
     // Pemohon kiri
@@ -411,6 +419,14 @@ const CreateSkckLetter: React.FC<{
           className="input"
         />
         <input
+          name="rtDate"
+          value={form.rtDate}
+          onChange={handleChange}
+          placeholder="Tanggal Surat RT/RW"
+          type="date"
+          className="input"
+        />
+        <input
           name="keperluan"
           value={form.keperluan || ""}
           onChange={handleChange}
@@ -429,6 +445,21 @@ const CreateSkckLetter: React.FC<{
           value={form.namaCamat}
           onChange={handleChange}
           placeholder="Nama Camat"
+          className="input"
+        />
+        <input
+          name="regNumber"
+          value={form.regNumber}
+          onChange={handleChange}
+          placeholder="No. Reg"
+          className="input"
+        />
+        <input
+          name="regDate"
+          value={form.regDate}
+          onChange={handleChange}
+          placeholder="Tanggal Reg"
+          type="date"
           className="input"
         />
       </form>
@@ -559,7 +590,7 @@ const CreateSkckLetter: React.FC<{
             </table>
             <p>
               Berdasakan Surat Keterangan dari Ketua Rukun Warga Nomor {form.rt}{" "}
-              Tanggal dan menurut pengakuan yang bersangkutan sampai saat ini
+              Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "__________"} dan menurut pengakuan yang bersangkutan sampai saat ini
               belum pernah tersangkut yustisi/urusan kepolisian.
             </p>
             <p>Surat keterangan ini diperlukan untuk {form.keperluan}</p>
@@ -582,12 +613,12 @@ const CreateSkckLetter: React.FC<{
                 <tr>
                   <td>No. Reg</td>
                   <td>:</td>
-                  <td>{form.letterNumber || "_________"}</td>
+                  <td>{form.regNumber || "_________"}</td>
                 </tr>
                 <tr>
                   <td>Tanggal</td>
                   <td>:</td>
-                  <td>{new Date().toLocaleDateString("id-ID")}</td>
+                  <td>{form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : "__________"}</td>
                 </tr>
               </tbody>
             </table>

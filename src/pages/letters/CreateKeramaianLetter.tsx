@@ -26,6 +26,11 @@ interface KeramaianFormData {
   jumlahUndangan: string;
   residentId?: number; // Tambahkan residentId ke form
   letterNumber: string;
+  rtNumber?: string;
+  rtDate?: string;
+  regNumber?: string; // Tambah field No. Reg
+  regDate?: string;   // Tambah field Tanggal Reg
+  camatName?: string; // Nama Camat manual
 }
 
 const initialForm: KeramaianFormData = {
@@ -45,6 +50,11 @@ const initialForm: KeramaianFormData = {
   jumlahUndangan: "",
   residentId: undefined,
   letterNumber: "",
+  rtNumber: "",
+  rtDate: "",
+  regNumber: "", // Tambah default
+  regDate: "",    // Tambah default
+  camatName: "",
 };
 
 const CreateKeramaianLetter: React.FC<{
@@ -204,7 +214,11 @@ const CreateKeramaianLetter: React.FC<{
     // Paragraf aturan and penutup
     y += 2;
     doc.text(
-      "Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga (nomor & tanggal), maka dengan ini menerangkan bahwa atas permohonan yang bersangkutan, kegiatan tersebut dapat dilaksanakan dengan ketentuan sebagai berikut:",
+      `Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga Nomor ${
+        form.rtNumber || "Nomor"
+      } Tanggal ${
+        form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"
+      }, maka dengan ini menerangkan bahwa atas permohonan yang bersangkutan, kegiatan tersebut dapat dilaksanakan dengan ketentuan sebagai berikut:`,
       25,
       y,
       { maxWidth: pageWidth - 50 }
@@ -230,11 +244,17 @@ const CreateKeramaianLetter: React.FC<{
     // Footer info
     doc.text("No. Reg", 28, y);
     doc.text(":", 70, y);
-    doc.text("_________", 75, y);
+    doc.text(form.regNumber || "_________", 75, y);
     y += 7;
     doc.text("Tanggal", 28, y);
     doc.text(":", 70, y);
-    doc.text(new Date().toLocaleDateString("id-ID"), 75, y);
+    doc.text(
+      form.regDate
+        ? new Date(form.regDate).toLocaleDateString("id-ID")
+        : new Date().toLocaleDateString("id-ID"),
+      75,
+      y
+    );
     y += 10;
     // Blok tanda tangan
     const ttdY = y;
@@ -250,16 +270,27 @@ const CreateKeramaianLetter: React.FC<{
     doc.text("An. KEPALA DESA KEDUNGWRINGIN", pageWidth - 80, ttdY + 6);
     doc.text("KASI PEMERINTAH", pageWidth - 70, ttdY + 12);
     // Spacer tanda tangan
-    doc.text("(................................)", 25, ttdY + 35);
-    doc.text("(................................)", pageWidth / 2, ttdY + 35, {
+    doc.text("()", 25, ttdY + 35);
+    doc.text("()", pageWidth / 2, ttdY + 35, {
       align: "center",
     });
     doc.text(
+      form.nama && form.nama.trim() ? `(${form.nama})` : "()",
+      25,
+      ttdY + 35
+    );
+    doc.text(
       villageInfo?.kasipemerintah?.trim()
         ? `(${villageInfo.kasipemerintah})`
-        : "(................................)",
+        : "()",
       pageWidth - 70,
       ttdY + 35
+    );
+    doc.text(
+      form.camatName && form.camatName.trim() ? `(${form.camatName})` : "[Nama Camat]",
+      pageWidth / 2,
+      ttdY + 35,
+      { align: "center" }
     );
     return doc;
   };
@@ -438,6 +469,45 @@ const CreateKeramaianLetter: React.FC<{
           placeholder="Nomor Surat"
           className="input"
         />
+        <input
+          name="rtNumber"
+          value={form.rtNumber}
+          onChange={handleChange}
+          placeholder="Nomor RT"
+          className="input"
+        />
+        <input
+          name="rtDate"
+          value={form.rtDate}
+          onChange={handleChange}
+          placeholder="Tanggal RT"
+          type="date"
+          className="input"
+        />
+        {/* Tambah input No. Reg dan Tanggal Reg */}
+        <input
+          name="regNumber"
+          value={form.regNumber}
+          onChange={handleChange}
+          placeholder="No. Reg"
+          className="input"
+        />
+        <input
+          name="regDate"
+          value={form.regDate}
+          onChange={handleChange}
+          placeholder="Tanggal Reg"
+          type="date"
+          className="input"
+        />
+        {/* Input nama camat manual */}
+        <input
+          name="camatName"
+          value={form.camatName}
+          onChange={handleChange}
+          placeholder="Nama Camat"
+          className="input"
+        />
       </form>
       <div className="flex gap-2 mb-6">
         <div className="flex gap-2 mb-6">
@@ -596,43 +666,41 @@ const CreateKeramaianLetter: React.FC<{
                 </tr>
               </tbody>
             </table>
+            {/* Pindahkan blok No. Reg & Tanggal ke bawah, setelah penutup */}
             <p>
-              Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga (nomor &
-              tanggal), maka dengan ini menerangkan bahwa atas permohonan yang
-              bersangkutan, kegiatan tersebut dapat dilaksanakan dengan
-              ketentuan sebagai berikut:
+              Berdasarkan Surat Pernyataan dari Ketua Rukun Tetangga Nomor {form.rtNumber || "Nomor"} Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"}, maka dengan ini menerangkan bahwa atas permohonan yang bersangkutan, kegiatan tersebut dapat dilaksanakan dengan ketentuan sebagai berikut:
             </p>
             <p>1. Menjaga keamanan dan ketertiban masyarakat.</p>
             <p>2. Mengikuti aturan yang berlaku dari pemerintah daerah.</p>
             <p>3. Menyudahi kegiatan sesuai waktu yang telah ditentukan.</p>
             <p>
-              Demikian Surat Keterangan Keramaian ini diberikan untuk
-              dipergunakan sebagaimana mestinya.
+              Demikian Surat Keterangan Keramaian ini diberikan untuk dipergunakan sebagaimana mestinya.
             </p>
-          </div>
-          <div
-            className="footer-info"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: 20,
-              marginBottom: 10,
-            }}
-          >
-            <table>
-              <tbody>
-                <tr>
-                  <td>No. Reg</td>
-                  <td>:</td>
-                  <td>_________</td>
-                </tr>
-                <tr>
-                  <td>Tanggal</td>
-                  <td>:</td>
-                  <td>{new Date().toLocaleDateString("id-ID")}</td>
-                </tr>
-              </tbody>
-            </table>
+            {/* Blok No. Reg & Tanggal di bawah penutup */}
+            <div
+              className="footer-info"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 20,
+                marginBottom: 10,
+              }}
+            >
+              <table>
+                <tbody>
+                  <tr>
+                    <td>No. Reg</td>
+                    <td>:</td>
+                    <td>{form.regNumber || "_________"}</td>
+                  </tr>
+                  <tr>
+                    <td>Tanggal</td>
+                    <td>:</td>
+                    <td>{form.regDate ? new Date(form.regDate).toLocaleDateString("id-ID") : new Date().toLocaleDateString("id-ID")}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div
             className="signature-block"
@@ -693,7 +761,7 @@ const CreateKeramaianLetter: React.FC<{
                   }}
                 ></div>
                 <p>
-                  <strong>[Nama Camat]</strong>
+                  <strong>{form.camatName || "[Nama Camat]"}</strong>
                 </p>
               </div>
             </div>

@@ -18,8 +18,10 @@ interface DomisiliFormData {
   agama: string;
   pekerjaan: string;
   alamat: string;
-  lamaTinggal: string;
+  binBinti?: string;
   letterNumber?: string;
+  rtNumber?: string;
+  rtDate?: string;
 }
 
 const initialForm: DomisiliFormData = {
@@ -31,8 +33,10 @@ const initialForm: DomisiliFormData = {
   agama: "",
   pekerjaan: "",
   alamat: "",
-  lamaTinggal: "",
+  binBinti: "",
   letterNumber: "",
+  rtNumber: "",
+  rtDate: "",
 };
 
 const CreateDomisiliLetter: React.FC<{
@@ -89,6 +93,7 @@ const CreateDomisiliLetter: React.FC<{
       agama: resident.religion,
       pekerjaan: resident.occupation,
       alamat: resident.address,
+      binBinti: resident.fatherName || resident.motherName || "",
     });
     setSearch(resident.nik + " - " + resident.name);
     setSearchResults([]);
@@ -138,10 +143,10 @@ const CreateDomisiliLetter: React.FC<{
     const data = [
       ["1. Nama Lengkap", form.nama],
       ["2. Jenis Kelamin", form.jenisKelamin],
-      ["3. Bin/Binti", ``],
-      ["4. Tempat/Tgl Lahir", form.tempatLahir, form.tanggalLahir],
+      ["3. Bin/Binti", form.binBinti || "-"],
+      ["4. Tempat/Tgl Lahir", form.tempatLahir + (form.tanggalLahir ? ", " + new Date(form.tanggalLahir).toLocaleDateString("id-ID") : "")],
       ["5. Agama", form.agama],
-      ["6. Warganegara", ""],
+      ["6. Warganegara", "Indonesia"],
       ["7. No. KTP", form.nik],
       ["8. Pekerjaan", form.pekerjaan],
       ["9. Alamat", form.alamat],
@@ -153,7 +158,7 @@ const CreateDomisiliLetter: React.FC<{
       y += 9;
     });
     doc.text(
-      "Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.",
+      `Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor ${form.rtNumber || "Nomor"} Tanggal ${form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"}, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
       15,
       y,
       { maxWidth: 180 }
@@ -315,10 +320,10 @@ const CreateDomisiliLetter: React.FC<{
           className="input"
         />
         <input
-          name="lamaTinggal"
-          value={form.lamaTinggal}
+          name="binBinti"
+          value={form.binBinti}
           onChange={handleChange}
-          placeholder="Lama Tinggal (tahun)"
+          placeholder="Bin/Binti"
           className="input"
         />
         <input
@@ -326,6 +331,21 @@ const CreateDomisiliLetter: React.FC<{
           value={form.letterNumber}
           onChange={handleChange}
           placeholder="Nomor Surat"
+          className="input"
+        />
+        <input
+          name="rtNumber"
+          value={form.rtNumber}
+          onChange={handleChange}
+          placeholder="Nomor RT"
+          className="input"
+        />
+        <input
+          name="rtDate"
+          value={form.rtDate}
+          onChange={handleChange}
+          placeholder="Tanggal RT"
+          type="date"
           className="input"
         />
       </form>
@@ -394,7 +414,9 @@ const CreateDomisiliLetter: React.FC<{
           >
             SURAT KETERANGAN DOMISILI TEMPAT TINGGAL
           </h2>
-          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
+          <p style={{ textAlign: "center" }}>
+            Nomor: {form.letterNumber || "_________/SKD/[BULAN]/[TAHUN]"}
+          </p>
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
@@ -416,7 +438,7 @@ const CreateDomisiliLetter: React.FC<{
                 <tr>
                   <td>3. Bin/Binti</td>
                   <td>:</td>
-                  <td></td>
+                  <td>{form.binBinti}</td>
                 </tr>
                 <tr>
                   <td>4. Tempat/Tgl Lahir</td>
@@ -455,8 +477,7 @@ const CreateDomisiliLetter: React.FC<{
               </tbody>
             </table>
             <p>
-              Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor
-              Tanggal, bahwa yang bersangkutan benar penduduk Desa Kedungwringin
+              Berdasarkan Surat Keterangan dari Ketua Rukun Tetangga Nomor {form.rtNumber || "Nomor"} Tanggal {form.rtDate ? new Date(form.rtDate).toLocaleDateString("id-ID") : "Tanggal"}, bahwa yang bersangkutan benar penduduk Desa Kedungwringin
               Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat
               tersebut diatas, surat ini dibuat untuk keperluan administrasi.
             </p>

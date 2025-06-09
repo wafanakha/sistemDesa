@@ -146,22 +146,20 @@ const CreateAhliWarisLetter: React.FC = () => {
     doc.text("Alamat", 30, y);
     doc.text(`: ${pewaris.alamat}`, 60, y);
     y += 8;
-    doc.text(
-      `Telah meninggal dunia pada hari ${pewaris.hariWafat || "..."} tanggal ${
-        pewaris.tanggalWafat || "..."
-      } di ${pewaris.tempatWafat || "..."},`,
-      20,
-      y
-    );
-    y += 6;
-    doc.text(
-      `sebagaimana tercatat pada Akta Kematian No. ${
-        pewaris.aktaKematian || "..."
-      } tanggal ${pewaris.tanggalAkta || "..."}.`,
-      20,
-      y
-    );
-    y += 7;
+    const kalimatKematian = `Telah meninggal dunia pada hari ${pewaris.hariWafat || "..."} tanggal ${
+      pewaris.tanggalWafat
+        ? new Date(pewaris.tanggalWafat).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+        : "..."
+    } di ${pewaris.tempatWafat || "..."}, sebagaimana tercatat pada Akta Kematian No. ${
+      pewaris.aktaKematian || "..."
+    } tanggal ${
+      pewaris.tanggalAkta
+        ? new Date(pewaris.tanggalAkta).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+        : "..."
+    }.`;
+    const kematianLines = doc.splitTextToSize(kalimatKematian, 170);
+    doc.text(kematianLines, 20, y);
+    y += kematianLines.length * 6;
     doc.text(
       "Bahwa berdasarkan data yang ditunjukkan sesuai ketentuan hukum yang berlaku, yang menjadi ahli waris dari",
       20,
@@ -172,21 +170,41 @@ const CreateAhliWarisLetter: React.FC = () => {
     // Ahli waris list
     ahliWaris.forEach((a, i) => {
       y += 8;
+      if (y > 260) {
+        doc.addPage();
+        y = 20;
+      }
       doc.setFont("Times", "Bold");
       doc.text(`${i + 1}.`, 23, y);
       doc.setFont("Times", "Normal");
       doc.text("Nama", 30, y);
       doc.text(`: ${a.nama}`, 60, y);
       y += 6;
+      if (y > 260) {
+        doc.addPage();
+        y = 20;
+      }
       doc.text("Tempat/Tgl Lahir", 30, y);
       doc.text(`: ${a.tempatLahir}, ${a.tanggalLahir}`, 60, y);
       y += 6;
+      if (y > 260) {
+        doc.addPage();
+        y = 20;
+      }
       doc.text("No KTP/NIK", 30, y);
       doc.text(`: ${a.nik}`, 60, y);
       y += 6;
+      if (y > 260) {
+        doc.addPage();
+        y = 20;
+      }
       doc.text("Alamat", 30, y);
       doc.text(`: ${a.alamat}`, 60, y);
       y += 6;
+      if (y > 260) {
+        doc.addPage();
+        y = 20;
+      }
       doc.text("Hubungan dengan ahli waris", 30, y);
       doc.text(`: ${a.hubungan}`, 90, y);
     });
@@ -278,6 +296,41 @@ const CreateAhliWarisLetter: React.FC = () => {
           placeholder="Nomor Surat"
           value={letterNumber}
           onChange={(e) => setLetterNumber(e.target.value)}
+        />
+        <input
+          type="text"
+          className="input w-full mt-2"
+          placeholder="Nomor Akta Kematian"
+          value={pewaris.aktaKematian}
+          onChange={e => setPewaris({ ...pewaris, aktaKematian: e.target.value })}
+        />
+        <input
+          type="date"
+          className="input w-full mt-2"
+          placeholder="Tanggal Akta Kematian"
+          value={pewaris.tanggalAkta}
+          onChange={e => setPewaris({ ...pewaris, tanggalAkta: e.target.value })}
+        />
+        <input
+          type="text"
+          className="input w-full mt-2"
+          placeholder="Hari Wafat"
+          value={pewaris.hariWafat}
+          onChange={e => setPewaris({ ...pewaris, hariWafat: e.target.value })}
+        />
+        <input
+          type="date"
+          className="input w-full mt-2"
+          placeholder="Tanggal Wafat"
+          value={pewaris.tanggalWafat}
+          onChange={e => setPewaris({ ...pewaris, tanggalWafat: e.target.value })}
+        />
+        <input
+          type="text"
+          className="input w-full mt-2"
+          placeholder="Tempat Wafat"
+          value={pewaris.tempatWafat}
+          onChange={e => setPewaris({ ...pewaris, tempatWafat: e.target.value })}
         />
         {searching && <div className="text-sm text-gray-500">Mencari...</div>}
         {kkResults.length > 0 && (
