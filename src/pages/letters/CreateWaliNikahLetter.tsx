@@ -91,7 +91,7 @@ const CreateWaliNikahLetter: React.FC<{
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleExportPDF = () => {
+  const generatePDF = (): jsPDF => {
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     let y = 20;
     doc.setFont("helvetica", "bold");
@@ -200,7 +200,31 @@ const CreateWaliNikahLetter: React.FC<{
       140,
       y
     );
+    return doc;
+  };
+
+  const handleExportPDF = () => {
+    const doc = generatePDF();
     doc.save("surat-wali-nikah.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.waliNama,
+      letter: "wali-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPDF = () => {
+    const doc = generatePDF();
+    window.open(doc.output("bloburl"), "_blank");
+
     const historyEntry: LetterHistory = {
       name: form.waliNama,
       letter: "wali-nikah", // Since this is the usaha letter component
@@ -354,8 +378,8 @@ const CreateWaliNikahLetter: React.FC<{
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Kembali
         </Button>
-        <Button variant="outline" onClick={handleSaveLetter}>
-          Simpan Surat
+        <Button variant="primary" onClick={handlePrintPDF}>
+          Print Surat
         </Button>
       </div>
       <div className="bg-white p-8 border shadow max-w-[800px] mx-auto">

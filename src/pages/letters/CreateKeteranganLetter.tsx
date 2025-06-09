@@ -60,7 +60,7 @@ const CreateKeteranganLetter: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleExportPDF = () => {
+  const generatePDF = (): jsPDF => {
     const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 18;
@@ -198,7 +198,31 @@ const CreateKeteranganLetter: React.FC = () => {
       y,
       { align: "right" }
     );
+    return doc;
+  };
+
+  const handleExportPDF = () => {
+    const doc = generatePDF();
     doc.save("surat-keterangan.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "keramaian", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPDF = () => {
+    const doc = generatePDF();
+    window.open(doc.output("bloburl"), "_blank");
+
     const historyEntry: LetterHistory = {
       name: form.nama,
       letter: "keramaian", // Since this is the usaha letter component
@@ -385,6 +409,9 @@ const CreateKeteranganLetter: React.FC = () => {
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
           Export PDF
+        </Button>
+        <Button variant="primary" onClick={handlePrintPDF}>
+          Print Surat
         </Button>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Kembali

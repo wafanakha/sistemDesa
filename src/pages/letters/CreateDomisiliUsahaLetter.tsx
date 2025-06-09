@@ -87,7 +87,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleExportPDF = () => {
+  const generatePDF = (): jsPDF => {
     const pdf = new jsPDF("p", "mm", "a4");
     const margin = 20;
     let y = margin;
@@ -231,23 +231,45 @@ const CreateDomisiliUsahaLetter: React.FC<{
         130,
         y + 35
       );
-
-      // Save
-      pdf.save("surat-domisili-usaha.pdf");
-      const historyEntry: LetterHistory = {
-        name: form.nama,
-        letter: "domisili-usaha", // Since this is the usaha letter component
-        date: new Date().toISOString(),
-      };
-
-      saveLetterHistory(historyEntry)
-        .then(() => {
-          console.log("Letter history saved");
-        })
-        .catch((error) => {
-          console.error("Failed to save letter history:", error);
-        });
     };
+    return pdf;
+  };
+
+  const handleExportPDF = () => {
+    const pdf = generatePDF();
+    pdf.save("surat-domisili-usaha.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "domisili-usaha", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPDF = () => {
+    const pdf = generatePDF();
+    window.open(pdf.output("bloburl"), "_blank");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "domisili-usaha", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -438,6 +460,9 @@ const CreateDomisiliUsahaLetter: React.FC<{
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
           Export PDF
+        </Button>
+        <Button variant="primary" onClick={handlePrintPDF}>
+          Print Surat
         </Button>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Kembali

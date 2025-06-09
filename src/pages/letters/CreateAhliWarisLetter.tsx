@@ -96,8 +96,7 @@ const CreateAhliWarisLetter: React.FC = () => {
     setAhliWaris(ahli);
   };
 
-  // Export PDF
-  const handleExportPDF = () => {
+  const generatePDF = (): jsPDF => {
     const doc = new jsPDF("p", "mm", "a4");
     // Logo
     doc.addImage(logo, "PNG", 20, 10, 24, 24);
@@ -220,11 +219,16 @@ const CreateAhliWarisLetter: React.FC = () => {
     y += 20;
     doc.setFont("Times", "Bold");
     doc.text("PARMINAH", 145, y);
-    doc.save("surat_ahli_waris.pdf");
+    return doc;
+  };
+  // Export PDF
+  const handleExportPDF = () => {
+    const doc = generatePDF();
+    doc.save("ahli-waris.pdf");
 
     const historyEntry: LetterHistory = {
       name: pewaris.nama,
-      letter: "ahli-waris", // Since this is the usaha letter component
+      letter: "keramaian", // Since this is the usaha letter component
       date: new Date().toISOString(),
     };
 
@@ -235,6 +239,24 @@ const CreateAhliWarisLetter: React.FC = () => {
       .catch((error) => {
         console.error("Failed to save letter history:", error);
       });
+  };
+
+  const handlePrintPDF = () => {
+    const doc = generatePDF();
+
+    // For Electron environment
+    window.open(doc.output("bloburl"), "_blank");
+
+    // Also save history
+    const historyEntry: LetterHistory = {
+      name: pewaris.nama,
+      letter: "ahli-waris",
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => console.log("Letter history saved"))
+      .catch((error) => console.error("Failed to save letter history:", error));
   };
 
   return (
@@ -295,6 +317,9 @@ const CreateAhliWarisLetter: React.FC = () => {
       <div className="flex gap-2 mb-6">
         <Button variant="primary" onClick={handleExportPDF}>
           Export PDF
+        </Button>
+        <Button variant="primary" onClick={handlePrintPDF}>
+          Print Surat
         </Button>
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Kembali

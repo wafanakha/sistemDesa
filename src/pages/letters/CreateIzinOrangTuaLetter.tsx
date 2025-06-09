@@ -5,7 +5,9 @@ import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
 import { residentService } from "../../database/residentService";
 import { LetterHistory } from "../../types";
+import { useNavigate } from "react-router-dom";
 import { saveLetterHistory } from "../../services/residentService";
+const navigate = useNavigate();
 const initialForm = {
   ayahNama: "",
   ayahBin: "",
@@ -44,7 +46,7 @@ const initialForm = {
   ibuTtd: "",
 };
 
-function generateSuratIzinOrangTuaN5(form: any) {
+const generatePDF = (form: any): jsPDF => {
   const doc = new jsPDF();
   doc.setFontSize(12);
   doc.text("SURAT IZIN ORANG TUA", 70, 15);
@@ -161,6 +163,11 @@ function generateSuratIzinOrangTuaN5(form: any) {
     10,
     291
   );
+  return doc;
+};
+
+const handleExportPDF = (form: any) => {
+  const doc = generatePDF(form);
   doc.save("surat_izin_orang_tua_n5.pdf");
   const historyEntry: LetterHistory = {
     name: form.nama,
@@ -175,7 +182,24 @@ function generateSuratIzinOrangTuaN5(form: any) {
     .catch((error) => {
       console.error("Failed to save letter history:", error);
     });
-}
+};
+const handlePrintPDF = (form: any) => {
+  const doc = generatePDF(form);
+  window.open(doc.output("bloburl"), "_blank");
+  const historyEntry: LetterHistory = {
+    name: form.nama,
+    letter: "izin-orang-tua", // Since this is the usaha letter component
+    date: new Date().toISOString(),
+  };
+
+  saveLetterHistory(historyEntry)
+    .then(() => {
+      console.log("Letter history saved");
+    })
+    .catch((error) => {
+      console.error("Failed to save letter history:", error);
+    });
+};
 
 const CreateIzinOrangTuaLetter: React.FC = () => {
   const [form, setForm] = useState<any>(initialForm);
@@ -189,10 +213,6 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleExportPdf = () => {
-    generateSuratIzinOrangTuaN5(form);
   };
 
   const handleWaliSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -509,15 +529,14 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
           onChange={handleChange}
         />
         <div className="md:col-span-2 flex space-x-2 mt-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setPreviewOpen(true)}
-          >
-            Preview
-          </Button>
-          <Button type="button" variant="secondary" onClick={handleExportPdf}>
+          <Button variant="primary" onClick={handleExportPDF}>
             Export PDF
+          </Button>
+          <Button variant="primary" onClick={handlePrintPDF}>
+            Print Surat
+          </Button>
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            Kembali
           </Button>
         </div>
       </form>

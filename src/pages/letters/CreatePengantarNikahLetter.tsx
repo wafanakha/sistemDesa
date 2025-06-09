@@ -147,20 +147,7 @@ function generateFormulirPengantarNikahN1(
   );
   doc.text("Kepala Desa Kedungwiringin", 130, y + 190);
   doc.text(village.leaderName || "", 140, y + 210);
-  doc.save("formulir_pengantar_nikah_n1.pdf");
-  const historyEntry: LetterHistory = {
-    name: form.nama,
-    letter: "pengantar-nikah", // Since this is the usaha letter component
-    date: new Date().toISOString(),
-  };
-
-  saveLetterHistory(historyEntry)
-    .then(() => {
-      console.log("Letter history saved");
-    })
-    .catch((error) => {
-      console.error("Failed to save letter history:", error);
-    });
+  return doc;
 }
 
 const CreatePengantarNikahLetter: React.FC = () => {
@@ -219,7 +206,64 @@ const CreatePengantarNikahLetter: React.FC = () => {
       (m: Resident) => String(m.id) === String(form.ibuId)
     );
     if (!village) return toast.error("Data desa belum lengkap");
-    generateFormulirPengantarNikahN1(form, resident, ayah, ibu, village);
+    const doc = generateFormulirPengantarNikahN1(
+      form,
+      resident,
+      ayah,
+      ibu,
+      village
+    );
+    doc.save("surat-pengantar-nikah");
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "pengantar-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPdf = async () => {
+    if (!selectedKk) return toast.error("Pilih KK terlebih dahulu");
+    const resident = selectedKk.members.find(
+      (m: Resident) => String(m.id) === String(form.residentId)
+    );
+    if (!resident) return toast.error("Pilih warga yang akan dibuatkan surat");
+    const ayah = selectedKk.members.find(
+      (m: Resident) => m.shdk === "Kepala Keluarga"
+    );
+    const ibu = selectedKk.members.find(
+      (m: Resident) => String(m.id) === String(form.ibuId)
+    );
+    if (!village) return toast.error("Data desa belum lengkap");
+    const doc = generateFormulirPengantarNikahN1(
+      form,
+      resident,
+      ayah,
+      ibu,
+      village
+    );
+    window.open(doc.output("bloburl"), "_blank");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "pengantar-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   // Ambil daftar ibu (istri) dari anggota KK
@@ -292,6 +336,9 @@ const CreatePengantarNikahLetter: React.FC = () => {
       <div className="flex space-x-2 mt-2">
         <Button type="button" variant="secondary" onClick={handleExportPdf}>
           Export PDF
+        </Button>
+        <Button type="button" variant="secondary" onClick={handlePrintPdf}>
+          Print PDF
         </Button>
         <Button
           type="button"

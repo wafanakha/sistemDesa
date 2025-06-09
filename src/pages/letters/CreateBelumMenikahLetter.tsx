@@ -18,11 +18,11 @@ const initialForm = {
   issuedDate: new Date().toISOString().slice(0, 10),
 };
 
-const exportBelumMenikahPDF = (
+const generatePDF = (
   resident: Resident,
   village: VillageInfo,
   issuedDate: string
-) => {
+): jsPDF => {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   let y = 20;
@@ -100,7 +100,7 @@ const exportBelumMenikahPDF = (
   doc.text(resident.name, 30, y, { align: "right" });
   doc.text(village.leaderName, pageWidth - 60, y);
 
-  doc.save("Surat-Pernyataan-Belum-Menikah.pdf");
+  return doc;
 };
 
 const CreateBelumMenikahLetter: React.FC = () => {
@@ -191,7 +191,7 @@ const CreateBelumMenikahLetter: React.FC = () => {
     }
   };
 
-  const handleExportPdf = async () => {
+  const handleExportPDF = async () => {
     const resident = residents.find(
       (r) => String(r.id) === String(form.residentId)
     );
@@ -200,7 +200,7 @@ const CreateBelumMenikahLetter: React.FC = () => {
       return;
     }
     try {
-      exportBelumMenikahPDF(
+      const doc = generatePDF(
         {
           ...resident,
           name: form.name,
@@ -215,9 +215,54 @@ const CreateBelumMenikahLetter: React.FC = () => {
         village,
         form.issuedDate
       );
+      doc.save("surat-keterangan-belum-menikah");
       toast.success("Surat berhasil diekspor ke PDF");
       const historyEntry: LetterHistory = {
-        name: form.nama,
+        name: resident.name,
+        letter: "belum-menikah", // Since this is the usaha letter component
+        date: new Date().toISOString(),
+      };
+
+      saveLetterHistory(historyEntry)
+        .then(() => {
+          console.log("Letter history saved");
+        })
+        .catch((error) => {
+          console.error("Failed to save letter history:", error);
+        });
+    } catch (error) {
+      toast.error("Gagal mengekspor surat ke PDF");
+    }
+  };
+
+  const handlePrintPDF = async () => {
+    const resident = residents.find(
+      (r) => String(r.id) === String(form.residentId)
+    );
+    if (!resident || !village) {
+      toast.error("Lengkapi data warga dan desa terlebih dahulu");
+      return;
+    }
+    try {
+      const doc = generatePDF(
+        {
+          ...resident,
+          name: form.name,
+          nik: form.nik,
+          birthPlace: form.birthPlace,
+          birthDate: form.birthDate,
+          gender: form.gender,
+          religion: form.religion,
+          occupation: form.occupation,
+          address: form.address,
+        },
+        village,
+        form.issuedDate
+      );
+      window.open(doc.output("bloburl"), "_blank");
+      toast.success("Surat berhasil diekspor ke PDF");
+      const historyEntry: LetterHistory = {
+        name: resident.name,
         letter: "belum-menikah", // Since this is the usaha letter component
         date: new Date().toISOString(),
       };
@@ -374,18 +419,14 @@ const CreateBelumMenikahLetter: React.FC = () => {
           required
         />
         <div className="md:col-span-2 flex space-x-2 mt-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setPreviewOpen(true)}
-          >
-            Preview
-          </Button>
-          <Button type="button" variant="secondary" onClick={handleExportPdf}>
+          <Button variant="primary" onClick={handleExportPDF}>
             Export PDF
           </Button>
-          <Button type="submit" variant="primary" isLoading={isSubmitting}>
-            Simpan
+          <Button variant="primary" onClick={handlePrintPDF}>
+            Print Surat
+          </Button>
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            Kembali
           </Button>
         </div>
       </form>

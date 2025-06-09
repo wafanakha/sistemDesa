@@ -83,21 +83,7 @@ function generatePermohonanKehendakNikahN2(form: any) {
   doc.text("Wassalam,", 150, y + 80);
   doc.text("Pemohon", 150, y + 84);
   doc.text(form.namaPemohon || "", 150, y + 110);
-  doc.save("permohonan_kehendak_nikah_n2.pdf");
-
-  const historyEntry: LetterHistory = {
-    name: form.nama,
-    letter: "permohonan-kehendak-nikah", // Since this is the usaha letter component
-    date: new Date().toISOString(),
-  };
-
-  saveLetterHistory(historyEntry)
-    .then(() => {
-      console.log("Letter history saved");
-    })
-    .catch((error) => {
-      console.error("Failed to save letter history:", error);
-    });
+  return doc;
 }
 
 const CreatePermohonanKehendakNikahLetter: React.FC = () => {
@@ -116,7 +102,43 @@ const CreatePermohonanKehendakNikahLetter: React.FC = () => {
   };
 
   const handleExportPdf = () => {
-    generatePermohonanKehendakNikahN2(form);
+    const doc = generatePermohonanKehendakNikahN2(form);
+
+    doc.save("permohonan_kehendak_nikah_n2.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "permohonan-kehendak-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPdf = () => {
+    const doc = generatePermohonanKehendakNikahN2(form);
+
+    window.open(doc.output("bloburl"), "_blank");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "permohonan-kehendak-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   return (
@@ -187,6 +209,9 @@ const CreatePermohonanKehendakNikahLetter: React.FC = () => {
           </Button>
           <Button type="button" variant="secondary" onClick={handleExportPdf}>
             Export PDF
+          </Button>
+          <Button type="button" variant="secondary" onClick={handlePrintPdf}>
+            Print PDF
           </Button>
         </div>
       </form>

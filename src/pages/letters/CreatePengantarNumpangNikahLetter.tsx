@@ -113,7 +113,7 @@ const CreatePengantarNumpangNikahLetter: React.FC<{
     setSearchResults([]);
   };
 
-  const handleExportPDF = () => {
+  const generatePDF = (): jsPDF => {
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     let y = 18;
     // Kop surat
@@ -244,7 +244,33 @@ const CreatePengantarNumpangNikahLetter: React.FC<{
       140,
       y + 26
     );
+    return doc;
+  };
+
+  const handleExportPDF = () => {
+    const doc = generatePDF();
+
     doc.save("pengantar-numpang-nikah.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "pengantar-numpang-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPDF = () => {
+    const doc = generatePDF();
+
+    window.open(doc.output("bloburl"), "_blank");
 
     const historyEntry: LetterHistory = {
       name: form.nama,
@@ -405,8 +431,8 @@ const CreatePengantarNumpangNikahLetter: React.FC<{
         <Button variant="secondary" onClick={() => navigate(-1)}>
           Kembali
         </Button>
-        <Button variant="outline" onClick={handleSaveLetter}>
-          Simpan Surat
+        <Button variant="outline" onClick={handlePrintPDF}>
+          Print Surat
         </Button>
       </div>
       <div className="bg-white p-8 border shadow max-w-[800px] mx-auto">

@@ -110,20 +110,7 @@ function generatePersetujuanCalonPengantinN4(form: any) {
   doc.text("Calon Isteri", 120, yStatement2 + 30);
   doc.text(form.namaSuami || "", 32, yStatement2 + 60);
   doc.text(form.namaIstri || "", 120, yStatement2 + 60);
-  doc.save("persetujuan_calon_pengantin_n4.pdf");
-  const historyEntry: LetterHistory = {
-    name: form.nama,
-    letter: "persetujuan-calon-pengantin", // Since this is the usaha letter component
-    date: new Date().toISOString(),
-  };
-
-  saveLetterHistory(historyEntry)
-    .then(() => {
-      console.log("Letter history saved");
-    })
-    .catch((error) => {
-      console.error("Failed to save letter history:", error);
-    });
+  return doc;
 }
 
 const CreatePersetujuanCalonPengantinLetter: React.FC = () => {
@@ -135,7 +122,41 @@ const CreatePersetujuanCalonPengantinLetter: React.FC = () => {
   };
 
   const handleExportPdf = () => {
-    generatePersetujuanCalonPengantinN4(form);
+    const doc = generatePersetujuanCalonPengantinN4(form);
+    doc.save("persetujuan_calon_pengantin_n4.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "persetujuan-calon-pengantin", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPdf = () => {
+    const doc = generatePersetujuanCalonPengantinN4(form);
+    window.open(doc.output("bloburl"), "_blank");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "persetujuan-calon-pengantin", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   return (
@@ -272,6 +293,9 @@ const CreatePersetujuanCalonPengantinLetter: React.FC = () => {
           </Button>
           <Button type="button" variant="secondary" onClick={handleExportPdf}>
             Export PDF
+          </Button>
+          <Button type="button" variant="secondary" onClick={handlePrintPdf}>
+            Print PDF
           </Button>
         </div>
       </form>

@@ -302,36 +302,6 @@ const CreateKeramaianLetter: React.FC<{
   };
 
   // Simpan surat ke database
-  const handleSaveLetter = async () => {
-    if (!form.residentId || isNaN(Number(form.residentId))) {
-      alert(
-        "Pilih warga dari daftar pencarian dan jangan edit manual nama/NIK!"
-      );
-      return;
-    }
-    const letterData = {
-      letterType: "keramaian",
-      title: "Surat Pengantar Ijin Keramaian",
-      content: JSON.stringify(form),
-      issuedDate: new Date(),
-      status: "draft" as const,
-      residentName: form.nama,
-      residentNik: form.nik,
-      residentId: form.residentId,
-      letterNumber: "",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    try {
-      await letterService.addLetter(letterData as any);
-      alert("Surat berhasil disimpan!");
-    } catch (err) {
-      alert(
-        "Gagal menyimpan surat: " + (err instanceof Error ? err.message : err)
-      );
-    }
-  };
-
   return (
     <div className="max-w-3xl mx-auto py-8">
       <h1 className="text-2xl font-bold mb-4 text-center text-teal-800">
