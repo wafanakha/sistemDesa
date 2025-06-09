@@ -187,14 +187,6 @@ const Dashboard: React.FC = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => {
-              useNavigate()(`letters/list`);
-            }}
-            className="flex items-center text-base font-medium text-teal-600 hover:text-teal-800 transition-colors"
-          >
-            Lihat Semua <ChevronRight className="ml-1" size={20} />
-          </button>
         </div>
         <div className="p-2">
           {isLoading ? (
