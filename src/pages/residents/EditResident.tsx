@@ -30,6 +30,17 @@ const EditResident: React.FC = () => {
     formState: { errors },
   } = useForm<Resident>();
 
+  const getAge = (birthDate: string): number => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   useEffect(() => {
     const loadData = async () => {
       if (!id) return;
@@ -122,6 +133,7 @@ const EditResident: React.FC = () => {
 
     try {
       const residentId = parseInt(id);
+      data.age = getAge(data.birthDate);
 
       // Update resident data
       await residentService.updateResident(residentId, data);
@@ -136,9 +148,9 @@ const EditResident: React.FC = () => {
           );
         }
       }
-
       toast.success("Data warga berhasil diperbarui");
       navigate(`/residents/view/${residentId}`);
+      window.location.reload();
     } catch (error) {
       console.error("Error updating resident:", error);
       if (error instanceof Error) {
@@ -243,17 +255,12 @@ const EditResident: React.FC = () => {
                   error={errors.birthDate?.message}
                   fullWidth
                 />
-                <Input
-                  label="Umur"
-                  type="number"
-                  {...register("age", { required: "Umur wajib diisi" })}
-                  error={errors.age?.message}
-                  fullWidth
-                />
               </div>
               <Input
                 label="Tempat Lahir"
-                {...register("birthPlace")}
+                {...register("birthPlace", {
+                  required: "Tempat Lahir wajib diisi",
+                })}
                 fullWidth
               />
               <Controller
@@ -282,13 +289,41 @@ const EditResident: React.FC = () => {
               </h3>
               <Input
                 label="No KK"
-                {...register("kk", { required: "No KK wajib diisi" })}
+                {...register("kk", {
+                  required: "nomor KK wajib diisi",
+                  minLength: { value: 16, message: "KK harus 16 digit" },
+                  maxLength: { value: 16, message: "KK harus 16 digit" },
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "KK hanya boleh berisi angka",
+                  },
+                })}
                 error={errors.kk?.message}
                 fullWidth
               />
               <div className="grid grid-cols-2 gap-3">
-                <Input label="RT" {...register("rt")} fullWidth />
-                <Input label="RW" {...register("rw")} fullWidth />
+                <Input
+                  label="RT"
+                  {...register("rt", {
+                    required: "nomor RT wajib diisi",
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "No RT hanya boleh berisi angka",
+                    },
+                  })}
+                  fullWidth
+                />
+                <Input
+                  label="RW"
+                  {...register("rw", {
+                    required: "nomor RW wajib diisi",
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "no RW hanya boleh berisi angka",
+                    },
+                  })}
+                  fullWidth
+                />
               </div>
               <Input
                 label="Alamat"
@@ -398,8 +433,8 @@ const EditResident: React.FC = () => {
                     <Select
                       label="Punya Akta Kawin?"
                       options={[
-                        { value: "true", label: "Ya" },
                         { value: "false", label: "Tidak" },
+                        { value: "true", label: "Ya" },
                       ]}
                       value={String(field.value)}
                       onChange={(val) => field.onChange(val === "true")}
@@ -421,8 +456,8 @@ const EditResident: React.FC = () => {
                     <Select
                       label="Punya Akta Cerai?"
                       options={[
-                        { value: "true", label: "Ya" },
                         { value: "false", label: "Tidak" },
+                        { value: "true", label: "Ya" },
                       ]}
                       value={String(field.value)}
                       onChange={(val) => field.onChange(val === "true")}
