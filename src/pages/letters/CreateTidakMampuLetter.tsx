@@ -7,7 +7,8 @@ import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface TidakMampuFormData {
   nama: string;
   nik: string;
@@ -225,6 +226,20 @@ const CreateTidakMampuLetter: React.FC<{
       { align: "right" }
     );
     doc.save("surat-tidak-mampu.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "poverty", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   return (
@@ -417,14 +432,11 @@ const CreateTidakMampuLetter: React.FC<{
         <div className="mb-2">
           Berdasakan Surat Keterangan dari Ketua Rukun Tetangga Nomor Tanggal,
           bahwa yang bersangkutan betul warga Desa Kedungwringin dan menurut
-          pengakuan yang bersangkutan keadaan ekonominya{" "}
-          <b>TIDAK MAMPU</b>.
+          pengakuan yang bersangkutan keadaan ekonominya <b>TIDAK MAMPU</b>.
         </div>
         <div className="mb-2">
           Surat keterangan ini diperlukan untuk{" "}
-          <span className="font-semibold">
-            {form.keperluan || "..."}
-          </span>
+          <span className="font-semibold">{form.keperluan || "..."}</span>
         </div>
         <div className="mb-2">
           Demikian Surat Keterangan ini kami buat atas permintaan yang

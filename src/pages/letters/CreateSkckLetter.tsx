@@ -7,7 +7,8 @@ import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface SkckFormData {
   nama: string;
   nik: string;
@@ -217,7 +218,12 @@ const CreateSkckLetter: React.FC<{
     doc.text(form.nama || "(................................)", 30, ttdY, {
       align: "center",
     });
-    doc.text(form.namaCamat || "(................................)", pageWidth / 2, ttdY, { align: "center" });
+    doc.text(
+      form.namaCamat || "(................................)",
+      pageWidth / 2,
+      ttdY,
+      { align: "center" }
+    );
     doc.text(
       villageInfo?.kasipemerintah?.trim()
         ? villageInfo.kasipemerintah
@@ -227,6 +233,20 @@ const CreateSkckLetter: React.FC<{
       { align: "right" }
     );
     doc.save("surat-skck.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "skck", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -521,7 +541,15 @@ const CreateSkckLetter: React.FC<{
               bersangkutan dan dapat dipergunakan sebagaimana mestinya.
             </p>
           </div>
-          <div className="footer-info" style={{ display: "flex", justifyContent: "center", marginTop: 20, marginBottom: 10 }}>
+          <div
+            className="footer-info"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 20,
+              marginBottom: 10,
+            }}
+          >
             <table>
               <tbody>
                 <tr>
@@ -537,40 +565,108 @@ const CreateSkckLetter: React.FC<{
               </tbody>
             </table>
           </div>
-          <div className="signature-block" style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
-            <div className="signature" style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}>
+          <div
+            className="signature-block"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: 20,
+            }}
+          >
+            <div
+              className="signature"
+              style={{
+                width: "30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: 180,
+              }}
+            >
               <p>Pemohon</p>
               <div style={{ marginTop: "auto" }}>
-                <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
+                <div
+                  className="ttd-space"
+                  style={{
+                    minHeight: 70,
+                    borderBottom: "1px solid transparent",
+                  }}
+                ></div>
                 <p>
-                  <strong>{form.nama || "(................................)"}</strong>
+                  <strong>
+                    {form.nama || "(................................)"}
+                  </strong>
                 </p>
               </div>
             </div>
-            <div className="signature" style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}>
+            <div
+              className="signature"
+              style={{
+                width: "30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: 180,
+              }}
+            >
               <div>
                 <p>Mengetahui,</p>
                 <p>Camat Patikreja</p>
               </div>
               <div style={{ marginTop: "auto" }}>
-                <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
+                <div
+                  className="ttd-space"
+                  style={{
+                    minHeight: 70,
+                    borderBottom: "1px solid transparent",
+                  }}
+                ></div>
                 <p>
-                  <strong>{form.namaCamat || "(................................)"}</strong>
+                  <strong>
+                    {form.namaCamat || "(................................)"}
+                  </strong>
                 </p>
               </div>
             </div>
-            <div className="signature" style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}>
+            <div
+              className="signature"
+              style={{
+                width: "30%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: 180,
+              }}
+            >
               <div className="compact" style={{ textAlign: "center" }}>
                 <p>
-                  Kedungwringin, {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}
+                  Kedungwringin,{" "}
+                  {new Date().toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
                 <p>An. KEPALA DESA KEDUNGWRINGIN</p>
                 <p>KASI PEMERINTAH</p>
               </div>
               <div style={{ marginTop: "auto" }}>
-                <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
+                <div
+                  className="ttd-space"
+                  style={{
+                    minHeight: 70,
+                    borderBottom: "1px solid transparent",
+                  }}
+                ></div>
                 <p>
-                  <strong>{villageInfo?.kasipemerintah?.trim() ? villageInfo.kasipemerintah : "(................................)"}</strong>
+                  <strong>
+                    {villageInfo?.kasipemerintah?.trim()
+                      ? villageInfo.kasipemerintah
+                      : "(................................)"}
+                  </strong>
                 </p>
               </div>
             </div>

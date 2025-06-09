@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Users, History, MapPin, ChevronRight, FileText } from "lucide-react";
+import {
+  Users,
+  History,
+  MapPin,
+  ChevronRight,
+  FileText,
+  User,
+} from "lucide-react";
 import { db } from "../database/db";
+import { Navigate, useNavigate } from "react-router-dom";
 import Card from "../components/ui/Card";
 import Table from "../components/ui/Table";
 import { VillageInfo } from "../types";
@@ -179,12 +187,14 @@ const Dashboard: React.FC = () => {
               </p>
             </div>
           </div>
-          <a
-            href="/letters/history"
+          <button
+            onClick={() => {
+              useNavigate()(`letters/list`);
+            }}
             className="flex items-center text-base font-medium text-teal-600 hover:text-teal-800 transition-colors"
           >
             Lihat Semua <ChevronRight className="ml-1" size={20} />
-          </a>
+          </button>
         </div>
         <div className="p-2">
           {isLoading ? (

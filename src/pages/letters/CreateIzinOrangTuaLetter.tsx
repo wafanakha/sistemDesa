@@ -4,7 +4,8 @@ import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
 import { residentService } from "../../database/residentService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 const initialForm = {
   ayahNama: "",
   ayahBin: "",
@@ -161,6 +162,19 @@ function generateSuratIzinOrangTuaN5(form: any) {
     291
   );
   doc.save("surat_izin_orang_tua_n5.pdf");
+  const historyEntry: LetterHistory = {
+    name: form.nama,
+    letter: "izin-orang-tua", // Since this is the usaha letter component
+    date: new Date().toISOString(),
+  };
+
+  saveLetterHistory(historyEntry)
+    .then(() => {
+      console.log("Letter history saved");
+    })
+    .catch((error) => {
+      console.error("Failed to save letter history:", error);
+    });
 }
 
 const CreateIzinOrangTuaLetter: React.FC = () => {
@@ -710,7 +724,9 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
             <div className="font-bold">Ayah/Wali/Pengampu</div>
             <div style={{ height: "50px" }}></div>
             <div className="font-bold underline">
-              {form.ayahTtd || form.ayahNama || "(................................)"}
+              {form.ayahTtd ||
+                form.ayahNama ||
+                "(................................)"}
             </div>
           </div>
           <div className="text-center">
@@ -718,13 +734,15 @@ const CreateIzinOrangTuaLetter: React.FC = () => {
             <div className="font-bold">Ibu/Wali/Pengampu</div>
             <div style={{ height: "50px" }}></div>
             <div className="font-bold underline">
-              {form.ibuTtd || form.ibuNama || "(................................)"}
+              {form.ibuTtd ||
+                form.ibuNama ||
+                "(................................)"}
             </div>
           </div>
         </div>
         <div className="text-xs mt-8">
-          Lampiran IX Keputusan Direktur Jendral Bimbingan Masyarakat Islam Nomor
-          473 Tahun 2020
+          Lampiran IX Keputusan Direktur Jendral Bimbingan Masyarakat Islam
+          Nomor 473 Tahun 2020
         </div>
       </div>
       <Modal

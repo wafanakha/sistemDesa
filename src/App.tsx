@@ -99,7 +99,7 @@ function App() {
             element={<MonografiUmur residents={residents} />}
           />
           {/* Letters */}
-          <Route path="letters" element={<LettersList />} />
+          <Route path="letters/list" element={<LettersList />} />
           <Route path="letters/create" element={<CreateLetter />} />
           <Route
             path="letters/create/keramaian"

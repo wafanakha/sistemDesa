@@ -6,6 +6,8 @@ import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 
 interface DomisiliFormData {
   nama: string;
@@ -186,6 +188,20 @@ const CreateDomisiliLetter: React.FC<{
       y
     );
     doc.save("surat-domisili.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "domicile",
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   return (
@@ -351,9 +367,7 @@ const CreateDomisiliLetter: React.FC<{
           >
             SURAT KETERANGAN DOMISILI TEMPAT TINGGAL
           </h2>
-          <p style={{ textAlign: "center" }}>
-            Nomor: 123/SKTM/[BULAN]/[TAHUN]
-          </p>
+          <p style={{ textAlign: "center" }}>Nomor: 123/SKTM/[BULAN]/[TAHUN]</p>
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin

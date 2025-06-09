@@ -3,7 +3,8 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 const initialForm = {
   calonSuami: "",
   calonIstri: "",
@@ -83,6 +84,20 @@ function generatePermohonanKehendakNikahN2(form: any) {
   doc.text("Pemohon", 150, y + 84);
   doc.text(form.namaPemohon || "", 150, y + 110);
   doc.save("permohonan_kehendak_nikah_n2.pdf");
+
+  const historyEntry: LetterHistory = {
+    name: form.nama,
+    letter: "permohonan-kehendak-nikah", // Since this is the usaha letter component
+    date: new Date().toISOString(),
+  };
+
+  saveLetterHistory(historyEntry)
+    .then(() => {
+      console.log("Letter history saved");
+    })
+    .catch((error) => {
+      console.error("Failed to save letter history:", error);
+    });
 }
 
 const CreatePermohonanKehendakNikahLetter: React.FC = () => {
@@ -179,8 +194,7 @@ const CreatePermohonanKehendakNikahLetter: React.FC = () => {
       <div className="bg-white p-6 border shadow max-w-[800px] mx-auto mb-8">
         <div className="text-right font-bold text-sm mb-2">Model N2</div>
         <div className="mb-2">
-          Perihal:{" "}
-          <span className="font-bold">Permohonan kehendak nikah</span>
+          Perihal: <span className="font-bold">Permohonan kehendak nikah</span>
         </div>
         <div className="mb-2 text-right">
           Kedungwiringin,{" "}

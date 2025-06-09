@@ -94,12 +94,12 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Surat",
-    path: "/letters",
+    path: "/",
     icon: <FileText size={20} />,
     submenu: [
       {
         title: "Daftar Surat",
-        path: "/letters",
+        path: "/letters/list",
       },
       {
         title: "Buat Surat",

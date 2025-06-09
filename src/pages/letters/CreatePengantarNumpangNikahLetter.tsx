@@ -7,7 +7,8 @@ import { Letter } from "../../types";
 import { letterService } from "../../database/letterService";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface PengantarNumpangNikahFormData {
   nama: string;
   tempatTanggalLahir: string;
@@ -244,6 +245,20 @@ const CreatePengantarNumpangNikahLetter: React.FC<{
       y + 26
     );
     doc.save("pengantar-numpang-nikah.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "pengantar-numpang-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   const handleSaveLetter = async () => {

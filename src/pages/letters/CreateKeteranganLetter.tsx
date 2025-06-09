@@ -6,7 +6,8 @@ import jsPDF from "jspdf";
 import logo from "../../../logo-bms.png";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface KeteranganFormData {
   nama: string;
   tempatLahir: string;
@@ -198,6 +199,19 @@ const CreateKeteranganLetter: React.FC = () => {
       { align: "right" }
     );
     doc.save("surat-keterangan.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "keramaian", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   // Pencarian warga
@@ -483,15 +497,29 @@ const CreateKeteranganLetter: React.FC = () => {
         </div>
         <div
           className="signature-block"
-          style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
         >
           <div
             className="signature"
-            style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}
+            style={{
+              width: "30%",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              minHeight: 180,
+            }}
           >
             <p>Pemohon</p>
             <div style={{ marginTop: "auto" }}>
-              <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
+              <div
+                className="ttd-space"
+                style={{ minHeight: 70, borderBottom: "1px solid transparent" }}
+              ></div>
               <p>
                 <strong>{form.nama}</strong>
               </p>
@@ -499,16 +527,37 @@ const CreateKeteranganLetter: React.FC = () => {
           </div>
           <div
             className="signature"
-            style={{ width: "30%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 180 }}
+            style={{
+              width: "30%",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              minHeight: 180,
+            }}
           >
             <div className="compact" style={{ textAlign: "center" }}>
-              <p>Kedungwringin, {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}</p>
+              <p>
+                Kedungwringin,{" "}
+                {new Date().toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
               <p>KASI PEMERINTAH</p>
             </div>
             <div style={{ marginTop: "auto" }}>
-              <div className="ttd-space" style={{ minHeight: 70, borderBottom: "1px solid transparent" }}></div>
+              <div
+                className="ttd-space"
+                style={{ minHeight: 70, borderBottom: "1px solid transparent" }}
+              ></div>
               <p>
-                <strong>{villageInfo?.kasipemerintah?.trim() ? villageInfo.kasipemerintah : "(................................)"}</strong>
+                <strong>
+                  {villageInfo?.kasipemerintah?.trim()
+                    ? villageInfo.kasipemerintah
+                    : "(................................)"}
+                </strong>
               </p>
             </div>
           </div>

@@ -9,7 +9,8 @@ import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
 import { toast } from "react-toastify";
 import { Resident, VillageInfo } from "../../types";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 const initialForm = {
   kk: "",
   residentId: "",
@@ -147,6 +148,19 @@ function generateFormulirPengantarNikahN1(
   doc.text("Kepala Desa Kedungwiringin", 130, y + 190);
   doc.text(village.leaderName || "", 140, y + 210);
   doc.save("formulir_pengantar_nikah_n1.pdf");
+  const historyEntry: LetterHistory = {
+    name: form.nama,
+    letter: "pengantar-nikah", // Since this is the usaha letter component
+    date: new Date().toISOString(),
+  };
+
+  saveLetterHistory(historyEntry)
+    .then(() => {
+      console.log("Letter history saved");
+    })
+    .catch((error) => {
+      console.error("Failed to save letter history:", error);
+    });
 }
 
 const CreatePengantarNikahLetter: React.FC = () => {
@@ -288,72 +302,208 @@ const CreatePengantarNikahLetter: React.FC = () => {
         </Button>
       </div>
       {/* Preview Surat Pengantar Nikah (N1) */}
-      {selectedKk && form.residentId && village && (
+      {selectedKk &&
+        form.residentId &&
+        village &&
         (() => {
-          const resident = selectedKk.members.find((m: Resident) => String(m.id) === String(form.residentId));
-          const ayah = selectedKk.members.find((m: Resident) => m.shdk === "Kepala Keluarga");
-          const ibu = selectedKk.members.find((m: Resident) => String(m.id) === String(form.ibuId));
+          const resident = selectedKk.members.find(
+            (m: Resident) => String(m.id) === String(form.residentId)
+          );
+          const ayah = selectedKk.members.find(
+            (m: Resident) => m.shdk === "Kepala Keluarga"
+          );
+          const ibu = selectedKk.members.find(
+            (m: Resident) => String(m.id) === String(form.ibuId)
+          );
           return (
             <div className="bg-white p-6 border shadow max-w-[800px] mx-auto mb-8 mt-6">
-              <div className="text-center font-bold text-lg mb-2">FORMULIR PENGANTAR NIKAH</div>
+              <div className="text-center font-bold text-lg mb-2">
+                FORMULIR PENGANTAR NIKAH
+              </div>
               <div className="text-center text-sm mb-2">Model N1</div>
               <div className="mb-2">KANTOR DESA/KEL: {village.name}</div>
               <div className="mb-2">KECAMATAN: {village.districtName}</div>
               <div className="mb-2">KABUPATEN: {village.regencyName}</div>
-              <div className="mb-4">Yang bertanda tangan di bawah ini menerangkan dengan sesungguhnya bahwa:</div>
+              <div className="mb-4">
+                Yang bertanda tangan di bawah ini menerangkan dengan
+                sesungguhnya bahwa:
+              </div>
               <table className="mb-2">
                 <tbody>
-                  <tr><td>1. Nama</td><td>:</td><td>{resident.name}</td></tr>
-                  <tr><td>2. NIK</td><td>:</td><td>{resident.nik}</td></tr>
-                  <tr><td>3. Jenis Kelamin</td><td>:</td><td>{resident.gender}</td></tr>
-                  <tr><td>4. Tempat & Tanggal Lahir</td><td>:</td><td>{resident.birthPlace}, {resident.birthDate}</td></tr>
-                  <tr><td>5. Kewarganegaraan</td><td>:</td><td>{resident.nationality || '-'}</td></tr>
-                  <tr><td>6. Agama</td><td>:</td><td>{resident.religion}</td></tr>
-                  <tr><td>7. Pekerjaan</td><td>:</td><td>{resident.occupation}</td></tr>
-                  <tr><td>8. Alamat</td><td>:</td><td>{resident.address}</td></tr>
-                  <tr><td>9. Status Perkawinan</td><td>:</td><td>{resident.maritalStatus}</td></tr>
+                  <tr>
+                    <td>1. Nama</td>
+                    <td>:</td>
+                    <td>{resident.name}</td>
+                  </tr>
+                  <tr>
+                    <td>2. NIK</td>
+                    <td>:</td>
+                    <td>{resident.nik}</td>
+                  </tr>
+                  <tr>
+                    <td>3. Jenis Kelamin</td>
+                    <td>:</td>
+                    <td>{resident.gender}</td>
+                  </tr>
+                  <tr>
+                    <td>4. Tempat & Tanggal Lahir</td>
+                    <td>:</td>
+                    <td>
+                      {resident.birthPlace}, {resident.birthDate}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5. Kewarganegaraan</td>
+                    <td>:</td>
+                    <td>{resident.nationality || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>6. Agama</td>
+                    <td>:</td>
+                    <td>{resident.religion}</td>
+                  </tr>
+                  <tr>
+                    <td>7. Pekerjaan</td>
+                    <td>:</td>
+                    <td>{resident.occupation}</td>
+                  </tr>
+                  <tr>
+                    <td>8. Alamat</td>
+                    <td>:</td>
+                    <td>{resident.address}</td>
+                  </tr>
+                  <tr>
+                    <td>9. Status Perkawinan</td>
+                    <td>:</td>
+                    <td>{resident.maritalStatus}</td>
+                  </tr>
                 </tbody>
               </table>
-              <div className="mb-2">a. Laki-laki: Jejaka / Duda / beristri ke: {resident.gender === "Laki-laki" ? (resident.maritalStatus === "Belum Kawin" ? "Jejaka" : "Duda") : "-"}</div>
-              <div className="mb-2">b. Perempuan: Perawan / Janda: {resident.gender === "Perempuan" ? (resident.maritalStatus === "Belum Kawin" ? "Perawan" : "Janda") : "-"}</div>
-              <div className="mb-2">Adalah benar anak dari pernikahan seorang pria:</div>
+              <div className="mb-2">
+                a. Laki-laki: Jejaka / Duda / beristri ke:{" "}
+                {resident.gender === "Laki-laki"
+                  ? resident.maritalStatus === "Belum Kawin"
+                    ? "Jejaka"
+                    : "Duda"
+                  : "-"}
+              </div>
+              <div className="mb-2">
+                b. Perempuan: Perawan / Janda:{" "}
+                {resident.gender === "Perempuan"
+                  ? resident.maritalStatus === "Belum Kawin"
+                    ? "Perawan"
+                    : "Janda"
+                  : "-"}
+              </div>
+              <div className="mb-2">
+                Adalah benar anak dari pernikahan seorang pria:
+              </div>
               <table className="mb-2">
                 <tbody>
-                  <tr><td>Nama lengkap dan alias</td><td>:</td><td>{ayah?.name || "-"}</td></tr>
-                  <tr><td>NIK</td><td>:</td><td>{ayah?.nik || "-"}</td></tr>
-                  <tr><td>Tempat & Tanggal Lahir</td><td>:</td><td>{ayah ? ayah.birthPlace + ", " + ayah.birthDate : "-"}</td></tr>
-                  <tr><td>Kewarganegaraan</td><td>:</td><td>{ayah?.nationality || "-"}</td></tr>
-                  <tr><td>Agama</td><td>:</td><td>{ayah?.religion || "-"}</td></tr>
-                  <tr><td>Pekerjaan</td><td>:</td><td>{ayah?.occupation || "-"}</td></tr>
-                  <tr><td>Alamat</td><td>:</td><td>{ayah?.address || "-"}</td></tr>
+                  <tr>
+                    <td>Nama lengkap dan alias</td>
+                    <td>:</td>
+                    <td>{ayah?.name || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>NIK</td>
+                    <td>:</td>
+                    <td>{ayah?.nik || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Tempat & Tanggal Lahir</td>
+                    <td>:</td>
+                    <td>
+                      {ayah ? ayah.birthPlace + ", " + ayah.birthDate : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Kewarganegaraan</td>
+                    <td>:</td>
+                    <td>{ayah?.nationality || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Agama</td>
+                    <td>:</td>
+                    <td>{ayah?.religion || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Pekerjaan</td>
+                    <td>:</td>
+                    <td>{ayah?.occupation || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Alamat</td>
+                    <td>:</td>
+                    <td>{ayah?.address || "-"}</td>
+                  </tr>
                 </tbody>
               </table>
               <div className="mb-2">Dengan seorang wanita:</div>
               <table className="mb-2">
                 <tbody>
-                  <tr><td>Nama lengkap dan alias</td><td>:</td><td>{ibu?.name || "-"}</td></tr>
-                  <tr><td>NIK</td><td>:</td><td>{ibu?.nik || "-"}</td></tr>
-                  <tr><td>Tempat & Tanggal Lahir</td><td>:</td><td>{ibu ? ibu.birthPlace + ", " + ibu.birthDate : "-"}</td></tr>
-                  <tr><td>Kewarganegaraan</td><td>:</td><td>{ibu?.nationality || "-"}</td></tr>
-                  <tr><td>Agama</td><td>:</td><td>{ibu?.religion || "-"}</td></tr>
-                  <tr><td>Pekerjaan</td><td>:</td><td>{ibu?.occupation || "-"}</td></tr>
-                  <tr><td>Alamat</td><td>:</td><td>{ibu?.address || "-"}</td></tr>
+                  <tr>
+                    <td>Nama lengkap dan alias</td>
+                    <td>:</td>
+                    <td>{ibu?.name || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>NIK</td>
+                    <td>:</td>
+                    <td>{ibu?.nik || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Tempat & Tanggal Lahir</td>
+                    <td>:</td>
+                    <td>{ibu ? ibu.birthPlace + ", " + ibu.birthDate : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Kewarganegaraan</td>
+                    <td>:</td>
+                    <td>{ibu?.nationality || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Agama</td>
+                    <td>:</td>
+                    <td>{ibu?.religion || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Pekerjaan</td>
+                    <td>:</td>
+                    <td>{ibu?.occupation || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Alamat</td>
+                    <td>:</td>
+                    <td>{ibu?.address || "-"}</td>
+                  </tr>
                 </tbody>
               </table>
-              <div className="mb-4">Demikianlah, surat pengantar ini dibuat dengan mengingat sumpah jabatan dan untuk dipergunakan sebagaimana mestinya.</div>
+              <div className="mb-4">
+                Demikianlah, surat pengantar ini dibuat dengan mengingat sumpah
+                jabatan dan untuk dipergunakan sebagaimana mestinya.
+              </div>
               <div className="flex justify-end mt-8">
                 <div className="text-center">
-                  <div>Kedungwiringin, {form.issuedDate && new Date(form.issuedDate).toLocaleDateString("id-ID")}</div>
+                  <div>
+                    Kedungwiringin,{" "}
+                    {form.issuedDate &&
+                      new Date(form.issuedDate).toLocaleDateString("id-ID")}
+                  </div>
                   <div className="font-bold">Kepala Desa {village.name}</div>
-                  <div style={{ height: '60px' }}></div>
-                  <div className="font-bold underline">{village.leaderName || "(................................)"}</div>
+                  <div style={{ height: "60px" }}></div>
+                  <div className="font-bold underline">
+                    {village.leaderName || "(................................)"}
+                  </div>
                 </div>
               </div>
-              <div className="text-xs mt-8">Lampiran X Keputusan Direktur Jendral Bimbingan Masyarakat Islam Nomor 473 Tahun 2020</div>
+              <div className="text-xs mt-8">
+                Lampiran X Keputusan Direktur Jendral Bimbingan Masyarakat Islam
+                Nomor 473 Tahun 2020
+              </div>
             </div>
           );
-        })()
-      )}
+        })()}
       <Modal
         isOpen={previewOpen}
         onClose={() => setPreviewOpen(false)}

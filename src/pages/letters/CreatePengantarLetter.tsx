@@ -7,7 +7,8 @@ import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface PengantarFormData {
   nama: string;
   nik: string;
@@ -137,7 +138,9 @@ const CreatePengantarLetter: React.FC<{
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(
-      `Nomor: ${form.letterNumber || "........................................"}`,
+      `Nomor: ${
+        form.letterNumber || "........................................"
+      }`,
       pageWidth / 2,
       y,
       { align: "center" }
@@ -218,6 +221,19 @@ const CreatePengantarLetter: React.FC<{
       { align: "right" }
     );
     doc.save("surat-pengantar.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "pengantar", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   return (
@@ -354,7 +370,8 @@ const CreatePengantarLetter: React.FC<{
         <div className="text-center mt-4 mb-2">
           <div className="font-bold underline text-lg">SURAT PENGANTAR</div>
           <div className="text-sm">
-            Nomor: {form.letterNumber || "........................................"}
+            Nomor:{" "}
+            {form.letterNumber || "........................................"}
           </div>
         </div>
         <div className="mb-2">
@@ -408,9 +425,7 @@ const CreatePengantarLetter: React.FC<{
         <div className="mb-2">
           Adalah benar warga Desa Kedungwringin dan surat ini dibuat untuk
           keperluan:{" "}
-          <span className="font-semibold">
-            {form.keperluan || "..."}
-          </span>
+          <span className="font-semibold">{form.keperluan || "..."}</span>
         </div>
         <div className="mb-2">
           Demikian surat pengantar ini dibuat untuk dapat dipergunakan

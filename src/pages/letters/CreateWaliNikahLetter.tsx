@@ -5,7 +5,8 @@ import jsPDF from "jspdf";
 import { Letter } from "../../types";
 import { letterService } from "../../database/letterService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface WaliNikahFormData {
   waliNama: string;
   waliTempatTanggalLahir: string;
@@ -99,7 +100,11 @@ const CreateWaliNikahLetter: React.FC<{
     y += 5;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    doc.text(`Nomor : ${letterNumber || "........................................"}`, 60, y);
+    doc.text(
+      `Nomor : ${letterNumber || "........................................"}`,
+      60,
+      y
+    );
     y += 7;
     doc.text(
       "     Yang bertanda tangan di bawah ini kami Kepala Desa Kedungwringin Kecamatan Patikraja",
@@ -189,11 +194,26 @@ const CreateWaliNikahLetter: React.FC<{
     doc.text("Kepala Desa Kedungwringin", 140, y);
     y += 30;
     doc.text(
-      kepalaDesa || villageInfo?.leaderName || "(................................)",
+      kepalaDesa ||
+        villageInfo?.leaderName ||
+        "(................................)",
       140,
       y
     );
     doc.save("surat-wali-nikah.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.waliNama,
+      letter: "wali-nikah", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   const handleSaveLetter = async () => {
@@ -311,14 +331,18 @@ const CreateWaliNikahLetter: React.FC<{
         <input
           name="letterNumber"
           value={letterNumber}
-          onChange={e => setLetterNumber(e.target.value)}
+          onChange={(e) => setLetterNumber(e.target.value)}
           placeholder="Nomor Surat"
           className="input"
         />
         <input
           name="kepalaDesa"
-          value={kepalaDesa === "" && villageInfo?.leaderName ? villageInfo.leaderName : kepalaDesa}
-          onChange={e => setKepalaDesa(e.target.value)}
+          value={
+            kepalaDesa === "" && villageInfo?.leaderName
+              ? villageInfo.leaderName
+              : kepalaDesa
+          }
+          onChange={(e) => setKepalaDesa(e.target.value)}
           placeholder="Nama Kepala Desa"
           className="input"
         />
@@ -456,7 +480,11 @@ const CreateWaliNikahLetter: React.FC<{
               <p>Kepala Desa Kedungwringin</p>
               <div style={{ minHeight: 70 }}></div>
               <p>
-                <strong>{kepalaDesa || villageInfo?.leaderName || "(................................)"}</strong>
+                <strong>
+                  {kepalaDesa ||
+                    villageInfo?.leaderName ||
+                    "(................................)"}
+                </strong>
               </p>
             </div>
           </div>

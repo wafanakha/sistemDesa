@@ -6,7 +6,8 @@ import logo from "../../../logo-bms.png";
 import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface UsahaFormData {
   nama: string;
   nik: string;
@@ -210,6 +211,19 @@ const CreateUsahaLetter: React.FC<{
       { align: "right" }
     );
     doc.save("surat-usaha.pdf");
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "business", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
   };
 
   // Pencarian warga

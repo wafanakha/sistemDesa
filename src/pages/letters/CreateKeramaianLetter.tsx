@@ -7,7 +7,8 @@ import { Letter } from "../../types";
 import { residentService } from "../../database/residentService";
 import { letterService } from "../../database/letterService";
 import { villageService } from "../../database/villageService";
-
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 interface KeramaianFormData {
   nama: string;
   nik: string;
@@ -74,7 +75,13 @@ const CreateKeramaianLetter: React.FC<{
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value, ...(e.target.name === 'nama' || e.target.name === 'nik' ? { residentId: undefined } : {}) });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+      ...(e.target.name === "nama" || e.target.name === "nik"
+        ? { residentId: undefined }
+        : {}),
+    });
   };
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +113,7 @@ const CreateKeramaianLetter: React.FC<{
     setSearchResults([]);
   };
 
-  const handleExportPDF = () => {
+  const generatePDF = (): jsPDF => {
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth() + 10;
     let y = 18;
@@ -254,13 +261,52 @@ const CreateKeramaianLetter: React.FC<{
       pageWidth - 70,
       ttdY + 35
     );
+    return doc;
+  };
+
+  const handleExportPDF = () => {
+    const doc = generatePDF();
     doc.save("surat-keramaian.pdf");
+
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "keramaian", // Since this is the usaha letter component
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => {
+        console.log("Letter history saved");
+      })
+      .catch((error) => {
+        console.error("Failed to save letter history:", error);
+      });
+  };
+
+  const handlePrintPDF = () => {
+    const doc = generatePDF();
+
+    // For Electron environment
+    window.open(doc.output("bloburl"), "_blank");
+
+    // Also save history
+    const historyEntry: LetterHistory = {
+      name: form.nama,
+      letter: "keramaian",
+      date: new Date().toISOString(),
+    };
+
+    saveLetterHistory(historyEntry)
+      .then(() => console.log("Letter history saved"))
+      .catch((error) => console.error("Failed to save letter history:", error));
   };
 
   // Simpan surat ke database
   const handleSaveLetter = async () => {
     if (!form.residentId || isNaN(Number(form.residentId))) {
-      alert("Pilih warga dari daftar pencarian dan jangan edit manual nama/NIK!");
+      alert(
+        "Pilih warga dari daftar pencarian dan jangan edit manual nama/NIK!"
+      );
       return;
     }
     const letterData = {
@@ -424,15 +470,17 @@ const CreateKeramaianLetter: React.FC<{
         />
       </form>
       <div className="flex gap-2 mb-6">
-        <Button variant="primary" onClick={handleExportPDF}>
-          Export PDF
-        </Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>
-          Kembali
-        </Button>
-        <Button variant="outline" onClick={handleSaveLetter}>
-          Simpan Surat
-        </Button>
+        <div className="flex gap-2 mb-6">
+          <Button variant="primary" onClick={handleExportPDF}>
+            Export PDF
+          </Button>
+          <Button variant="primary" onClick={handlePrintPDF}>
+            Print Surat
+          </Button>
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            Kembali
+          </Button>
+        </div>
       </div>
       <div
         id="keramaian-preview"

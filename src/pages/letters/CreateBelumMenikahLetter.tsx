@@ -10,6 +10,8 @@ import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import { toast } from "react-toastify";
 import jsPDF from "jspdf";
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 
 const initialForm = {
   residentId: "",
@@ -214,6 +216,19 @@ const CreateBelumMenikahLetter: React.FC = () => {
         form.issuedDate
       );
       toast.success("Surat berhasil diekspor ke PDF");
+      const historyEntry: LetterHistory = {
+        name: form.nama,
+        letter: "belum-menikah", // Since this is the usaha letter component
+        date: new Date().toISOString(),
+      };
+
+      saveLetterHistory(historyEntry)
+        .then(() => {
+          console.log("Letter history saved");
+        })
+        .catch((error) => {
+          console.error("Failed to save letter history:", error);
+        });
     } catch (error) {
       toast.error("Gagal mengekspor surat ke PDF");
     }

@@ -3,6 +3,8 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import jsPDF from "jspdf";
+import { LetterHistory } from "../../types";
+import { saveLetterHistory } from "../../services/residentService";
 
 const initialForm = {
   namaSuami: "",
@@ -109,6 +111,19 @@ function generatePersetujuanCalonPengantinN4(form: any) {
   doc.text(form.namaSuami || "", 32, yStatement2 + 60);
   doc.text(form.namaIstri || "", 120, yStatement2 + 60);
   doc.save("persetujuan_calon_pengantin_n4.pdf");
+  const historyEntry: LetterHistory = {
+    name: form.nama,
+    letter: "persetujuan-calon-pengantin", // Since this is the usaha letter component
+    date: new Date().toISOString(),
+  };
+
+  saveLetterHistory(historyEntry)
+    .then(() => {
+      console.log("Letter history saved");
+    })
+    .catch((error) => {
+      console.error("Failed to save letter history:", error);
+    });
 }
 
 const CreatePersetujuanCalonPengantinLetter: React.FC = () => {
