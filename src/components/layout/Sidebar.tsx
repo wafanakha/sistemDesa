@@ -98,7 +98,7 @@ const menuItems: MenuItem[] = [
     icon: <FileText size={20} />,
     submenu: [
       {
-        title: "Daftar Surat",
+        title: "Riwayat Surat",
         path: "/letters/list",
       },
       {

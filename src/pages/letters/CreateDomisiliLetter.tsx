@@ -106,11 +106,11 @@ const CreateDomisiliLetter: React.FC<{
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text("PEMERINTAHAN DESA KEDUNGWRINGIN", 105, 15, { align: "center" });
-    doc.text("KECAMATAN PATIKREJA KABUPATEN BANYUMAS", 105, 22, {
+    doc.text("KECAMATAN PATIKRAJA KABUPATEN BANYUMAS", 105, 22, {
       align: "center",
     });
     doc.setFontSize(10);
-    doc.text("SEKERTARIAT DESA", 105, 28, { align: "center" });
+    doc.text("SEKRETARIAT DESA", 105, 28, { align: "center" });
     doc.text(
       "Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171",
       105,
@@ -133,7 +133,7 @@ const CreateDomisiliLetter: React.FC<{
     );
     doc.setFont("helvetica", "normal");
     doc.text(
-      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
       15,
       70,
       { maxWidth: 180 }
@@ -170,7 +170,7 @@ const CreateDomisiliLetter: React.FC<{
         form.rtDate
           ? new Date(form.rtDate).toLocaleDateString("id-ID")
           : "Tanggal"
-      }, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
+      }, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
       15,
       y,
       { maxWidth: 180 }
@@ -413,10 +413,10 @@ const CreateDomisiliLetter: React.FC<{
                 PEMERINTAHAN DESA KEDUNGWRINGIN
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
-                KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+                KECAMATAN PATIKRAJA KABUPATEN BANYUMAS
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
-                SEKERTARIAT DESA
+                SEKRETARIAT DESA
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
                 Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171
@@ -443,7 +443,7 @@ const CreateDomisiliLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -506,7 +506,7 @@ const CreateDomisiliLetter: React.FC<{
                 ? new Date(form.rtDate).toLocaleDateString("id-ID")
                 : "Tanggal"}
               , bahwa yang bersangkutan benar penduduk Desa Kedungwringin
-              Kecamatan Patikreja Kabupaten Banyumas yang beralamat pada alamat
+              Kecamatan PATIKRAJA Kabupaten Banyumas yang beralamat pada alamat
               tersebut diatas, surat ini dibuat untuk keperluan administrasi.
             </p>
             <p>

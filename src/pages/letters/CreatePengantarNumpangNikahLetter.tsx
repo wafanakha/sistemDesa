@@ -490,7 +490,7 @@ const CreatePengantarNumpangNikahLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>

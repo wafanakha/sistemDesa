@@ -417,9 +417,9 @@ const CreateAhliWarisLetter: React.FC = () => {
           <div className="text-center w-full">
             <div className="font-bold">PEMERINTAHAN DESA KEDUNGWRINGIN</div>
             <div className="font-bold">
-              KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+              KECAMATAN PATIKRAJA KABUPATEN BANYUMAS
             </div>
-            <div className="font-bold">SEKERTARIAT DESA</div>
+            <div className="font-bold">SEKRETARIAT DESA</div>
             <div className="font-bold">
               Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171
             </div>

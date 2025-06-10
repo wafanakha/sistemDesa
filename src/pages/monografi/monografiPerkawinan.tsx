@@ -49,7 +49,7 @@ const MonografiStatusPernikahan = ({
     // Title with underline
     doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN AGAMA";
+    const title = "REKAPITULASI JUMLAH PENDUDUK BERDASARKAN STATUS PERNIKAHAN";
     const titleY = 34;
 
     doc.text(title, pageWidth / 2, titleY, { align: "center" });

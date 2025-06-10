@@ -107,7 +107,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
     pdf.text("PEMERINTAHAN DESA KEDUNGWRINGIN", 105, y + 5, {
       align: "center",
     });
-    pdf.text("KECAMATAN PATIKREJA KABUPATEN BANYUMAS", 105, y + 10, {
+    pdf.text("KECAMATAN PATIKRAJA KABUPATEN BANYUMAS", 105, y + 10, {
       align: "center",
     });
     pdf.text("SEKRETARIAT DESA", 105, y + 15, { align: "center" });
@@ -145,7 +145,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
     // Introduction
     pdf.setFontSize(10);
     pdf.text(
-      `     Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas`,
+      `     Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas`,
       margin,
       y
     );
@@ -222,7 +222,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
 
     // Signatures
     pdf.text("Mengetahui,", margin, y);
-    pdf.text("Camat Patikreja", margin, y + 5);
+    pdf.text("Camat PATIKRAJA", margin, y + 5);
     pdf.text(form.namaCamat || "[Nama Camat]", margin, y + 35);
     pdf.text(
       "Kedungwringin, " +
@@ -543,10 +543,10 @@ const CreateDomisiliUsahaLetter: React.FC<{
                 PEMERINTAHAN DESA KEDUNGWRINGIN
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
-                KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+                KECAMATAN PATIKRAJA KABUPATEN BANYUMAS
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
-                SEKERTARIAT DESA
+                SEKRETARIAT DESA
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
                 Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171
@@ -573,7 +573,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -723,7 +723,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
             >
               <div>
                 <p>Mengetahui,</p>
-                <p>Camat Patikreja</p>
+                <p>Camat PATIKRAJA</p>
               </div>
               <div style={{ marginTop: "auto" }}>
                 <div

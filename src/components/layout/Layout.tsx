@@ -42,7 +42,7 @@ const Layout: React.FC = () => {
         <main className="ml-64 w-full p-4">
           <Navbar onToggleSidebar={toggleSidebar} isMobile={isMobile} />
 
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-6 w-full max-w-[calc(100vw-18rem)] overflow-x-auto">
             <Outlet />
           </div>
 

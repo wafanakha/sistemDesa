@@ -96,12 +96,12 @@ const CreateSkckLetter: React.FC<{
       align: "center",
     });
     y += 7;
-    doc.text("KECAMATAN PATIKREJA KABUPATEN BANYUMAS", pageWidth / 2, y, {
+    doc.text("KECAMATAN PATIKRAJA KABUPATEN BANYUMAS", pageWidth / 2, y, {
       align: "center",
     });
     y += 7;
     doc.setFontSize(10);
-    doc.text("SEKERTARIAT DESA", pageWidth / 2, y, { align: "center" });
+    doc.text("SEKRETARIAT DESA", pageWidth / 2, y, { align: "center" });
     y += 7;
     doc.text(
       "Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171",
@@ -137,7 +137,7 @@ const CreateSkckLetter: React.FC<{
     y += 8;
     // Pembuka
     doc.text(
-      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
       15,
       y,
       { maxWidth: pageWidth - 30 }
@@ -215,7 +215,7 @@ const CreateSkckLetter: React.FC<{
     doc.text("Pemohon", 30, ttdY);
     // Camat tengah
     doc.text("Mengetahui,", pageWidth / 2, ttdY, { align: "center" });
-    doc.text("Camat Patikreja", pageWidth / 2, ttdY + 6, { align: "center" });
+    doc.text("Camat PATIKRAJA", pageWidth / 2, ttdY + 6, { align: "center" });
     // Pejabat kanan
     doc.text(
       `Kedungwringin, ${new Date().toLocaleDateString("id-ID", {
@@ -520,10 +520,10 @@ const CreateSkckLetter: React.FC<{
                 PEMERINTAHAN DESA KEDUNGWRINGIN
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
-                KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+                KECAMATAN PATIKRAJA KABUPATEN BANYUMAS
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
-                SEKERTARIAT DESA
+                SEKRETARIAT DESA
               </div>
               <div className="bold" style={{ fontWeight: "bold" }}>
                 Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171
@@ -550,7 +550,7 @@ const CreateSkckLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan Patikreja Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -695,7 +695,7 @@ const CreateSkckLetter: React.FC<{
             >
               <div>
                 <p>Mengetahui,</p>
-                <p>Camat Patikreja</p>
+                <p>Camat PATIKRAJA</p>
               </div>
               <div style={{ marginTop: "auto" }}>
                 <div

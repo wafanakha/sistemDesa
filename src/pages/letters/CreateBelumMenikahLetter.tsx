@@ -544,10 +544,10 @@ const CreateBelumMenikahLetter: React.FC = () => {
                     PEMERINTAHAN DESA KEDUNGWRINGIN
                   </div>
                   <div className="bold" style={{ fontWeight: "bold" }}>
-                    KECAMATAN PATIKREJA KABUPATEN BANYUMAS
+                    KECAMATAN PATIKRAJA KABUPATEN BANYUMAS
                   </div>
                   <div className="bold" style={{ fontWeight: "bold" }}>
-                    SEKERTARIAT DESA
+                    SEKRETARIAT DESA
                   </div>
                   <div className="bold" style={{ fontWeight: "bold" }}>
                     Jl. Raya Kedungwringin No. 1 Kedungwringin Kode Pos 53171

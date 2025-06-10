@@ -339,7 +339,7 @@ const MonografiUmur = ({ residents }: { residents: Resident[] }) => {
                 RW {rw.padStart(3, "0")}
               </h2>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-scroll">
               <table className="min-w-full divide-y divide-gray-200 text-sm">
                 <thead className="bg-gray-50">
                   <tr>

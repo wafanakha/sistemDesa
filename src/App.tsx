@@ -49,7 +49,6 @@ function App() {
 
   useEffect(() => {
     getAllResidents().then(setResidents);
-    seedResidents();
   }, []);
 
   return (
