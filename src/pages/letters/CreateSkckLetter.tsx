@@ -137,7 +137,7 @@ const CreateSkckLetter: React.FC<{
     y += 8;
     // Pembuka
     doc.text(
-      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
       15,
       y,
       { maxWidth: pageWidth - 30 }
@@ -215,7 +215,7 @@ const CreateSkckLetter: React.FC<{
     doc.text("Pemohon", 30, ttdY);
     // Camat tengah
     doc.text("Mengetahui,", pageWidth / 2, ttdY, { align: "center" });
-    doc.text("Camat PATIKRAJA", pageWidth / 2, ttdY + 6, { align: "center" });
+    doc.text("Camat Patikraja", pageWidth / 2, ttdY + 6, { align: "center" });
     // Pejabat kanan
     doc.text(
       `Kedungwringin, ${new Date().toLocaleDateString("id-ID", {
@@ -550,7 +550,7 @@ const CreateSkckLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -695,7 +695,7 @@ const CreateSkckLetter: React.FC<{
             >
               <div>
                 <p>Mengetahui,</p>
-                <p>Camat PATIKRAJA</p>
+                <p>Camat Patikraja</p>
               </div>
               <div style={{ marginTop: "auto" }}>
                 <div

@@ -112,7 +112,7 @@ const CreateKeteranganLetter: React.FC = () => {
     y += 8;
     // Pembuka
     doc.text(
-      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
       15,
       y,
       { maxWidth: pageWidth - 30 }
@@ -451,7 +451,7 @@ const CreateKeteranganLetter: React.FC = () => {
         <div className="content mt-4">
           <p style={{ textIndent: "2em" }}>
             Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-            Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
+            Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah,
             menerangkan bahwa:
           </p>
           <table className="mb-2">

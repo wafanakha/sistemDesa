@@ -172,7 +172,7 @@ const CreateKeramaianLetter: React.FC<{
     // Paragraf pembuka
     doc.setFontSize(10);
     doc.text(
-      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
       25,
       y,
       { maxWidth: pageWidth - 50 }
@@ -268,7 +268,7 @@ const CreateKeramaianLetter: React.FC<{
       pageWidth - 70,
       ttdY
     );
-    doc.text("Camat PATIKRAJA", pageWidth / 2, ttdY + 6, { align: "center" });
+    doc.text("Camat Patikraja", pageWidth / 2, ttdY + 6, { align: "center" });
     doc.text("An. KEPALA DESA KEDUNGWRINGIN", pageWidth - 80, ttdY + 6);
     doc.text("KASI PEMERINTAH", pageWidth - 70, ttdY + 12);
     // Spacer tanda tangan
@@ -604,7 +604,7 @@ const CreateKeramaianLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -784,7 +784,7 @@ const CreateKeramaianLetter: React.FC<{
             >
               <div>
                 <p>Mengetahui,</p>
-                <p>Camat PATIKRAJA</p>
+                <p>Camat Patikraja</p>
               </div>
               <div style={{ marginTop: "auto" }}>
                 <div

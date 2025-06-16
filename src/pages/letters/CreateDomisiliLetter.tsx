@@ -133,7 +133,7 @@ const CreateDomisiliLetter: React.FC<{
     );
     doc.setFont("helvetica", "normal");
     doc.text(
-      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
+      "Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah, menerangkan bahwa:",
       15,
       70,
       { maxWidth: 180 }
@@ -170,7 +170,7 @@ const CreateDomisiliLetter: React.FC<{
         form.rtDate
           ? new Date(form.rtDate).toLocaleDateString("id-ID")
           : "Tanggal"
-      }, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
+      }, bahwa yang bersangkutan benar penduduk Desa Kedungwringin Kecamatan Patikraja Kabupaten Banyumas yang beralamat pada alamat tersebut diatas, surat ini dibuat untuk keperluan administrasi.`,
       15,
       y,
       { maxWidth: 180 }
@@ -443,7 +443,7 @@ const CreateDomisiliLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -506,7 +506,7 @@ const CreateDomisiliLetter: React.FC<{
                 ? new Date(form.rtDate).toLocaleDateString("id-ID")
                 : "Tanggal"}
               , bahwa yang bersangkutan benar penduduk Desa Kedungwringin
-              Kecamatan PATIKRAJA Kabupaten Banyumas yang beralamat pada alamat
+              Kecamatan Patikraja Kabupaten Banyumas yang beralamat pada alamat
               tersebut diatas, surat ini dibuat untuk keperluan administrasi.
             </p>
             <p>

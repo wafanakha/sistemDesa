@@ -145,7 +145,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
     // Introduction
     pdf.setFontSize(10);
     pdf.text(
-      `     Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan PATIKRAJA Kabupaten Banyumas`,
+      `     Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin Kecamatan Patikraja Kabupaten Banyumas`,
       margin,
       y
     );
@@ -222,7 +222,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
 
     // Signatures
     pdf.text("Mengetahui,", margin, y);
-    pdf.text("Camat PATIKRAJA", margin, y + 5);
+    pdf.text("Camat Patikraja", margin, y + 5);
     pdf.text(form.namaCamat || "[Nama Camat]", margin, y + 35);
     pdf.text(
       "Kedungwringin, " +
@@ -573,7 +573,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
           <div className="content" style={{ marginTop: 30 }}>
             <p>
               Yang bertanda tangan di bawah ini, kami Kepala Desa Kedungwringin
-              Kecamatan PATIKRAJA Kabupaten Banyumas Provinsi Jawa Tengah,
+              Kecamatan Patikraja Kabupaten Banyumas Provinsi Jawa Tengah,
               menerangkan bahwa:
             </p>
             <table style={{ marginLeft: 20 }}>
@@ -723,7 +723,7 @@ const CreateDomisiliUsahaLetter: React.FC<{
             >
               <div>
                 <p>Mengetahui,</p>
-                <p>Camat PATIKRAJA</p>
+                <p>Camat Patikraja</p>
               </div>
               <div style={{ marginTop: "auto" }}>
                 <div
